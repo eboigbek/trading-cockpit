@@ -1,45 +1,49 @@
 {
-  "cash": 10000.0,
-  "positions": {},
-  "trades": [],
-  "day": "2026-10-14",
-  "day_start_equity": 10000.0,
-  "last_bar_ts": {
-    "BTC/USD": 1792017900,
-    "EUR/USD": 1792017900,
-    "GBP/USD": 1792017900,
-    "USD/JPY": 1792017900
-  },
-  "last_prices": {
-    "BTC/USD": 81559.6,
-    "EUR/USD": 1.11693,
-    "GBP/USD": 1.32066,
-    "USD/JPY": 160.999
-  },
-  "paper_start_ts": 1792017491,
-  "equity_history": [
-    [
-      1792017491,
-      10000.0
-    ],
-    [
-      1792019048,
-      10000.0
-    ]
+ "cash": 10000.0,
+ "positions": {},
+ "trades": [],
+ "day": "2026-10-14",
+ "day_start_equity": 10000.0,
+ "last_bar_ts": {
+  "BTC/USD": 1792019700,
+  "EUR/USD": 1792019700,
+  "GBP/USD": 1792019700,
+  "USD/JPY": 1792019700
+ },
+ "last_prices": {
+  "BTC/USD": 81442.1,
+  "EUR/USD": 1.11767,
+  "GBP/USD": 1.32136,
+  "USD/JPY": 160.999
+ },
+ "paper_start_ts": 1792017491,
+ "equity_history": [
+  [
+   1792017491,
+   10000.0
   ],
-  "events": [
-    {
-      "ts": 1792017491,
-      "kind": "info",
-      "text": "Spielgeld-Konto gestartet mit 10,000 USD"
-    }
+  [
+   1792019048,
+   10000.0
   ],
-  "flags": {
-    "stop": "False",
-    "data:BTC/USD": "ok",
-    "data:EUR/USD": "ok",
-    "data:GBP/USD": "ok",
-    "data:USD/JPY": "ok",
-    "mode": "Spielgeld-Modus"
+  [
+   1792021149,
+   10000.0
+  ]
+ ],
+ "events": [
+  {
+   "ts": 1792017491,
+   "kind": "info",
+   "text": "Spielgeld-Konto gestartet mit 10,000 USD"
   }
+ ],
+ "flags": {
+  "stop": "False",
+  "data:BTC/USD": "ok",
+  "data:EUR/USD": "ok",
+  "data:GBP/USD": "ok",
+  "data:USD/JPY": "ok",
+  "mode": "Spielgeld-Modus"
+ }
 }
