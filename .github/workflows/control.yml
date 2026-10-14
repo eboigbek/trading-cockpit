@@ -1,0 +1,56 @@
+name: Steuerung
+
+# Knopf in GitHub (auch in der GitHub-App): Actions -> Steuerung -> Run workflow
+on:
+  workflow_dispatch:
+    inputs:
+      aktion:
+        description: "Was soll passieren?"
+        required: true
+        type: choice
+        options:
+          - "Not-Aus (alles schließen, nicht mehr handeln)"
+          - "Weiter handeln (Not-Aus aufheben)"
+          - "Echtgeld anfordern (nur wirksam, wenn freigeschaltet)"
+          - "Zurück auf Spielgeld"
+          - "Spielgeld-Konto zurücksetzen (alles löschen, neu starten)"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trading-bot
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: trading-cockpit
+
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Aktion ausführen
+        env:
+          AKTION: ${{ inputs.aktion }}
+          COCKPIT_PASSWORT: ${{ secrets.COCKPIT_PASSWORT }}
+        run: python control_action.py "$AKTION"
+      - name: Bot sofort einmal laufen lassen
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COCKPIT_PASSWORT: ${{ secrets.COCKPIT_PASSWORT }}
+        run: pip install -q -r requirements.txt && python run.py live --once
+      - name: Speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A control.json data/
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Steuerung"
+          for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && exit 0; sleep 5; done
+          exit 1
