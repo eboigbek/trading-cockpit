@@ -2,24 +2,28 @@
   "cash": 10000.0,
   "positions": {},
   "trades": [],
-  "day": "",
-  "day_start_equity": 0.0,
+  "day": "2026-10-14",
+  "day_start_equity": 10000.0,
   "last_bar_ts": {
-    "BTC/USD": 1792016100,
-    "EUR/USD": 1792016100,
-    "GBP/USD": 1792016100,
-    "USD/JPY": 1792016100
+    "BTC/USD": 1792017900,
+    "EUR/USD": 1792017900,
+    "GBP/USD": 1792017900,
+    "USD/JPY": 1792017900
   },
   "last_prices": {
-    "BTC/USD": 81504.8,
-    "EUR/USD": 1.11593,
-    "GBP/USD": 1.31978,
+    "BTC/USD": 81559.6,
+    "EUR/USD": 1.11693,
+    "GBP/USD": 1.32066,
     "USD/JPY": 160.999
   },
   "paper_start_ts": 1792017491,
   "equity_history": [
     [
       1792017491,
+      10000.0
+    ],
+    [
+      1792019048,
       10000.0
     ]
   ],
