@@ -1,0 +1,41 @@
+{
+  "cash": 10000.0,
+  "positions": {},
+  "trades": [],
+  "day": "",
+  "day_start_equity": 0.0,
+  "last_bar_ts": {
+    "BTC/USD": 1792016100,
+    "EUR/USD": 1792016100,
+    "GBP/USD": 1792016100,
+    "USD/JPY": 1792016100
+  },
+  "last_prices": {
+    "BTC/USD": 81504.8,
+    "EUR/USD": 1.11593,
+    "GBP/USD": 1.31978,
+    "USD/JPY": 160.999
+  },
+  "paper_start_ts": 1792017491,
+  "equity_history": [
+    [
+      1792017491,
+      10000.0
+    ]
+  ],
+  "events": [
+    {
+      "ts": 1792017491,
+      "kind": "info",
+      "text": "Spielgeld-Konto gestartet mit 10,000 USD"
+    }
+  ],
+  "flags": {
+    "stop": "False",
+    "data:BTC/USD": "ok",
+    "data:EUR/USD": "ok",
+    "data:GBP/USD": "ok",
+    "data:USD/JPY": "ok",
+    "mode": "Spielgeld-Modus"
+  }
+}
