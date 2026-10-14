@@ -139,6 +139,9 @@ td.r,th.r{text-align:right}
 .empty{padding:28px 8px;text-align:center;color:var(--text-2)}
 footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
 .skeleton{opacity:.55}
+.lockform{margin-top:16px;display:grid;gap:12px;max-width:420px}
+.lockform input[type=password]{font:inherit;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);min-height:44px}
+.lockform .btn{justify-content:center;background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
@@ -474,6 +477,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
 
   function render(d) {
     $("app").classList.remove("skeleton");
+    $("app").style.display = "";
     renderHeader(d); renderAccount(d); renderMarkets(d); renderPositions(d);
     renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
     $("src").innerHTML = REPO_URL ? `Daten: <a href="${REPO_URL}" target="_blank" rel="noopener">${esc(repo.owner)}/${esc(repo.name)}</a> · aktualisiert sich jede Minute` : "";
@@ -481,15 +485,68 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
 
   let lastGen = 0, lastData = null, rz = 0;
   window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => lastData && equityChart($("curve"), lastData.equity_curve, lastData.account.start, lastData.account.currency), 150); });
-  async function load() {
+  // ---------- Tresor-Modus: verschlüsselte Daten im Browser entschlüsseln ----------
+  const PW_KEY = "cockpit_pw";
+  let memPw = null, vaultOn = false;
+  const storedPw = () => { try { return localStorage.getItem(PW_KEY) || memPw; } catch { return memPw; } };
+  const forgetPw = () => { memPw = null; try { localStorage.removeItem(PW_KEY); } catch {} };
+  async function decryptEnvelope(env, pw) {
+    const b = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: b(env.salt), iterations: env.iter, hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b(env.iv) }, key, b(env.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  function showLock(msg) {
+    $("app").style.display = "none";
+    $("pills").innerHTML = `<span class="pill mode">TRESOR</span>`;
+    $("banners").innerHTML = `<form class="card lockform" id="lockform" autocomplete="on">
+      <h2>Tresor-Modus</h2>
+      <p class="small t2" style="margin-top:0">Die Kontodaten sind verschlüsselt. Gib dein Cockpit-Passwort ein – es wird nur auf diesem Gerät zum Entschlüsseln verwendet und nie verschickt.</p>
+      <input type="text" name="username" value="cockpit" autocomplete="username" hidden>
+      <input id="pw" type="password" autocomplete="current-password" placeholder="Cockpit-Passwort" required>
+      <label class="small t2"><input id="remember" type="checkbox" checked> Auf diesem Gerät merken</label>
+      ${msg ? `<div class="small neg">${esc(msg)}</div>` : ""}
+      <button class="btn" type="submit">Öffnen</button></form>`;
+    $("lockform").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const pw = $("pw").value;
+      memPw = pw;
+      if ($("remember").checked) { try { localStorage.setItem(PW_KEY, pw); } catch {} }
+      $("lockform").querySelector("button").textContent = "Entschlüssele …";
+      await load(true);
+    });
+    setTimeout(() => $("pw")?.focus(), 50);
+  }
+
+  async function fetchFresh(url) {
+    const sep = url.includes("?") ? "&" : "?";
+    return fetch(`${url}${sep}t=${Math.floor(Date.now() / 60000)}`, { cache: "no-store" });
+  }
+
+  async function load(fromForm = false) {
     try {
-      const sep = DATA_URL.includes("?") ? "&" : "?";
-      const r = await fetch(`${DATA_URL}${sep}t=${Math.floor(Date.now() / 60000)}`, { cache: "no-store" });
-      if (r.status === 404) throw new Error("noch keine Daten");
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const d = await r.json();
+      let d;
+      const re = await fetchFresh(DATA_URL + ".enc");
+      if (re.ok) {
+        vaultOn = true;
+        const env = await re.json();
+        const pw = storedPw();
+        if (!pw) { if (!document.getElementById("lockform")) showLock(""); return; }
+        try { d = await decryptEnvelope(env, pw); }
+        catch { forgetPw(); showLock(fromForm ? "Passwort falsch. Bitte noch einmal versuchen." : "Gespeichertes Passwort passt nicht mehr."); return; }
+      } else {
+        const r = await fetchFresh(DATA_URL);
+        if (r.status === 404) throw new Error("noch keine Daten");
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        d = await r.json();
+      }
       lastGen = d.generated_at; lastData = d;
       render(d);
+      if (vaultOn) $("src").innerHTML += ` · <span class="pill mode" style="padding:1px 8px">Tresor-Modus</span> <a href="#" id="logout">Passwort auf diesem Gerät vergessen</a>`;
+      const lo = document.getElementById("logout");
+      if (lo) lo.onclick = (ev) => { ev.preventDefault(); forgetPw(); location.reload(); };
     } catch (e) {
       if (!lastGen) {
         $("pills").innerHTML = `<span class="pill warn"><span class="dot"></span>Warte auf ersten Bot-Lauf</span>`;
@@ -498,8 +555,8 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     }
   }
   load();
-  setInterval(load, 60_000);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+  setInterval(() => load(), 60_000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && !document.getElementById("lockform")) load(); });
 })();
 </script>
 </body>

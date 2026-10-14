@@ -5,6 +5,7 @@ import json
 import os
 from typing import Dict, List, Optional
 
+from . import vault
 from .broker import PaperBroker, Trade
 from .config import Config
 from .data import Candle
@@ -122,16 +123,12 @@ def build(cfg: Config, broker: PaperBroker, now_ts: int, markets: Dict[str, List
 
 
 def write(path: str, data: Dict) -> None:
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, separators=(",", ":"), ensure_ascii=False)
-    os.replace(tmp, path)
+    vault.write_text(path, json.dumps(data, separators=(",", ":"), ensure_ascii=False))
 
 
 def read(path: str) -> Optional[Dict]:
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        text = vault.read_text(path)
+        return json.loads(text) if text else None
     except (OSError, ValueError):
         return None

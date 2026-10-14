@@ -10,7 +10,7 @@ import time
 from datetime import datetime, timezone
 from typing import Callable, Dict, List, Optional
 
-from . import export
+from . import export, vault
 from .ai_reviewer import AIReviewer
 from .broker import PaperBroker
 from .config import Config, SymbolConfig
@@ -28,7 +28,12 @@ def setup_logging(cfg: Config) -> None:
     root = logging.getLogger()
     root.setLevel(logging.INFO)
     root.handlers.clear()
-    for h in (logging.StreamHandler(), logging.FileHandler(cfg.log_file, encoding="utf-8")):
+    console = logging.StreamHandler()
+    if vault.active():
+        # Tresor-Modus: GitHub-Logs öffentlicher Projekte sind für alle lesbar –
+        # dort nur Warnungen ohne Beträge, Details nur im Cockpit.
+        console.setLevel(logging.WARNING)
+    for h in (console, logging.FileHandler(cfg.log_file, encoding="utf-8")):
         h.setFormatter(fmt)
         root.addHandler(h)
 

@@ -8,12 +8,14 @@ größe wird vom Risikomanager begrenzt.
 from __future__ import annotations
 
 import csv
+import io
 import json
 import os
 from dataclasses import dataclass, asdict, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+from . import vault
 from .config import Config, SymbolConfig
 
 
@@ -85,11 +87,10 @@ class PaperBroker:
 
     # ---------------- Persistenz ----------------
     def _load(self) -> AccountState:
-        path = self.cfg.state_file
-        if not os.path.exists(path):
+        text = vault.read_text(self.cfg.state_file)
+        if text is None:
             return AccountState(cash=self.cfg.risk.starting_cash)
-        with open(path, "r", encoding="utf-8") as f:
-            raw = json.load(f)
+        raw = json.loads(text)
         return AccountState(
             cash=raw["cash"],
             positions={k: Position(**v) for k, v in raw.get("positions", {}).items()},
@@ -107,23 +108,19 @@ class PaperBroker:
     def save(self) -> None:
         if not self.persist:
             return
-        os.makedirs(os.path.dirname(self.cfg.state_file) or ".", exist_ok=True)
-        tmp = self.cfg.state_file + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(asdict(self.state), f, indent=2)
-        os.replace(tmp, self.cfg.state_file)
+        vault.write_text(self.cfg.state_file, json.dumps(asdict(self.state), indent=1))
 
     def _append_trade_csv(self, t: Trade) -> None:
         if not self.persist:
             return
         path = self.cfg.trades_file
-        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        new = not os.path.exists(path)
-        with open(path, "a", newline="", encoding="utf-8") as f:
-            w = csv.DictWriter(f, fieldnames=list(asdict(t).keys()))
-            if new:
-                w.writeheader()
-            w.writerow(asdict(t))
+        existing = vault.read_text(path) or ""
+        buf = io.StringIO()
+        w = csv.DictWriter(buf, fieldnames=list(asdict(t).keys()), lineterminator="\n")
+        if not existing:
+            w.writeheader()
+        w.writerow(asdict(t))
+        vault.write_text(path, existing + buf.getvalue())
 
     # ---------------- Protokoll & Verlauf ----------------
     MAX_EVENTS = 300

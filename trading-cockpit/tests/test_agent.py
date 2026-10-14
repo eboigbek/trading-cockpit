@@ -311,3 +311,60 @@ class TestControlAndExport(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------------------
+# Tresor-Modus (Verschlüsselung)
+# ---------------------------------------------------------------------------
+from unittest import mock  # noqa: E402
+
+from agent import vault  # noqa: E402
+
+
+class TestVault(unittest.TestCase):
+    def setUp(self):
+        p = mock.patch.object(vault, "ITERATIONS", 2000)  # Tests schnell halten
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_roundtrip_and_wrong_password(self):
+        blob = vault.encrypt("geheim 123 €", "richtiges-passwort")
+        self.assertNotIn("geheim", blob)
+        self.assertEqual(vault.decrypt(blob, "richtiges-passwort"), "geheim 123 €")
+        with self.assertRaises(vault.VaultError):
+            vault.decrypt(blob, "falsch")
+
+    def test_agent_migrates_to_encrypted_and_leaves_no_plaintext(self):
+        cfg = cfg_tmp()
+        series = {s.name: synthetic_series(s.name, 1200, seed=4) for s in cfg.symbols}
+        pos = {"n": 300}
+        clock = lambda: series["BTC/USD"][pos["n"] - 1].ts + 120  # noqa: E731
+        mk = lambda: LiveAgent(cfg, fetcher=lambda s, iv: series[s.name][: pos["n"]], clock=clock)  # noqa: E731
+        a = mk()
+        for _ in range(50):  # erst Klartext
+            a.cycle(); pos["n"] += 1
+        self.assertTrue(os.path.exists(cfg.state_file))
+        with mock.patch.dict(os.environ, {vault.ENV: "testpasswort-123"}):
+            a = mk()  # liest Klartext, schreibt verschlüsselt
+            trades_before = len(a.broker.state.trades)
+            for _ in range(400):
+                a.cycle(); pos["n"] += 1
+            self.assertGreater(len(a.broker.state.trades), trades_before)
+            for p in (cfg.state_file, cfg.trades_file, cfg.cockpit_file):
+                self.assertFalse(os.path.exists(p), p)
+                self.assertTrue(os.path.exists(p + ".enc"), p)
+                with open(p + ".enc") as f:
+                    env = json.load(f)  # nur der Umschlag, keine Klartext-Felder
+                self.assertEqual(set(env), {"v", "alg", "kdf", "iter", "salt", "iv", "ct"})
+                self.assertNotIn('"symbol"', env["ct"])
+            b = mk()  # Neustart mit Passwort setzt fort
+            self.assertEqual(len(b.broker.state.trades), len(a.broker.state.trades))
+            csv_text = vault.read_text(cfg.trades_file)
+            self.assertEqual(csv_text.count("\n"), len(a.broker.state.trades) + 1)
+        # Ohne Passwort: harter Abbruch statt leerem Konto
+        with mock.patch.dict(os.environ, {vault.ENV: ""}):
+            with self.assertRaises(vault.VaultError):
+                mk()
+        with mock.patch.dict(os.environ, {vault.ENV: "falsches-passwort"}):
+            with self.assertRaises(vault.VaultError):
+                mk()

@@ -10,6 +10,10 @@ Der Bot läuft automatisch alle 15 Minuten über GitHub Actions, auch wenn kein 
 - **Claude-Prüfung einschalten:** *Settings* → *Secrets and variables* → *Actions* → *New repository secret*, Name `ANTHROPIC_API_KEY`, Wert = API-Key von console.anthropic.com. Wird separat abgerechnet, nicht über das Claude-Abo.
 - **Bot-Läufe ansehen:** Reiter *Actions* → *Trading-Bot*.
 
+## Tresor-Modus (Verschlüsselung)
+
+Ist bei GitHub das Secret `COCKPIT_PASSWORT` hinterlegt (*Settings* → *Secrets and variables* → *Actions*), speichert der Bot Kontostand, Trades und Cockpit-Daten nur noch verschlüsselt (`data/*.enc`, AES-256-GCM, Schlüssel per PBKDF2-SHA256 aus dem Passwort). In den öffentlichen GitHub-Logs stehen dann keine Beträge mehr. Das Cockpit fragt einmal pro Gerät nach dem Passwort und entschlüsselt die Daten direkt im Browser. Ohne Passwort oder mit falschem Passwort bricht der Bot ab, statt Daten zu überschreiben. **Passwort vergessen = Daten nicht wiederherstellbar** (dann über *Steuerung* das Konto zurücksetzen).
+
 ## Echtgeld-Freischaltung
 
 Der Echtgeld-Modus wird erst frei, wenn der Spielgeld-Lauf ALLE Bedingungen erfüllt: mindestens 42 Tage (6 Wochen), mindestens 50 Trades, Profit-Faktor nach Gebühren mindestens 1,2, größter Rückgang höchstens 15 %, Ergebnis nach Gebühren im Plus. Grenzen im Echtgeld-Betrieb: höchstens 200 €, 1 % Risiko pro Trade, 3 % Tagesverlust-Limit, Notbremse bei 15 % Gesamtverlust (automatisch zurück auf Spielgeld), 1 Position, nur BTC/EUR, nur Kauf, kein Hebel, Börsen-Schlüssel ohne Auszahlungsrecht. Die Börsenanbindung wird eingerichtet, sobald ein Börsenkonto existiert. Vor Echtgeld wird dieses Projekt auf privat gestellt.

@@ -16,6 +16,7 @@ import os
 import sys
 from datetime import datetime, timezone
 
+from agent import vault
 from agent.ai_reviewer import AIReviewer
 from agent.backtest import run_backtest, write_report
 from agent.broker import PaperBroker
@@ -29,6 +30,8 @@ def cmd_live(cfg, args):
         cfg.ai.enabled = False
     setup_logging(cfg)
     LiveAgent(cfg).run(max_cycles=1 if args.once else None)
+    if vault.active():
+        print("Lauf beendet. Tresor-Modus aktiv: Kontodaten verschlüsselt, Details nur im Cockpit.")
 
 
 def cmd_demo(cfg, args):
@@ -93,8 +96,7 @@ def cmd_status(cfg, args):
 
 def cmd_reset(cfg, args):
     for p in (cfg.state_file, cfg.trades_file, cfg.cockpit_file):
-        if os.path.exists(p):
-            os.remove(p)
+        vault.remove(p)
     print("Paper-Konto zurückgesetzt.")
 
 
