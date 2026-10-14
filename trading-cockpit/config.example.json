@@ -1,0 +1,92 @@
+{
+  "interval_min": 15,
+  "data_source": "kraken",
+  "risk": {
+    "starting_cash": 10000.0,
+    "account_currency": "USD",
+    "risk_per_trade_pct": 1.0,
+    "max_daily_loss_pct": 3.0,
+    "max_open_positions": 3,
+    "slippage_pct": 0.005
+  },
+  "strategy": {
+    "ema_fast": 9,
+    "ema_slow": 21,
+    "ema_trend": 100,
+    "rsi_period": 14,
+    "atr_period": 14,
+    "rsi_long_min": 50.0,
+    "rsi_long_max": 70.0,
+    "rsi_short_min": 30.0,
+    "rsi_short_max": 50.0,
+    "stop_atr": 1.5,
+    "take_profit_atr": 3.0,
+    "max_hold_bars": 96,
+    "allow_short": true
+  },
+  "gate": {
+    "min_days": 42,
+    "min_trades": 50,
+    "min_profit_factor": 1.2,
+    "max_drawdown_pct": 15.0,
+    "require_net_profit": true
+  },
+  "live": {
+    "max_capital": 200.0,
+    "currency": "EUR",
+    "risk_per_trade_pct": 1.0,
+    "max_daily_loss_pct": 3.0,
+    "max_total_loss_pct": 15.0,
+    "max_open_positions": 1,
+    "symbols": [
+      "BTC/EUR"
+    ],
+    "long_only": true,
+    "leverage": 1.0,
+    "withdrawals_allowed": false
+  },
+  "ai": {
+    "enabled": true,
+    "fail_open": true,
+    "min_confidence": 0.55,
+    "timeout_s": 30
+  },
+  "symbols": [
+    {
+      "name": "BTC/USD",
+      "base": "BTC",
+      "quote": "USD",
+      "kraken": "XBTUSD",
+      "yahoo": "BTC-USD",
+      "fee_pct": 0.8,
+      "max_leverage": 1.0
+    },
+    {
+      "name": "EUR/USD",
+      "base": "EUR",
+      "quote": "USD",
+      "kraken": "EURUSD",
+      "yahoo": "EURUSD=X",
+      "fee_pct": 0.006,
+      "max_leverage": 10.0
+    },
+    {
+      "name": "GBP/USD",
+      "base": "GBP",
+      "quote": "USD",
+      "kraken": "GBPUSD",
+      "yahoo": "GBPUSD=X",
+      "fee_pct": 0.008,
+      "max_leverage": 10.0
+    },
+    {
+      "name": "USD/JPY",
+      "base": "USD",
+      "quote": "JPY",
+      "kraken": "USDJPY",
+      "yahoo": "JPY=X",
+      "fee_pct": 0.008,
+      "max_leverage": 10.0
+    }
+  ]
+}

@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141413">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cockpit">
+<title>Trading-Cockpit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a78d6'/%3E%3Cpath d='M6 22l6-7 5 4 9-11' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f4f2; --surface:#fcfcfb; --surface-2:#f0efec; --border:#e3e2de;
+  --text:#0b0b0b; --text-2:#52514e; --muted:#7a7974;
+  --accent:#2a78d6; --accent-soft:#2a78d61a;
+  --good:#0a7d0a; --good-mark:#0ca30c; --bad:#c22f2f; --bad-mark:#d03b3b; --warn:#a86b00; --warn-mark:#fab219;
+  --grid:#e7e6e2; --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121211; --surface:#1a1a19; --surface-2:#242422; --border:#2e2e2b;
+    --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+    --accent:#3987e5; --accent-soft:#3987e522;
+    --good:#4cc54c; --good-mark:#0ca30c; --bad:#ef7a7a; --bad-mark:#d03b3b; --warn:#fab219; --warn-mark:#fab219;
+    --grid:#2a2a28;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121211; --surface:#1a1a19; --surface-2:#242422; --border:#2e2e2b;
+  --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+  --accent:#3987e5; --accent-soft:#3987e522;
+  --good:#4cc54c; --good-mark:#0ca30c; --bad:#ef7a7a; --bad-mark:#d03b3b; --warn:#fab219; --warn-mark:#fab219;
+  --grid:#2a2a28;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 48px}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+h2{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2);margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.grid{display:grid;gap:12px}
+.section{margin-top:20px}
+.muted{color:var(--muted)} .t2{color:var(--text-2)}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.small{font-size:13px}
+
+/* Kopfzeile */
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:18px}
+.brand svg{flex:none}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-2);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.ok .dot{background:var(--good-mark)} .pill.warn .dot{background:var(--warn-mark)} .pill.bad .dot{background:var(--bad-mark)}
+.pill.mode{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.pill.live{background:var(--bad-mark);color:#fff;border-color:transparent}
+.banner{margin-top:12px;border-radius:12px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:flex-start;
+  background:var(--surface-2);border:1px solid var(--border)}
+.banner.warn{border-color:var(--warn-mark)} .banner.bad{border-color:var(--bad-mark)}
+.banner b{font-weight:650}
+
+/* Kontostand */
+.hero{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+@media(min-width:820px){.hero{grid-template-columns:minmax(260px,1fr) 2fr}}
+.equity{font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.equity small{font-size:16px;font-weight:600;color:var(--text-2);margin-left:4px}
+.delta{font-size:16px;font-weight:600;margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.stat{background:var(--surface-2);border-radius:10px;padding:9px 11px}
+.stat span{display:block;font-size:12px;color:var(--text-2)}
+.stat b{font-size:17px;font-weight:650}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:6px 9px;font-size:12.5px;box-shadow:0 4px 14px #0002;white-space:nowrap;transform:translate(-50%,-100%);display:none}
+
+/* Märkte */
+.markets{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.mkt-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mkt-name{font-weight:650}
+.mkt-price{font-size:21px;font-weight:650;margin-top:2px}
+.mkt-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2);margin-top:6px}
+.tag{display:inline-block;font-size:11.5px;font-weight:650;padding:2px 7px;border-radius:6px;background:var(--surface-2);color:var(--text-2)}
+.tag.long{background:#0ca30c22;color:var(--good)} .tag.short{background:#d03b3b22;color:var(--bad)}
+
+/* Positionen */
+.posrow{display:grid;gap:8px}
+.range{position:relative;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--bad-mark) 0%,var(--surface-2) 33%,var(--surface-2) 66%,var(--good-mark) 100%);opacity:.85;margin:10px 0 4px}
+.range i{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:var(--text)}
+.range-l{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)}
+
+/* Freischaltung */
+.two{grid-template-columns:1fr}
+@media(min-width:820px){.two{grid-template-columns:1fr 1fr}}
+.lock{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lock .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2)}
+.req{margin:12px 0}
+.req-top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.req-top .ok{color:var(--good);font-weight:650}
+.bar{height:8px;border-radius:4px;background:var(--surface-2);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.bar i.done{background:var(--good-mark)}
+dl.limits{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin:0;font-size:14px}
+dl.limits dt{color:var(--text-2)} dl.limits dd{margin:0;font-weight:600;text-align:right}
+
+/* Gebühren */
+.fee-row{display:grid;grid-template-columns:96px 1fr 92px;gap:10px;align-items:center;margin:9px 0;font-size:14px}
+.fee-track{position:relative;height:18px}
+.fee-track .zero{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--muted)}
+.fee-track i{position:absolute;top:0;height:100%;border-radius:4px}
+.fee-row.cur{font-weight:650}
+
+/* Protokoll & Trades */
+.events{list-style:none;margin:0;padding:0;max-height:480px;overflow:auto}
+.events li{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.events li:last-child{border:0}
+.events time{display:block;font-size:12px;color:var(--muted)}
+.ev-ic{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface-2);color:var(--text-2)}
+.ev-ic.open{color:var(--accent)} .ev-ic.ai{color:#9085e9} .ev-ic.warn{color:var(--warn)} .ev-ic.close{color:var(--text)}
+.tbl-wrap{overflow-x:auto;max-height:520px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface);color:var(--text-2);font-weight:600;font-size:12.5px}
+td.r,th.r{text-align:right}
+
+/* Steuerung */
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 16px;border-radius:12px;font-weight:650;font-size:15px;
+  text-decoration:none;border:1px solid var(--border);background:var(--surface-2);color:var(--text)}
+.btn.stop{background:var(--bad-mark);border-color:var(--bad-mark);color:#fff}
+.empty{padding:28px 8px;text-align:center;color:var(--text-2)}
+footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
+.skeleton{opacity:.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 22l6-7 5 4 9-11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Trading-Cockpit
+    </div>
+    <div class="pills" id="pills"><span class="pill"><span class="dot"></span>Lade …</span></div>
+  </header>
+  <div id="banners"></div>
+
+  <div id="app" class="skeleton">
+    <div class="hero">
+      <div class="card">
+        <h2>Spielgeld-Konto</h2>
+        <div class="equity num" id="equity">–</div>
+        <div class="delta num" id="delta">&nbsp;</div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="card">
+        <div class="chart-head"><h2 style="margin:0">Kontoverlauf</h2><span class="small muted" id="curve-range"></span></div>
+        <div class="chart" id="curve"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Märkte</h2>
+      <div class="grid markets" id="markets"></div>
+    </div>
+
+    <div class="section">
+      <h2>Offene Positionen</h2>
+      <div class="grid" id="positions"></div>
+    </div>
+
+    <div class="section grid two">
+      <div class="card" id="gate"></div>
+      <div class="card" id="fees"></div>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h2>Protokoll</h2>
+        <ul class="events" id="events"></ul>
+      </div>
+      <div class="card" id="control"></div>
+    </div>
+
+    <div class="section card">
+      <h2>Abgeschlossene Trades</h2>
+      <div class="tbl-wrap" id="trades"></div>
+    </div>
+  </div>
+
+  <footer>
+    Spielgeld-Simulation mit echten Kursen. Keine Anlageberatung. Vergangene Ergebnisse sind keine Garantie für künftige Gewinne.<br>
+    <span id="src"></span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const NF = (d) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const money = (v, ccy = "USD", sign = false) => (sign && v > 0 ? "+" : "") + NF(2).format(v) + " " + (ccy === "USD" ? "$" : ccy === "EUR" ? "€" : ccy);
+  const pct = (v, d = 2, sign = true) => (sign && v > 0 ? "+" : "") + NF(d).format(v) + " %";
+  const priceDigits = (sym) => sym.startsWith("BTC") ? 0 : sym.includes("JPY") ? 3 : 5;
+  const price = (sym, v) => NF(priceDigits(sym)).format(v);
+  const cls = (v) => (v > 0 ? "pos" : v < 0 ? "neg" : "");
+  const dt = (ts, withDay = true) => new Date(ts * 1000).toLocaleString("de-DE", withDay
+    ? { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" } : { hour: "2-digit", minute: "2-digit" });
+  const ago = (ts) => {
+    const m = Math.round((Date.now() / 1000 - ts) / 60);
+    if (m < 1) return "gerade eben";
+    if (m < 60) return `vor ${m} Min.`;
+    const h = Math.floor(m / 60);
+    return h < 48 ? `vor ${h} Std. ${m % 60} Min.` : `vor ${Math.floor(h / 24)} Tagen`;
+  };
+  const sideDe = (s) => (s === "long" ? "Kauf (Long)" : "Verkauf (Short)");
+  const reasonDe = { stop_loss: "Stop-Loss", take_profit: "Gewinnziel", gegensignal: "Gegensignal", max_haltedauer: "Max. Haltedauer", not_aus: "Not-Aus", backtest_ende: "Ende" };
+
+  // ---------- Datenquelle bestimmen ----------
+  const params = new URLSearchParams(location.search);
+  let repo = null;
+  if (location.hostname.endsWith(".github.io")) {
+    const owner = location.hostname.split(".")[0];
+    const name = location.pathname.split("/").filter(Boolean)[0];
+    if (name) repo = { owner, name };
+  }
+  if (params.get("repo")) {
+    const [owner, name] = params.get("repo").split("/");
+    repo = { owner, name };
+  }
+  const DATA_URL = params.get("data") || (repo
+    ? `https://raw.githubusercontent.com/${repo.owner}/${repo.name}/main/data/cockpit.json`
+    : "data/cockpit.json");
+  const REPO_URL = repo ? `https://github.com/${repo.owner}/${repo.name}` : null;
+
+  // ---------- Diagramme ----------
+  function sparkline(values, w = 220, h = 44) {
+    if (!values || values.length < 2) return "";
+    const lo = Math.min(...values), hi = Math.max(...values), span = hi - lo || 1;
+    const pts = values.map((v, i) => `${(i / (values.length - 1) * w).toFixed(1)},${(h - 3 - (v - lo) / span * (h - 6)).toFixed(1)}`).join(" ");
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="height:${h}px;margin-top:8px" aria-hidden="true">
+      <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+  }
+
+  function equityChart(el, curve, start, ccy) {
+    if (!curve || curve.length < 2) {
+      el.innerHTML = `<div class="empty">Der Verlauf erscheint nach den ersten Bot-Läufen.</div>`;
+      $("curve-range").textContent = "";
+      return;
+    }
+    const W = Math.max(300, Math.round(el.clientWidth || 640)), H = W < 500 ? 190 : 230, padL = 4, padR = 54, padT = 10, padB = 24;
+    const xs = curve.map((p) => p[0]), ys = curve.map((p) => p[1]);
+    let lo = Math.min(start, ...ys), hi = Math.max(start, ...ys);
+    const pad = (hi - lo) * 0.08 || start * 0.005; lo -= pad; hi += pad;
+    const x0 = xs[0], x1 = xs[xs.length - 1], xspan = x1 - x0 || 1;
+    const X = (t) => padL + (t - x0) / xspan * (W - padL - padR);
+    const Y = (v) => padT + (hi - v) / (hi - lo) * (H - padT - padB);
+    const ticks = 4, grid = [];
+    for (let i = 0; i <= ticks; i++) {
+      const v = lo + (hi - lo) * i / ticks;
+      grid.push(`<line x1="${padL}" x2="${W - padR}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/>
+        <text x="${W - padR + 8}" y="${Y(v) + 4}" font-size="11" fill="var(--muted)">${NF(0).format(v)}</text>`);
+    }
+    const path = curve.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
+    const area = `${path}L${X(x1).toFixed(1)},${Y(lo)}L${X(x0).toFixed(1)},${Y(lo)}Z`;
+    const last = curve[curve.length - 1];
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Kontoverlauf von ${money(ys[0], ccy)} auf ${money(last[1], ccy)}">
+      <defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".18"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+      ${grid.join("")}
+      <line x1="${padL}" x2="${W - padR}" y1="${Y(start)}" y2="${Y(start)}" stroke="var(--muted)" stroke-dasharray="4 4"/>
+      <text x="${padL + 4}" y="${Y(start) - 6}" font-size="11" fill="var(--muted)">Start ${NF(0).format(start)}</text>
+      <path d="${area}" fill="url(#ga)"/>
+      <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${X(last[0])}" cy="${Y(last[1])}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>
+      <text x="${padL}" y="${H - 6}" font-size="11" fill="var(--muted)">${dt(x0)}</text>
+      <text x="${W - padR}" y="${H - 6}" font-size="11" fill="var(--muted)" text-anchor="end">${dt(x1)}</text>
+      <g id="xh" style="display:none"><line y1="${padT}" y2="${H - padB}" stroke="var(--muted)"/><circle r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/></g>
+      <rect x="${padL}" y="0" width="${W - padL - padR}" height="${H}" fill="transparent" id="hit"/>
+    </svg><div class="tip" id="tip"></div>`;
+    $("curve-range").textContent = `${curve.length} Messpunkte`;
+    const svg = el.querySelector("svg"), xh = el.querySelector("#xh"), tip = el.querySelector("#tip");
+    const move = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left) / r.width * W;
+      const t = x0 + (cx - padL) / (W - padL - padR) * xspan;
+      let best = 0;
+      for (let i = 1; i < curve.length; i++) if (Math.abs(curve[i][0] - t) < Math.abs(curve[best][0] - t)) best = i;
+      const p = curve[best], px = X(p[0]), py = Y(p[1]);
+      xh.style.display = "";
+      xh.querySelector("line").setAttribute("x1", px); xh.querySelector("line").setAttribute("x2", px);
+      xh.querySelector("circle").setAttribute("cx", px); xh.querySelector("circle").setAttribute("cy", py);
+      tip.style.display = "block";
+      tip.style.left = (px / W * r.width) + "px"; tip.style.top = (py / H * r.height - 10) + "px";
+      tip.innerHTML = `<b class="num">${money(p[1], ccy)}</b> <span class="${cls(p[1] - start)} num">${pct((p[1] / start - 1) * 100)}</span><br><span class="muted">${dt(p[0])}</span>`;
+    };
+    const leave = () => { xh.style.display = "none"; tip.style.display = "none"; };
+    const hit = el.querySelector("#hit");
+    hit.addEventListener("pointermove", move); hit.addEventListener("pointerleave", leave);
+    hit.addEventListener("touchmove", move, { passive: true }); hit.addEventListener("touchend", leave);
+  }
+
+  // ---------- Bereiche ----------
+  function renderHeader(d) {
+    const age = Date.now() / 1000 - d.generated_at;
+    const stale = age > 45 * 60;
+    const live = d.mode.effective === "live";
+    const pills = [
+      `<span class="pill ${live ? "live" : "mode"}">${live ? "ECHTGELD" : "SPIELGELD"}</span>`,
+      d.mode.stop ? `<span class="pill bad"><span class="dot"></span>Not-Aus aktiv</span>`
+        : stale ? `<span class="pill warn"><span class="dot"></span>Keine Meldung ${ago(d.generated_at)}</span>`
+        : `<span class="pill ok"><span class="dot"></span>Bot läuft · ${ago(d.generated_at)}</span>`,
+      `<span class="pill"><span class="dot" style="background:${d.ai.active ? "#9085e9" : "var(--muted)"}"></span>Claude ${d.ai.active ? "prüft" : "aus"}</span>`,
+    ];
+    $("pills").innerHTML = pills.join("");
+    const b = [];
+    if (d.mode.stop) b.push(`<div class="banner bad"><b>Not-Aus ist aktiv.</b> Der Bot eröffnet keine neuen Trades. Aufheben über „Steuerung“ → „Weiter handeln“.</div>`);
+    if (stale && !d.mode.stop) b.push(`<div class="banner warn"><span><b>Der Bot hat sich ${ago(d.generated_at)} zuletzt gemeldet.</b> GitHub startet Läufe manchmal verspätet. Hält das länger als eine Stunde an, im GitHub-Reiter „Actions“ nachsehen.</span></div>`);
+    if (d.mode.requested === "live") b.push(`<div class="banner warn"><span><b>Echtgeld angefordert.</b> ${esc(d.mode.note)}</span></div>`);
+    $("banners").innerHTML = b.join("");
+  }
+
+  function renderAccount(d) {
+    const a = d.account, ccy = a.currency;
+    $("equity").innerHTML = `${NF(2).format(a.equity)}<small>${ccy === "USD" ? "$" : ccy}</small>`;
+    $("delta").innerHTML = `<span class="${cls(a.pnl)}">${money(a.pnl, ccy, true)} (${pct(a.pnl_pct)})</span> <span class="muted small">seit Start mit ${money(a.start, ccy)}</span>`;
+    const st = [
+      ["Trades", a.trades],
+      ["Trefferquote", a.win_rate == null ? "–" : pct(a.win_rate, 1, false)],
+      ["Profit-Faktor", a.profit_factor == null ? "–" : NF(2).format(a.profit_factor)],
+      ["Gebühren gesamt", money(a.fees_total, ccy)],
+      ["Größter Rückgang", pct(a.max_drawdown_pct, 1, false)],
+      ["Läuft seit", a.paper_start ? dt(a.paper_start) : "–"],
+    ];
+    $("stats").innerHTML = st.map(([k, v]) => `<div class="stat"><span>${k}</span><b class="num">${v}</b></div>`).join("");
+    equityChart($("curve"), d.equity_curve, a.start, ccy);
+  }
+
+  function renderMarkets(d) {
+    const open = Object.fromEntries(d.positions.map((p) => [p.symbol, p]));
+    $("markets").innerHTML = d.markets.map((m) => {
+      const p = open[m.symbol];
+      return `<div class="card">
+        <div class="mkt-top"><span class="mkt-name">${esc(m.symbol)}</span>
+          ${p ? `<span class="tag ${p.side}">${p.side === "long" ? "Long offen" : "Short offen"}</span>` : ""}</div>
+        <div class="mkt-price num">${price(m.symbol, m.price)}</div>
+        <div class="mkt-meta"><span class="${cls(m.change_24h_pct)} num">${pct(m.change_24h_pct)} 24 h</span>
+          <span>Trend ${m.trend === "auf" ? "↗ aufwärts" : m.trend === "ab" ? "↘ abwärts" : "–"}</span>
+          <span class="num">RSI ${m.rsi == null ? "–" : NF(0).format(m.rsi)}</span></div>
+        ${sparkline(m.closes)}
+        <div class="small muted">${m.stale ? "Daten gerade nicht erreichbar · " : ""}Letzte 24 h · Stand ${dt(m.ts + d.interval_min * 60, false)}</div>
+      </div>`;
+    }).join("") || `<div class="card empty">Noch keine Kursdaten – der erste Bot-Lauf kommt gleich.</div>`;
+  }
+
+  function renderPositions(d) {
+    const ccy = d.account.currency;
+    $("positions").innerHTML = d.positions.map((p) => {
+      const lo = Math.min(p.stop, p.tp), hi = Math.max(p.stop, p.tp);
+      let f = (p.price - lo) / (hi - lo || 1); f = Math.max(0, Math.min(1, f));
+      const left = p.side === "long" ? f : 1 - f;
+      return `<div class="card posrow">
+        <div class="mkt-top"><span class="mkt-name">${esc(p.symbol)} · ${sideDe(p.side)}</span>
+          <span class="${cls(p.unrealized)} num" style="font-weight:650">${money(p.unrealized, ccy, true)}</span></div>
+        <div class="small t2 num">Einstieg ${price(p.symbol, p.entry)} · jetzt ${price(p.symbol, p.price)} · seit ${dt(p.opened)}</div>
+        <div><div class="range" role="img" aria-label="Kurs zwischen Stop-Loss und Gewinnziel"><i style="left:calc(${(left * 100).toFixed(1)}% - 1px)"></i></div>
+        <div class="range-l num"><span>Stop ${price(p.symbol, p.stop)}</span><span>Ziel ${price(p.symbol, p.tp)}</span></div></div>
+        <div class="small t2">${esc(p.reason)}${p.ai ? `<br><span style="color:#9085e9">Claude:</span> ${esc(p.ai)}` : ""}</div>
+      </div>`;
+    }).join("") || `<div class="card empty">Gerade keine offene Position. Der Bot wartet auf ein Signal, bei dem alle Regeln passen.</div>`;
+  }
+
+  function renderGate(d) {
+    const g = d.gate, L = d.limits.live;
+    const show = (i) => ({
+      days: `${NF(1).format(i.value)} / ${i.target} Tage`,
+      trades: `${i.value} / ${i.target}`,
+      pf: d.account.trades ? `${NF(2).format(i.value)} / mind. ${NF(2).format(i.target)}` : "noch keine Trades",
+      dd: `${NF(1).format(i.value)} % / max. ${NF(0).format(i.target)} %`,
+      net: money(i.value, d.account.currency, true),
+    }[i.key] ?? i.display);
+    const items = g.items.map((i) => `<div class="req">
+      <div class="req-top"><span>${esc(i.label)}</span><span class="num ${i.ok ? "ok" : ""}">${i.ok ? "✓ " : ""}${esc(show(i))}</span></div>
+      <div class="bar"><i class="${i.ok ? "done" : ""}" style="width:${(i.pct * 100).toFixed(0)}%"></i></div></div>`).join("");
+    const cur = L.currency === "EUR" ? "€" : L.currency;
+    $("gate").innerHTML = `<h2>Echtgeld-Freischaltung</h2>
+      <div class="lock"><div class="ic">${g.unlocked
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2.2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'}</div>
+        <div><b>${g.unlocked ? "Alle Bedingungen erfüllt" : "Gesperrt"}</b><div class="small t2">${g.unlocked
+          ? "Echtgeld kann angefordert werden, sobald die Börse angebunden ist."
+          : "Echtgeld wird frei, wenn alle Punkte erfüllt sind."}</div></div></div>
+      ${items}
+      <h2 style="margin-top:20px">Grenzen im Echtgeld-Betrieb</h2>
+      <dl class="limits num">
+        <dt>Höchstbetrag für den Bot</dt><dd>${NF(0).format(L.max_capital)} ${cur}</dd>
+        <dt>Risiko pro Trade</dt><dd>${pct(L.risk_per_trade_pct, 0, false)}</dd>
+        <dt>Tagesverlust-Limit</dt><dd>${pct(L.max_daily_loss_pct, 0, false)}</dd>
+        <dt>Notbremse gesamt</dt><dd>${pct(L.max_total_loss_pct, 0, false)} → Spielgeld</dd>
+        <dt>Offene Positionen</dt><dd>max. ${L.max_open_positions}</dd>
+        <dt>Märkte</dt><dd>${esc(L.symbols.join(", "))}${L.long_only ? ", nur Kauf" : ""}</dd>
+        <dt>Hebel</dt><dd>${L.leverage <= 1 ? "keiner" : L.leverage + "×"}</dd>
+        <dt>Auszahlungen durch Bot</dt><dd>${L.withdrawals_allowed ? "erlaubt" : "gesperrt"}</dd>
+      </dl>`;
+  }
+
+  function renderFees(d) {
+    const ccy = d.account.currency, sc = d.fee_scenarios || [];
+    const maxAbs = Math.max(1, ...sc.map((s) => Math.abs(s.net)));
+    const rows = sc.map((s) => {
+      const w = Math.abs(s.net) / maxAbs * 50;
+      const left = s.net >= 0 ? 50 : 50 - w;
+      return `<div class="fee-row ${s.current ? "cur" : ""}">
+        <span class="num">${NF(2).format(s.fee_pct)} %${s.current ? " ◂" : ""}</span>
+        <div class="fee-track"><span class="zero" style="left:50%"></span>
+          <i style="left:${left}%;width:${w}%;background:${s.net >= 0 ? "var(--good-mark)" : "var(--bad-mark)"}"></i></div>
+        <span class="num ${cls(s.net)}" style="text-align:right">${money(s.net, ccy, true)}</span></div>`;
+    }).join("");
+    const cfg = (d.fees_config || []).map((f) => `<dt>${esc(f.symbol)}</dt><dd>${NF(f.fee_pct < 0.1 ? 3 : 2).format(f.fee_pct)} %</dd>`).join("");
+    $("fees").innerHTML = `<h2>Gebühren</h2>
+      <p class="small t2" style="margin-top:0">Jeder Trade zahlt Gebühren beim Kauf und Verkauf. Sie sind in allen Zahlen oben schon abgezogen: bisher <b class="num">${money(d.account.fees_total, ccy)}</b>.</p>
+      <dl class="limits num">${cfg}</dl>
+      <p class="small muted" style="margin:6px 0 16px">Werte pro Kauf bzw. Verkauf inkl. Spread. BTC: 0,80 % = Kraken Pro Einstiegsstufe mit Market-Order.</p>
+      <h2>Was wäre bei anderen BTC-Gebühren?</h2>
+      ${sc.length && d.account.trades ? rows + `<p class="small muted" style="margin-bottom:0">Gesamtergebnis aller Trades, wenn BTC-Trades die links genannte Gebühr gekostet hätten. ◂ = aktuelle Annahme.</p>`
+        : `<div class="small muted">Erscheint nach den ersten abgeschlossenen Trades.</div>`}`;
+  }
+
+  function renderEvents(d) {
+    const ic = { open: "+", close: "✓", ai: "C", warn: "!", skip: "–", info: "i" };
+    $("events").innerHTML = d.events.map((e) => `<li><span class="ev-ic ${esc(e.kind)}">${ic[e.kind] || "·"}</span>
+      <div><time>${dt(e.ts)}</time>${esc(e.text)}</div></li>`).join("") || `<li><span class="ev-ic">i</span><div class="muted">Noch keine Ereignisse.</div></li>`;
+  }
+
+  function renderControl(d) {
+    const act = REPO_URL ? `${REPO_URL}/actions/workflows/control.yml` : null;
+    $("control").innerHTML = `<h2>Steuerung</h2>
+      <p class="small t2" style="margin-top:0">Der Bot läuft auf GitHub alle 15 Minuten, auch wenn dieses Cockpit geschlossen ist.
+      Steuern kannst du ihn über GitHub (Browser oder GitHub-App): <b>„Run workflow“</b> tippen und die Aktion wählen.</p>
+      <div class="btns">
+        ${act ? `<a class="btn stop" href="${act}" target="_blank" rel="noopener">Not-Aus / Steuerung</a>` : ""}
+        ${REPO_URL ? `<a class="btn" href="${REPO_URL}/actions" target="_blank" rel="noopener">Bot-Läufe ansehen</a>` : ""}
+      </div>
+      <h2 style="margin-top:20px">Claude-Prüfung</h2>
+      <p class="small t2" style="margin:0">${d.ai.active
+        ? `Aktiv mit Modell <b>${esc(d.ai.model)}</b>. Jedes Signal wird vor der Ausführung geprüft, die Begründung steht im Protokoll.`
+        : `Aus – der Bot handelt nur nach Regeln. Zum Einschalten in GitHub unter Settings → Secrets → Actions einen Schlüssel <code>ANTHROPIC_API_KEY</code> hinterlegen (kostet grob 1–3 € im Monat, separat vom Claude-Abo).`}</p>
+      <h2 style="margin-top:20px">Spielgeld-Regeln</h2>
+      <dl class="limits num">
+        <dt>Risiko pro Trade</dt><dd>${pct(d.limits.paper.risk_per_trade_pct, 0, false)}</dd>
+        <dt>Tagesverlust-Limit</dt><dd>${pct(d.limits.paper.max_daily_loss_pct, 0, false)}</dd>
+        <dt>Offene Positionen</dt><dd>max. ${d.limits.paper.max_open_positions}</dd>
+      </dl>`;
+  }
+
+  function renderTrades(d) {
+    const ccy = d.account.currency;
+    if (!d.trades.length) { $("trades").innerHTML = `<div class="empty">Noch keine abgeschlossenen Trades.</div>`; return; }
+    $("trades").innerHTML = `<table class="num"><thead><tr><th>Geschlossen</th><th>Markt</th><th>Richtung</th>
+      <th class="r">Einstieg</th><th class="r">Ausstieg</th><th class="r">Gebühren</th><th class="r">Ergebnis</th><th>Grund</th></tr></thead><tbody>
+      ${d.trades.map((t) => `<tr title="${esc(t.entry_reason)}${t.ai ? " | Claude: " + esc(t.ai) : ""}"><td>${dt(t.closed)}</td><td>${esc(t.symbol)}</td>
+        <td><span class="tag ${t.side}">${t.side === "long" ? "Long" : "Short"}</span></td>
+        <td class="r">${price(t.symbol, t.entry)}</td><td class="r">${price(t.symbol, t.exit)}</td>
+        <td class="r muted">${money(t.fees, ccy)}</td><td class="r ${cls(t.pnl)}"><b>${money(t.pnl, ccy, true)}</b></td>
+        <td>${esc(reasonDe[t.reason] || t.reason)}</td></tr>`).join("")}</tbody></table>`;
+  }
+
+  function render(d) {
+    $("app").classList.remove("skeleton");
+    renderHeader(d); renderAccount(d); renderMarkets(d); renderPositions(d);
+    renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
+    $("src").innerHTML = REPO_URL ? `Daten: <a href="${REPO_URL}" target="_blank" rel="noopener">${esc(repo.owner)}/${esc(repo.name)}</a> · aktualisiert sich jede Minute` : "";
+  }
+
+  let lastGen = 0, lastData = null, rz = 0;
+  window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => lastData && equityChart($("curve"), lastData.equity_curve, lastData.account.start, lastData.account.currency), 150); });
+  async function load() {
+    try {
+      const sep = DATA_URL.includes("?") ? "&" : "?";
+      const r = await fetch(`${DATA_URL}${sep}t=${Math.floor(Date.now() / 60000)}`, { cache: "no-store" });
+      if (r.status === 404) throw new Error("noch keine Daten");
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const d = await r.json();
+      lastGen = d.generated_at; lastData = d;
+      render(d);
+    } catch (e) {
+      if (!lastGen) {
+        $("pills").innerHTML = `<span class="pill warn"><span class="dot"></span>Warte auf ersten Bot-Lauf</span>`;
+        $("banners").innerHTML = `<div class="banner warn"><span><b>Noch keine Daten.</b> Sobald der Bot das erste Mal gelaufen ist (spätestens in 15 Minuten), erscheint hier alles. (${esc(e.message)})</span></div>`;
+      }
+    }
+  }
+  load();
+  setInterval(load, 60_000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+})();
+</script>
+</body>
+</html>
