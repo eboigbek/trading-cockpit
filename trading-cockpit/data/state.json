@@ -1,19 +1,6 @@
 {
- "cash": 9712.729985213922,
- "positions": {
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "short",
-   "units": 0.12229529232025797,
-   "entry": 80911.454225,
-   "stop": 81264.8491906294,
-   "take_profit": 80216.80161874123,
-   "opened_ts": 1792059300,
-   "bars_held": 6,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.3",
-   "ai_note": ""
-  }
- },
+ "cash": 9589.504085942977,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -46,20 +33,36 @@
    "ai_note": "",
    "gross_pnl": -100.281928,
    "turnover": 42651.1596
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.12229529232025797,
+   "entry": 80911.454225,
+   "exit": 81268.91243308893,
+   "opened_ts": 1792059300,
+   "closed_ts": 1792067400,
+   "pnl": -202.386619,
+   "fees": 158.671163,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.3",
+   "ai_note": "",
+   "gross_pnl": -43.715456,
+   "turnover": 19833.8953
   }
  ],
  "day": "2026-10-15",
  "day_start_equity": 10000.0,
  "last_bar_ts": {
-  "BTC/USD": 1792064700,
-  "EUR/USD": 1792064700,
-  "GBP/USD": 1792064700,
-  "USD/JPY": 1792064700
+  "BTC/USD": 1792067400,
+  "EUR/USD": 1792067400,
+  "GBP/USD": 1792067400,
+  "USD/JPY": 1792067400
  },
  "last_prices": {
-  "BTC/USD": 80876.1,
-  "EUR/USD": 1.12046,
-  "GBP/USD": 1.3262,
+  "BTC/USD": 80799.1,
+  "EUR/USD": 1.12088,
+  "GBP/USD": 1.32548,
   "USD/JPY": 160.368
  },
  "paper_start_ts": 1792017491,
@@ -167,6 +170,10 @@
   [
    1792066311,
    9717.0536
+  ],
+  [
+   1792068885,
+   9589.5041
   ]
  ],
  "events": [
@@ -199,6 +206,11 @@
    "ts": 1792062900,
    "kind": "close",
    "text": "USD/JPY SHORT geschlossen @ 158.447 (Stop-Loss): -103.69 USD nach 3.41 Geb\u00fchren"
+  },
+  {
+   "ts": 1792068300,
+   "kind": "close",
+   "text": "BTC/USD SHORT geschlossen @ 81268.9 (Stop-Loss): -202.39 USD nach 158.67 Geb\u00fchren"
   }
  ],
  "flags": {
