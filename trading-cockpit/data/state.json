@@ -1,6 +1,31 @@
 {
- "cash": 9895.584725739835,
- "positions": {},
+ "cash": 9814.717959784548,
+ "positions": {
+  "BTC/USD": {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.12229529232025797,
+   "entry": 80911.454225,
+   "stop": 81264.8491906294,
+   "take_profit": 80216.80161874123,
+   "opened_ts": 1792059300,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.3",
+   "ai_note": ""
+  },
+  "USD/JPY": {
+   "symbol": "USD/JPY",
+   "side": "short",
+   "units": 21325.579790738466,
+   "entry": 157.70211450000002,
+   "stop": 158.4392785284444,
+   "take_profit": 156.25144294311127,
+   "opened_ts": 1792059300,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 30.8",
+   "ai_note": ""
+  }
+ },
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -22,16 +47,16 @@
  "day": "2026-10-15",
  "day_start_equity": 10000.0,
  "last_bar_ts": {
-  "BTC/USD": 1792057500,
-  "EUR/USD": 1792057500,
-  "GBP/USD": 1792057500,
-  "USD/JPY": 1792057500
+  "BTC/USD": 1792059300,
+  "EUR/USD": 1792059300,
+  "GBP/USD": 1792059300,
+  "USD/JPY": 1792059300
  },
  "last_prices": {
-  "BTC/USD": 81161.5,
-  "EUR/USD": 1.12144,
-  "GBP/USD": 1.32611,
-  "USD/JPY": 160.5
+  "BTC/USD": 80915.5,
+  "EUR/USD": 1.12028,
+  "GBP/USD": 1.32493,
+  "USD/JPY": 157.71
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -122,6 +147,10 @@
   [
    1792058445,
    9895.5847
+  ],
+  [
+   1792060317,
+   9813.1569
   ]
  ],
  "events": [
@@ -139,6 +168,16 @@
    "ts": 1792047600,
    "kind": "close",
    "text": "USD/JPY SHORT geschlossen @ 158.154 (Stop-Loss): -104.42 USD nach 2.72 Geb\u00fchren"
+  },
+  {
+   "ts": 1792060200,
+   "kind": "open",
+   "text": "BTC/USD SHORT er\u00f6ffnet @ 80911.5 | Stop 81264.8 | Ziel 80216.8 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.3"
+  },
+  {
+   "ts": 1792060200,
+   "kind": "open",
+   "text": "USD/JPY SHORT er\u00f6ffnet @ 157.702 | Stop 158.439 | Ziel 156.251 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 30.8"
   }
  ],
  "flags": {
