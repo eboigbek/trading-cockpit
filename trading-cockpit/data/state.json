@@ -1,20 +1,33 @@
 {
- "cash": 10000.0,
- "positions": {},
+ "cash": 9998.638351120311,
+ "positions": {
+  "USD/JPY": {
+   "symbol": "USD/JPY",
+   "side": "short",
+   "units": 17020.610996113155,
+   "entry": 157.20913915000003,
+   "stop": 158.1461449347551,
+   "take_profit": 155.3587101304898,
+   "opened_ts": 1792045800,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 32.9",
+   "ai_note": ""
+  }
+ },
  "trades": [],
  "day": "2026-10-15",
  "day_start_equity": 10000.0,
  "last_bar_ts": {
-  "BTC/USD": 1792043100,
-  "EUR/USD": 1792043100,
-  "GBP/USD": 1792043100,
-  "USD/JPY": 1792043100
+  "BTC/USD": 1792045800,
+  "EUR/USD": 1792045800,
+  "GBP/USD": 1792045800,
+  "USD/JPY": 1792045800
  },
  "last_prices": {
-  "BTC/USD": 80495.2,
-  "EUR/USD": 1.12122,
-  "GBP/USD": 1.32381,
-  "USD/JPY": 160.601
+  "BTC/USD": 80839.0,
+  "EUR/USD": 1.12022,
+  "GBP/USD": 1.32366,
+  "USD/JPY": 157.217
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -81,6 +94,10 @@
   [
    1792044616,
    10000.0
+  ],
+  [
+   1792047246,
+   9997.7873
   ]
  ],
  "events": [
@@ -88,6 +105,11 @@
    "ts": 1792017491,
    "kind": "info",
    "text": "Spielgeld-Konto gestartet mit 10,000 USD"
+  },
+  {
+   "ts": 1792046700,
+   "kind": "open",
+   "text": "USD/JPY SHORT er\u00f6ffnet @ 157.209 | Stop 158.146 | Ziel 155.359 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 32.9"
   }
  ],
  "flags": {
