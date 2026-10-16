@@ -1,18 +1,6 @@
 {
- "cash": 9291.47501914579,
+ "cash": 9189.283240425273,
  "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 34813.12657948446,
-   "entry": 160.38101865000002,
-   "stop": 159.93236114181798,
-   "take_profit": 161.25427771636402,
-   "opened_ts": 1792141200,
-   "bars_held": 23,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 64.5",
-   "ai_note": ""
-  },
   "EUR/USD": {
    "symbol": "EUR/USD",
    "side": "long",
@@ -21,7 +9,7 @@
    "stop": 1.1239490540053465,
    "take_profit": 1.1267718919893068,
    "opened_ts": 1792157400,
-   "bars_held": 5,
+   "bars_held": 6,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 54.2",
    "ai_note": ""
   }
@@ -122,21 +110,37 @@
    "ai_note": "",
    "gross_pnl": -32.304159,
    "turnover": 19000.7897
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 34813.12657948446,
+   "entry": 160.38101865000002,
+   "exit": 159.9243645237609,
+   "opened_ts": 1792141200,
+   "closed_ts": 1792162800,
+   "pnl": -104.976829,
+   "fees": 5.5701,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 64.5",
+   "ai_note": "",
+   "gross_pnl": -99.406729,
+   "turnover": 69626.2532
   }
  ],
  "day": "2026-10-16",
  "day_start_equity": 9589.504085942977,
  "last_bar_ts": {
-  "BTC/USD": 1792161900,
-  "EUR/USD": 1792161900,
-  "GBP/USD": 1792161900,
-  "USD/JPY": 1792161900
+  "BTC/USD": 1792162800,
+  "EUR/USD": 1792162800,
+  "GBP/USD": 1792162800,
+  "USD/JPY": 1792162800
  },
  "last_prices": {
-  "BTC/USD": 81870.0,
-  "EUR/USD": 1.12516,
-  "GBP/USD": 1.33547,
-  "USD/JPY": 160.659
+  "BTC/USD": 81629.9,
+  "EUR/USD": 1.12504,
+  "GBP/USD": 1.33483,
+  "USD/JPY": 160.477
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -435,6 +439,10 @@
   [
    1792162809,
    9369.4259
+  ],
+  [
+   1792164517,
+   9197.0533
   ]
  ],
  "events": [
@@ -537,6 +545,11 @@
    "ts": 1792158300,
    "kind": "open",
    "text": "EUR/USD LONG er\u00f6ffnet @ 1.12495 | Stop 1.12395 | Ziel 1.12677 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 54.2"
+  },
+  {
+   "ts": 1792163700,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 159.924 (Stop-Loss): -104.98 USD nach 5.57 Geb\u00fchren"
   }
  ],
  "flags": {
