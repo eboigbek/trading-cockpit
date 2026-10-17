@@ -1,19 +1,6 @@
 {
- "cash": 8802.255293935821,
- "positions": {
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "long",
-   "units": 66788.6576929689,
-   "entry": 1.3329166425000003,
-   "stop": 1.3323134590037777,
-   "take_profit": 1.3339230819924446,
-   "opened_ts": 1792225800,
-   "bars_held": 14,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.4",
-   "ai_note": ""
-  }
- },
+ "cash": 8778.218585727604,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -222,20 +209,36 @@
    "ai_note": "",
    "gross_pnl": -90.31117,
    "turnover": 27973.5005
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 66788.6576929689,
+   "entry": 1.3329166425000003,
+   "exit": 1.3326633635,
+   "opened_ts": 1792225800,
+   "closed_ts": 1792239300,
+   "pnl": -31.158605,
+   "fees": 14.242441,
+   "exit_reason": "gegensignal",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.4",
+   "ai_note": "",
+   "gross_pnl": -16.916164,
+   "turnover": 178030.5106
   }
  ],
  "day": "2026-10-17",
  "day_start_equity": 9096.393823586975,
  "last_bar_ts": {
-  "BTC/USD": 1792238400,
-  "EUR/USD": 1792238400,
-  "GBP/USD": 1792238400,
-  "USD/JPY": 1792238400
+  "BTC/USD": 1792241100,
+  "EUR/USD": 1792241100,
+  "GBP/USD": 1792241100,
+  "USD/JPY": 1792241100
  },
  "last_prices": {
-  "BTC/USD": 81453.1,
-  "EUR/USD": 1.12377,
-  "GBP/USD": 1.33293,
+  "BTC/USD": 81410.3,
+  "EUR/USD": 1.12388,
+  "GBP/USD": 1.33289,
   "USD/JPY": 157.231
  },
  "paper_start_ts": 1792017491,
@@ -703,6 +706,10 @@
   [
    1792239547,
    8803.1474
+  ],
+  [
+   1792242072,
+   8778.2186
   ]
  ],
  "events": [
@@ -885,6 +892,16 @@
    "ts": 1792237500,
    "kind": "skip",
    "text": "USD/JPY SHORT-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
+  },
+  {
+   "ts": 1792240200,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.33266 (Gegensignal): -31.16 USD nach 14.24 Geb\u00fchren"
+  },
+  {
+   "ts": 1792242000,
+   "kind": "skip",
+   "text": "GBP/USD LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
