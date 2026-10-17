@@ -1,5 +1,5 @@
 {
- "cash": 9051.849242782222,
+ "cash": 9020.169741233978,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
@@ -9,20 +9,20 @@
    "stop": 159.79797367089694,
    "take_profit": 161.4960526582061,
    "opened_ts": 1792214100,
-   "bars_held": 2,
+   "bars_held": 5,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.6",
    "ai_note": ""
   },
   "GBP/USD": {
    "symbol": "GBP/USD",
    "side": "long",
-   "units": 67963.36003253615,
+   "units": 67725.46945508497,
    "entry": 1.3328166375000003,
-   "stop": 1.3322603161372257,
-   "take_profit": 1.333729367725549,
-   "opened_ts": 1792215900,
+   "stop": 1.33220217002678,
+   "take_profit": 1.33384565994644,
+   "opened_ts": 1792218600,
    "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 51.3",
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 51.4",
    "ai_note": ""
   }
  },
@@ -170,21 +170,37 @@
    "ai_note": "",
    "gross_pnl": -20.698183,
    "turnover": 181916.2747
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 67963.36003253615,
+   "entry": 1.3328166375000003,
+   "exit": 1.3325633685,
+   "opened_ts": 1792215900,
+   "closed_ts": 1792216800,
+   "pnl": -31.704867,
+   "fees": 14.491854,
+   "exit_reason": "gegensignal",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 51.3",
+   "ai_note": "",
+   "gross_pnl": -17.213012,
+   "turnover": 181148.181
   }
  ],
  "day": "2026-10-17",
  "day_start_equity": 9096.393823586975,
  "last_bar_ts": {
-  "BTC/USD": 1792215900,
-  "EUR/USD": 1792215900,
-  "GBP/USD": 1792215900,
-  "USD/JPY": 1792215900
+  "BTC/USD": 1792218600,
+  "EUR/USD": 1792218600,
+  "GBP/USD": 1792218600,
+  "USD/JPY": 1792218600
  },
  "last_prices": {
-  "BTC/USD": 81461.3,
-  "EUR/USD": 1.12353,
+  "BTC/USD": 81500.0,
+  "EUR/USD": 1.12344,
   "GBP/USD": 1.33275,
-  "USD/JPY": 160.364
+  "USD/JPY": 160.369
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -603,6 +619,10 @@
   [
    1792217134,
    9046.0413
+  ],
+  [
+   1792219772,
+   9015.1752
   ]
  ],
  "events": [
@@ -745,6 +765,16 @@
    "ts": 1792216800,
    "kind": "open",
    "text": "GBP/USD LONG er\u00f6ffnet @ 1.33282 | Stop 1.33226 | Ziel 1.33373 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 51.3"
+  },
+  {
+   "ts": 1792217700,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.33256 (Gegensignal): -31.70 USD nach 14.49 Geb\u00fchren"
+  },
+  {
+   "ts": 1792219500,
+   "kind": "open",
+   "text": "GBP/USD LONG er\u00f6ffnet @ 1.33282 | Stop 1.3322 | Ziel 1.33385 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 51.4"
   }
  ],
  "flags": {
