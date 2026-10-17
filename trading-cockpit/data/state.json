@@ -1,6 +1,31 @@
 {
- "cash": 8901.926240607361,
- "positions": {},
+ "cash": 8893.685403518546,
+ "positions": {
+  "GBP/USD": {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 66788.6576929689,
+   "entry": 1.3329166425000003,
+   "stop": 1.3323134590037777,
+   "take_profit": 1.3339230819924446,
+   "opened_ts": 1792225800,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.4",
+   "ai_note": ""
+  },
+  "USD/JPY": {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 13986.750240998728,
+   "entry": 161.99109915000003,
+   "stop": 160.95989575584895,
+   "take_profit": 164.02920848830215,
+   "opened_ts": 1792225800,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 65.5",
+   "ai_note": ""
+  }
+ },
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -198,16 +223,16 @@
  "day": "2026-10-17",
  "day_start_equity": 9096.393823586975,
  "last_bar_ts": {
-  "BTC/USD": 1792224000,
-  "EUR/USD": 1792224000,
-  "GBP/USD": 1792224000,
-  "USD/JPY": 1792224000
+  "BTC/USD": 1792225800,
+  "EUR/USD": 1792225800,
+  "GBP/USD": 1792225800,
+  "USD/JPY": 1792225800
  },
  "last_prices": {
-  "BTC/USD": 81606.9,
-  "EUR/USD": 1.12335,
-  "GBP/USD": 1.33261,
-  "USD/JPY": 157.637
+  "BTC/USD": 81557.0,
+  "EUR/USD": 1.12322,
+  "GBP/USD": 1.33285,
+  "USD/JPY": 161.983
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -642,6 +667,10 @@
   [
    1792225111,
    8901.9262
+  ],
+  [
+   1792227282,
+   8888.5351
   ]
  ],
  "events": [
@@ -804,6 +833,16 @@
    "ts": 1792221300,
    "kind": "close",
    "text": "USD/JPY LONG geschlossen @ 159.79 (Stop-Loss): -97.27 USD nach 4.09 Geb\u00fchren"
+  },
+  {
+   "ts": 1792226700,
+   "kind": "open",
+   "text": "GBP/USD LONG er\u00f6ffnet @ 1.33292 | Stop 1.33231 | Ziel 1.33392 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.4"
+  },
+  {
+   "ts": 1792226700,
+   "kind": "open",
+   "text": "USD/JPY LONG er\u00f6ffnet @ 161.991 | Stop 160.96 | Ziel 164.029 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 65.5"
   }
  ],
  "flags": {
