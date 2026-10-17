@@ -1,5 +1,5 @@
 {
- "cash": 8893.685403518546,
+ "cash": 8802.255293935821,
  "positions": {
   "GBP/USD": {
    "symbol": "GBP/USD",
@@ -9,20 +9,8 @@
    "stop": 1.3323134590037777,
    "take_profit": 1.3339230819924446,
    "opened_ts": 1792225800,
-   "bars_held": 10,
+   "bars_held": 12,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.4",
-   "ai_note": ""
-  },
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 13986.750240998728,
-   "entry": 161.99109915000003,
-   "stop": 160.95989575584895,
-   "take_profit": 164.02920848830215,
-   "opened_ts": 1792225800,
-   "bars_held": 10,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 65.5",
    "ai_note": ""
   }
  },
@@ -218,21 +206,37 @@
    "ai_note": "",
    "gross_pnl": -93.178713,
    "turnover": 51162.0082
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 13986.750240998728,
+   "entry": 161.99109915000003,
+   "exit": 160.95184776106115,
+   "opened_ts": 1792225800,
+   "closed_ts": 1792235700,
+   "pnl": -92.54905,
+   "fees": 2.23788,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 65.5",
+   "ai_note": "",
+   "gross_pnl": -90.31117,
+   "turnover": 27973.5005
   }
  ],
  "day": "2026-10-17",
  "day_start_equity": 9096.393823586975,
  "last_bar_ts": {
-  "BTC/USD": 1792234800,
-  "EUR/USD": 1792234800,
-  "GBP/USD": 1792234800,
-  "USD/JPY": 1792234800
+  "BTC/USD": 1792236600,
+  "EUR/USD": 1792236600,
+  "GBP/USD": 1792236600,
+  "USD/JPY": 1792236600
  },
  "last_prices": {
-  "BTC/USD": 81527.4,
-  "EUR/USD": 1.12343,
-  "GBP/USD": 1.33257,
-  "USD/JPY": 161.983
+  "BTC/USD": 81473.4,
+  "EUR/USD": 1.12314,
+  "GBP/USD": 1.33286,
+  "USD/JPY": 158.199
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -691,6 +695,10 @@
   [
    1792235845,
    8869.8343
+  ],
+  [
+   1792237875,
+   8798.4722
   ]
  ],
  "events": [
@@ -863,6 +871,16 @@
    "ts": 1792226700,
    "kind": "open",
    "text": "USD/JPY LONG er\u00f6ffnet @ 161.991 | Stop 160.96 | Ziel 164.029 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 65.5"
+  },
+  {
+   "ts": 1792236600,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 160.952 (Stop-Loss): -92.55 USD nach 2.24 Geb\u00fchren"
+  },
+  {
+   "ts": 1792237500,
+   "kind": "skip",
+   "text": "USD/JPY SHORT-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
