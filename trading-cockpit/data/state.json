@@ -1,5 +1,5 @@
 {
- "cash": 8509.028301204455,
+ "cash": 8470.925803021575,
  "positions": {
   "BTC/USD": {
    "symbol": "BTC/USD",
@@ -9,20 +9,8 @@
    "stop": 81722.37839475788,
    "take_profit": 82183.24321048423,
    "opened_ts": 1792314000,
-   "bars_held": 14,
+   "bars_held": 16,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 67.1",
-   "ai_note": ""
-  },
-  "EUR/USD": {
-   "symbol": "EUR/USD",
-   "side": "short",
-   "units": 76854.19218779528,
-   "entry": 1.1230938425,
-   "stop": 1.1234660343107843,
-   "take_profit": 1.122517931378432,
-   "opened_ts": 1792315800,
-   "bars_held": 12,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 39.7",
    "ai_note": ""
   }
  },
@@ -314,21 +302,37 @@
    "ai_note": "",
    "gross_pnl": -88.837278,
    "turnover": 35059.532
+  },
+  {
+   "symbol": "EUR/USD",
+   "side": "short",
+   "units": 76854.19218779528,
+   "entry": 1.1230938425,
+   "exit": 1.1235222076125,
+   "opened_ts": 1792315800,
+   "closed_ts": 1792327500,
+   "pnl": -43.281366,
+   "fees": 10.359712,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 39.7",
+   "ai_note": "",
+   "gross_pnl": -32.921655,
+   "turnover": 172661.8617
   }
  ],
  "day": "2026-10-18",
  "day_start_equity": 8778.218585727604,
  "last_bar_ts": {
-  "BTC/USD": 1792326600,
-  "EUR/USD": 1792326600,
-  "GBP/USD": 1792326600,
-  "USD/JPY": 1792326600
+  "BTC/USD": 1792328400,
+  "EUR/USD": 1792328400,
+  "GBP/USD": 1792328400,
+  "USD/JPY": 1792328400
  },
  "last_prices": {
-  "BTC/USD": 81832.7,
+  "BTC/USD": 81810.0,
   "EUR/USD": 1.12322,
-  "GBP/USD": 1.33261,
-  "USD/JPY": 160.538
+  "GBP/USD": 1.33251,
+  "USD/JPY": 161.225
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -1003,6 +1007,10 @@
   [
    1792327560,
    8494.3083
+  ],
+  [
+   1792329394,
+   8463.4951
   ]
  ],
  "events": [
@@ -1260,6 +1268,16 @@
    "ts": 1792323000,
    "kind": "skip",
    "text": "GBP/USD LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
+  },
+  {
+   "ts": 1792328400,
+   "kind": "close",
+   "text": "EUR/USD SHORT geschlossen @ 1.12352 (Stop-Loss): -43.28 USD nach 10.36 Geb\u00fchren"
+  },
+  {
+   "ts": 1792329300,
+   "kind": "skip",
+   "text": "USD/JPY LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
