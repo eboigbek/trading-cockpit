@@ -1,16 +1,16 @@
 {
- "cash": 8742.526511110771,
+ "cash": 8708.637674259724,
  "positions": {
   "GBP/USD": {
    "symbol": "GBP/USD",
-   "side": "short",
-   "units": 65676.77604698317,
-   "entry": 1.3321433894999999,
-   "stop": 1.332665879300956,
-   "take_profit": 1.3312982413980878,
-   "opened_ts": 1792300500,
+   "side": "long",
+   "units": 65413.84973726098,
+   "entry": 1.332446619,
+   "stop": 1.3319434510109103,
+   "take_profit": 1.3332530979781791,
+   "opened_ts": 1792302300,
    "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 46.9",
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 53.7",
    "ai_note": ""
   }
  },
@@ -254,20 +254,36 @@
    "ai_note": "",
    "gross_pnl": -18.158379,
    "turnover": 175573.7519
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "short",
+   "units": 65676.77604698317,
+   "entry": 1.3321433894999999,
+   "exit": 1.332446619,
+   "opened_ts": 1792300500,
+   "closed_ts": 1792302300,
+   "pnl": -33.91527,
+   "fees": 14.000134,
+   "exit_reason": "gegensignal",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 46.9",
+   "ai_note": "",
+   "gross_pnl": -19.915136,
+   "turnover": 175001.6812
   }
  ],
  "day": "2026-10-18",
  "day_start_equity": 8778.218585727604,
  "last_bar_ts": {
-  "BTC/USD": 1792300500,
-  "EUR/USD": 1792300500,
-  "GBP/USD": 1792300500,
-  "USD/JPY": 1792300500
+  "BTC/USD": 1792302300,
+  "EUR/USD": 1792302300,
+  "GBP/USD": 1792302300,
+  "USD/JPY": 1792302300
  },
  "last_prices": {
-  "BTC/USD": 81648.3,
-  "EUR/USD": 1.12331,
-  "GBP/USD": 1.33221,
+  "BTC/USD": 81629.1,
+  "EUR/USD": 1.12333,
+  "GBP/USD": 1.33238,
   "USD/JPY": 157.25
  },
  "paper_start_ts": 1792017491,
@@ -887,6 +903,10 @@
   [
    1792302001,
    8738.1517
+  ],
+  [
+   1792303492,
+   8704.2799
   ]
  ],
  "events": [
@@ -1099,6 +1119,16 @@
    "ts": 1792301400,
    "kind": "open",
    "text": "GBP/USD SHORT er\u00f6ffnet @ 1.33214 | Stop 1.33267 | Ziel 1.3313 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 46.9"
+  },
+  {
+   "ts": 1792303200,
+   "kind": "close",
+   "text": "GBP/USD SHORT geschlossen @ 1.33245 (Gegensignal): -33.92 USD nach 14.00 Geb\u00fchren"
+  },
+  {
+   "ts": 1792303200,
+   "kind": "open",
+   "text": "GBP/USD LONG er\u00f6ffnet @ 1.33245 | Stop 1.33194 | Ziel 1.33325 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 53.7"
   }
  ],
  "flags": {
