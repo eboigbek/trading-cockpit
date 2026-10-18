@@ -1,19 +1,6 @@
 {
- "cash": 8470.925803021575,
- "positions": {
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "long",
-   "units": 0.10601061174657404,
-   "entry": 81880.0938,
-   "stop": 81722.37839475788,
-   "take_profit": 82183.24321048423,
-   "opened_ts": 1792314000,
-   "bars_held": 16,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 67.1",
-   "ai_note": ""
-  }
- },
+ "cash": 8384.469075223273,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -318,20 +305,36 @@
    "ai_note": "",
    "gross_pnl": -32.921655,
    "turnover": 172661.8617
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "long",
+   "units": 0.10601061174657404,
+   "entry": 81880.0938,
+   "exit": 81718.29227583815,
+   "opened_ts": 1792314000,
+   "closed_ts": 1792329300,
+   "pnl": -155.897998,
+   "fees": 138.74532,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 67.1",
+   "ai_note": "",
+   "gross_pnl": -17.152679,
+   "turnover": 17343.165
   }
  ],
  "day": "2026-10-18",
  "day_start_equity": 8778.218585727604,
  "last_bar_ts": {
-  "BTC/USD": 1792328400,
-  "EUR/USD": 1792328400,
-  "GBP/USD": 1792328400,
-  "USD/JPY": 1792328400
+  "BTC/USD": 1792329300,
+  "EUR/USD": 1792329300,
+  "GBP/USD": 1792329300,
+  "USD/JPY": 1792329300
  },
  "last_prices": {
-  "BTC/USD": 81810.0,
+  "BTC/USD": 81458.2,
   "EUR/USD": 1.12322,
-  "GBP/USD": 1.33251,
+  "GBP/USD": 1.3326,
   "USD/JPY": 161.225
  },
  "paper_start_ts": 1792017491,
@@ -1011,6 +1014,10 @@
   [
    1792329394,
    8463.4951
+  ],
+  [
+   1792331090,
+   8384.4691
   ]
  ],
  "events": [
@@ -1278,6 +1285,16 @@
    "ts": 1792329300,
    "kind": "skip",
    "text": "USD/JPY LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
+  },
+  {
+   "ts": 1792330200,
+   "kind": "close",
+   "text": "BTC/USD LONG geschlossen @ 81718.3 (Stop-Loss): -155.90 USD nach 138.75 Geb\u00fchren"
+  },
+  {
+   "ts": 1792330200,
+   "kind": "skip",
+   "text": "BTC/USD SHORT-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
