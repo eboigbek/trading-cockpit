@@ -1,5 +1,5 @@
 {
- "cash": 8095.862697962933,
+ "cash": 8069.719337653878,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
@@ -9,20 +9,8 @@
    "stop": 159.65826317229633,
    "take_profit": 163.59047365540732,
    "opened_ts": 1792448100,
-   "bars_held": 6,
+   "bars_held": 9,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.0",
-   "ai_note": ""
-  },
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "short",
-   "units": 0.0997101489664494,
-   "entry": 81839.607815,
-   "stop": 82042.48625791214,
-   "take_profit": 81446.12748417571,
-   "opened_ts": 1792453500,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.0",
    "ai_note": ""
   }
  },
@@ -394,20 +382,36 @@
    "ai_note": "",
    "gross_pnl": -85.271243,
    "turnover": 28700.1578
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.0997101489664494,
+   "entry": 81839.607815,
+   "exit": 81450.19979054993,
+   "opened_ts": 1792453500,
+   "closed_ts": 1792455300,
+   "pnl": -91.425276,
+   "fees": 130.253208,
+   "exit_reason": "take_profit",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.0",
+   "ai_note": "",
+   "gross_pnl": 38.827932,
+   "turnover": 16281.651
   }
  ],
- "day": "2026-10-19",
- "day_start_equity": 8384.469075223273,
+ "day": "2026-10-20",
+ "day_start_equity": 8094.957570696731,
  "last_bar_ts": {
-  "BTC/USD": 1792453500,
-  "EUR/USD": 1792453500,
-  "GBP/USD": 1792453500,
-  "USD/JPY": 1792453500
+  "BTC/USD": 1792456200,
+  "EUR/USD": 1792456200,
+  "GBP/USD": 1792456200,
+  "USD/JPY": 1792456200
  },
  "last_prices": {
-  "BTC/USD": 81843.7,
-  "EUR/USD": 1.12125,
-  "GBP/USD": 1.33124,
+  "BTC/USD": 81593.6,
+  "EUR/USD": 1.12174,
+  "GBP/USD": 1.33194,
   "USD/JPY": 160.969
  },
  "paper_start_ts": 1792017491,
@@ -1347,6 +1351,10 @@
   [
    1792454739,
    8094.9576
+  ],
+  [
+   1792457726,
+   8069.2222
   ]
  ],
  "events": [
@@ -1674,6 +1682,11 @@
    "ts": 1792454400,
    "kind": "open",
    "text": "BTC/USD SHORT er\u00f6ffnet @ 81839.6 | Stop 82042.5 | Ziel 81446.1 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.0"
+  },
+  {
+   "ts": 1792456200,
+   "kind": "close",
+   "text": "BTC/USD SHORT geschlossen @ 81450.2 (Gewinnziel): -91.43 USD nach 130.25 Geb\u00fchren"
   }
  ],
  "flags": {
