@@ -1,19 +1,6 @@
 {
- "cash": 7720.057911828274,
- "positions": {
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "long",
-   "units": 57669.2607743806,
-   "entry": 1.3398169875000001,
-   "stop": 1.3385870921748468,
-   "take_profit": 1.3420758156503063,
-   "opened_ts": 1792600200,
-   "bars_held": 6,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.6",
-   "ai_note": ""
-  }
- },
+ "cash": 7639.095673726711,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -510,20 +497,36 @@
    "ai_note": "",
    "gross_pnl": -64.973594,
    "turnover": 156068.7116
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 57669.2607743806,
+   "entry": 1.3398169875000001,
+   "exit": 1.3385201628202381,
+   "opened_ts": 1792600200,
+   "closed_ts": 1792608300,
+   "pnl": -87.143539,
+   "fees": 12.356618,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.6",
+   "ai_note": "",
+   "gross_pnl": -74.786921,
+   "turnover": 154457.7236
   }
  ],
  "day": "2026-10-21",
  "day_start_equity": 7839.664247794708,
  "last_bar_ts": {
-  "BTC/USD": 1792605600,
-  "EUR/USD": 1792605600,
-  "GBP/USD": 1792605600,
-  "USD/JPY": 1792605600
+  "BTC/USD": 1792608300,
+  "EUR/USD": 1792608300,
+  "GBP/USD": 1792608300,
+  "USD/JPY": 1792608300
  },
  "last_prices": {
-  "BTC/USD": 84655.3,
-  "EUR/USD": 1.12366,
-  "GBP/USD": 1.33974,
+  "BTC/USD": 84341.8,
+  "EUR/USD": 1.1224,
+  "GBP/USD": 1.33832,
   "USD/JPY": 157.947
  },
  "paper_start_ts": 1792017491,
@@ -1747,6 +1750,10 @@
   [
    1792607196,
    7715.6181
+  ],
+  [
+   1792609785,
+   7639.0957
   ]
  ],
  "events": [
@@ -2159,6 +2166,11 @@
    "ts": 1792601100,
    "kind": "open",
    "text": "GBP/USD LONG er\u00f6ffnet @ 1.33982 | Stop 1.33859 | Ziel 1.34208 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.6"
+  },
+  {
+   "ts": 1792609200,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.33852 (Stop-Loss): -87.14 USD nach 12.36 Geb\u00fchren"
   }
  ],
  "flags": {
