@@ -1,19 +1,6 @@
 {
- "cash": 7833.392202809902,
- "positions": {
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "long",
-   "units": 58606.86303643431,
-   "entry": 1.3377368835,
-   "stop": 1.337091000360822,
-   "take_profit": 1.3388279992783558,
-   "opened_ts": 1792555200,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 56.9",
-   "ai_note": ""
-  }
- },
+ "cash": 7803.459324768196,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -446,20 +433,36 @@
    "ai_note": "",
    "gross_pnl": 62.335739,
    "turnover": 15871.7309
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 58606.86303643431,
+   "entry": 1.3377368835,
+   "exit": 1.33733313,
+   "opened_ts": 1792555200,
+   "closed_ts": 1792557000,
+   "pnl": -36.204923,
+   "fees": 12.542197,
+   "exit_reason": "gegensignal",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 56.9",
+   "ai_note": "",
+   "gross_pnl": -23.662726,
+   "turnover": 156777.4619
   }
  ],
  "day": "2026-10-21",
  "day_start_equity": 7839.664247794708,
  "last_bar_ts": {
-  "BTC/USD": 1792555200,
-  "EUR/USD": 1792555200,
-  "GBP/USD": 1792555200,
-  "USD/JPY": 1792555200
+  "BTC/USD": 1792557000,
+  "EUR/USD": 1792557000,
+  "GBP/USD": 1792557000,
+  "USD/JPY": 1792557000
  },
  "last_prices": {
-  "BTC/USD": 82709.3,
-  "EUR/USD": 1.12286,
-  "GBP/USD": 1.33767,
+  "BTC/USD": 82680.4,
+  "EUR/USD": 1.1225,
+  "GBP/USD": 1.3374,
   "USD/JPY": 158.037
  },
  "paper_start_ts": 1792017491,
@@ -1591,6 +1594,10 @@
   [
    1792556223,
    7829.4724
+  ],
+  [
+   1792558306,
+   7803.4593
   ]
  ],
  "events": [
@@ -1963,6 +1970,11 @@
    "ts": 1792556100,
    "kind": "open",
    "text": "GBP/USD LONG er\u00f6ffnet @ 1.33774 | Stop 1.33709 | Ziel 1.33883 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 56.9"
+  },
+  {
+   "ts": 1792557900,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.33733 (Gegensignal): -36.20 USD nach 12.54 Geb\u00fchren"
   }
  ],
  "flags": {
