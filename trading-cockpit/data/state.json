@@ -1,19 +1,6 @@
 {
- "cash": 7335.1247729417755,
- "positions": {
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "long",
-   "units": 54845.36951993357,
-   "entry": 1.3385569245000002,
-   "stop": 1.337177254085408,
-   "take_profit": 1.3411154918291837,
-   "opened_ts": 1792766700,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.7",
-   "ai_note": ""
-  }
- },
+ "cash": 7249.922595109864,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -638,21 +625,37 @@
    "ai_note": "",
    "gross_pnl": -74.87707,
    "turnover": 13993.4666
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 54845.36951993357,
+   "entry": 1.3385569245000002,
+   "exit": 1.337110395222704,
+   "opened_ts": 1792766700,
+   "closed_ts": 1792769400,
+   "pnl": -91.07527,
+   "fees": 11.739837,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.7",
+   "ai_note": "",
+   "gross_pnl": -79.335433,
+   "turnover": 146747.9629
   }
  ],
  "day": "2026-10-23",
  "day_start_equity": 7550.914022680481,
  "last_bar_ts": {
-  "BTC/USD": 1792766700,
-  "EUR/USD": 1792766700,
-  "GBP/USD": 1792766700,
-  "USD/JPY": 1792766700
+  "BTC/USD": 1792769400,
+  "EUR/USD": 1792769400,
+  "GBP/USD": 1792769400,
+  "USD/JPY": 1792769400
  },
  "last_prices": {
-  "BTC/USD": 81667.1,
-  "EUR/USD": 1.12035,
-  "GBP/USD": 1.33849,
-  "USD/JPY": 160.302
+  "BTC/USD": 81377.6,
+  "EUR/USD": 1.12002,
+  "GBP/USD": 1.33759,
+  "USD/JPY": 159.385
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -2175,6 +2178,10 @@
   [
    1792767969,
    7331.4543
+  ],
+  [
+   1792770475,
+   7249.9226
   ]
  ],
  "events": [
@@ -2672,6 +2679,11 @@
    "ts": 1792767600,
    "kind": "open",
    "text": "GBP/USD LONG er\u00f6ffnet @ 1.33856 | Stop 1.33718 | Ziel 1.34112 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.7"
+  },
+  {
+   "ts": 1792770300,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.33711 (Stop-Loss): -91.08 USD nach 11.74 Geb\u00fchren"
   }
  ],
  "flags": {
