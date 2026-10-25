@@ -1,28 +1,16 @@
 {
- "cash": 7031.51127916048,
+ "cash": 6904.839609797831,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
-   "side": "short",
-   "units": 16427.240722851617,
-   "entry": 156.2301881,
-   "stop": 156.9124396847675,
-   "take_profit": 154.88912063046502,
-   "opened_ts": 1792936800,
-   "bars_held": 10,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 33.4",
-   "ai_note": ""
-  },
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "short",
-   "units": 52649.71634060705,
-   "entry": 1.336373178,
-   "stop": 1.3371901222709468,
-   "take_profit": 1.3349397554581066,
-   "opened_ts": 1792942200,
-   "bars_held": 4,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 36.0",
+   "side": "long",
+   "units": 11874.63748459848,
+   "entry": 159.50697495,
+   "stop": 158.57678413860552,
+   "take_profit": 161.34343172278898,
+   "opened_ts": 1792947600,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 69.4",
    "ai_note": ""
   }
  },
@@ -794,21 +782,53 @@
    "ai_note": "",
    "gross_pnl": -21.582332,
    "turnover": 141355.8445
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "short",
+   "units": 52649.71634060705,
+   "entry": 1.336373178,
+   "exit": 1.3372569817770605,
+   "opened_ts": 1792942200,
+   "closed_ts": 1792947600,
+   "pnl": -57.793288,
+   "fees": 11.26127,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 36.0",
+   "ai_note": "",
+   "gross_pnl": -46.532018,
+   "turnover": 140765.8695
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "short",
+   "units": 16427.240722851617,
+   "entry": 156.2301881,
+   "exit": 156.92028530675174,
+   "opened_ts": 1792936800,
+   "closed_ts": 1792946700,
+   "pnl": -74.871363,
+   "fees": 2.628359,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 33.4",
+   "ai_note": "",
+   "gross_pnl": -72.243005,
+   "turnover": 32854.4814
   }
  ],
  "day": "2026-10-25",
  "day_start_equity": 7068.517914860222,
  "last_bar_ts": {
-  "BTC/USD": 1792945800,
-  "EUR/USD": 1792945800,
-  "GBP/USD": 1792945800,
-  "USD/JPY": 1792945800
+  "BTC/USD": 1792947600,
+  "EUR/USD": 1792947600,
+  "GBP/USD": 1792947600,
+  "USD/JPY": 1792947600
  },
  "last_prices": {
-  "BTC/USD": 80500.8,
-  "EUR/USD": 1.11986,
+  "BTC/USD": 80680.3,
+  "EUR/USD": 1.11985,
   "GBP/USD": 1.33661,
-  "USD/JPY": 156.278
+  "USD/JPY": 159.499
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -2711,6 +2731,10 @@
   [
    1792947394,
    7014.0169
+  ],
+  [
+   1792948776,
+   6904.2459
   ]
  ],
  "events": [
@@ -3318,6 +3342,21 @@
    "ts": 1792943100,
    "kind": "open",
    "text": "GBP/USD SHORT er\u00f6ffnet @ 1.33637 | Stop 1.33719 | Ziel 1.33494 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 36.0"
+  },
+  {
+   "ts": 1792948500,
+   "kind": "close",
+   "text": "GBP/USD SHORT geschlossen @ 1.33726 (Stop-Loss): -57.79 USD nach 11.26 Geb\u00fchren"
+  },
+  {
+   "ts": 1792947600,
+   "kind": "close",
+   "text": "USD/JPY SHORT geschlossen @ 156.92 (Stop-Loss): -74.87 USD nach 2.63 Geb\u00fchren"
+  },
+  {
+   "ts": 1792948500,
+   "kind": "open",
+   "text": "USD/JPY LONG er\u00f6ffnet @ 159.507 | Stop 158.577 | Ziel 161.343 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 69.4"
   }
  ],
  "flags": {
