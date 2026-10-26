@@ -1,19 +1,6 @@
 {
- "cash": 6643.638798651822,
- "positions": {
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "long",
-   "units": 0.08326653783661593,
-   "entry": 80435.12155500002,
-   "stop": 80004.72524742063,
-   "take_profit": 81283.84950515874,
-   "opened_ts": 1793027700,
-   "bars_held": 3,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 60.4",
-   "ai_note": ""
-  }
- },
+ "cash": 6554.177035229141,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -846,20 +833,36 @@
    "ai_note": "",
    "gross_pnl": -26.870389,
    "turnover": 13693.4617
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "long",
+   "units": 0.08326653783661593,
+   "entry": 80435.12155500002,
+   "exit": 80000.72501115827,
+   "opened_ts": 1793027700,
+   "closed_ts": 1793031300,
+   "pnl": -143.042196,
+   "fees": 106.8715,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 60.4",
+   "ai_note": "",
+   "gross_pnl": -36.170696,
+   "turnover": 13358.9375
   }
  ],
  "day": "2026-10-26",
  "day_start_equity": 6833.637313731593,
  "last_bar_ts": {
-  "BTC/USD": 1793030400,
-  "EUR/USD": 1793030400,
-  "GBP/USD": 1793030400,
-  "USD/JPY": 1793030400
+  "BTC/USD": 1793033100,
+  "EUR/USD": 1793033100,
+  "GBP/USD": 1793033100,
+  "USD/JPY": 1793033100
  },
  "last_prices": {
-  "BTC/USD": 80094.0,
-  "EUR/USD": 1.11779,
-  "GBP/USD": 1.33491,
+  "BTC/USD": 80120.1,
+  "EUR/USD": 1.11811,
+  "GBP/USD": 1.33459,
   "USD/JPY": 156.521
  },
  "paper_start_ts": 1792017491,
@@ -2899,6 +2902,10 @@
   [
    1793031917,
    6615.2348
+  ],
+  [
+   1793034774,
+   6554.177
   ]
  ],
  "events": [
@@ -3551,6 +3558,11 @@
    "ts": 1793028600,
    "kind": "open",
    "text": "BTC/USD LONG er\u00f6ffnet @ 80435.1 | Stop 80004.7 | Ziel 81283.8 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 60.4"
+  },
+  {
+   "ts": 1793032200,
+   "kind": "close",
+   "text": "BTC/USD LONG geschlossen @ 80000.7 (Stop-Loss): -143.04 USD nach 106.87 Geb\u00fchren"
   }
  ],
  "flags": {
