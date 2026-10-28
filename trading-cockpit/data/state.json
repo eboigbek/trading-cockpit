@@ -1,19 +1,6 @@
 {
- "cash": 6413.664876419713,
- "positions": {
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "short",
-   "units": 48286.146140397235,
-   "entry": 1.3315234205000002,
-   "stop": 1.3328674707438324,
-   "take_profit": 1.3290350585123356,
-   "opened_ts": 1793113200,
-   "bars_held": 59,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.8",
-   "ai_note": ""
-  }
- },
+ "cash": 6525.475412772423,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -926,21 +913,37 @@
    "ai_note": "",
    "gross_pnl": 126.744522,
    "turnover": 39247.7861
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "short",
+   "units": 48286.146140397235,
+   "entry": 1.3315234205000002,
+   "exit": 1.3291015102652615,
+   "opened_ts": 1793113200,
+   "closed_ts": 1793169000,
+   "pnl": 106.667006,
+   "fees": 10.277706,
+   "exit_reason": "take_profit",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.8",
+   "ai_note": "",
+   "gross_pnl": 116.944712,
+   "turnover": 128471.3242
   }
  ],
  "day": "2026-10-28",
  "day_start_equity": 6368.731357147769,
  "last_bar_ts": {
-  "BTC/USD": 1793166300,
-  "EUR/USD": 1793166300,
-  "GBP/USD": 1793166300,
-  "USD/JPY": 1793166300
+  "BTC/USD": 1793169900,
+  "EUR/USD": 1793169900,
+  "GBP/USD": 1793169900,
+  "USD/JPY": 1793169900
  },
  "last_prices": {
-  "BTC/USD": 80776.9,
-  "EUR/USD": 1.11215,
-  "GBP/USD": 1.3292,
-  "USD/JPY": 156.25
+  "BTC/USD": 80751.1,
+  "EUR/USD": 1.11191,
+  "GBP/USD": 1.32821,
+  "USD/JPY": 159.0
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -3199,6 +3202,10 @@
   [
    1793167754,
    6525.8539
+  ],
+  [
+   1793171124,
+   6525.4754
   ]
  ],
  "events": [
@@ -3901,6 +3908,11 @@
    "ts": 1793166300,
    "kind": "close",
    "text": "USD/JPY SHORT geschlossen @ 156.75 (Gewinnziel): +123.60 USD nach 3.14 Geb\u00fchren"
+  },
+  {
+   "ts": 1793169900,
+   "kind": "close",
+   "text": "GBP/USD SHORT geschlossen @ 1.3291 (Gewinnziel): +106.67 USD nach 10.28 Geb\u00fchren"
   }
  ],
  "flags": {
