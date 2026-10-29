@@ -1,19 +1,6 @@
 {
- "cash": 6305.891918350549,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "short",
-   "units": 11208.403792503454,
-   "entry": 156.22718825,
-   "stop": 157.11908382099782,
-   "take_profit": 154.4668323580044,
-   "opened_ts": 1793259900,
-   "bars_held": 10,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 30.5",
-   "ai_note": ""
-  }
- },
+ "cash": 6240.812882273842,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1006,21 +993,37 @@
    "ai_note": "",
    "gross_pnl": -64.842282,
    "turnover": 22038.2721
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "short",
+   "units": 11208.403792503454,
+   "entry": 156.22718825,
+   "exit": 157.12693977518887,
+   "opened_ts": 1793259900,
+   "closed_ts": 1793269800,
+   "pnl": -65.975708,
+   "fees": 1.793345,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 30.5",
+   "ai_note": "",
+   "gross_pnl": -64.182364,
+   "turnover": 22416.8076
   }
  ],
  "day": "2026-10-29",
  "day_start_equity": 6437.493918451591,
  "last_bar_ts": {
-  "BTC/USD": 1793268900,
-  "EUR/USD": 1793268900,
-  "GBP/USD": 1793268900,
-  "USD/JPY": 1793268900
+  "BTC/USD": 1793271600,
+  "EUR/USD": 1793271600,
+  "GBP/USD": 1793271600,
+  "USD/JPY": 1793271600
  },
  "last_prices": {
-  "BTC/USD": 80031.6,
-  "EUR/USD": 1.11398,
-  "GBP/USD": 1.33196,
-  "USD/JPY": 156.235
+  "BTC/USD": 80119.1,
+  "EUR/USD": 1.11459,
+  "GBP/USD": 1.33247,
+  "USD/JPY": 159.999
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -3419,6 +3422,10 @@
   [
    1793270311,
    6305.3315
+  ],
+  [
+   1793272941,
+   6240.8129
   ]
  ],
  "events": [
@@ -4171,6 +4178,16 @@
    "ts": 1793260800,
    "kind": "open",
    "text": "USD/JPY SHORT er\u00f6ffnet @ 156.227 | Stop 157.119 | Ziel 154.467 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 30.5"
+  },
+  {
+   "ts": 1793270700,
+   "kind": "close",
+   "text": "USD/JPY SHORT geschlossen @ 157.127 (Stop-Loss): -65.98 USD nach 1.79 Geb\u00fchren"
+  },
+  {
+   "ts": 1793272500,
+   "kind": "skip",
+   "text": "USD/JPY LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
