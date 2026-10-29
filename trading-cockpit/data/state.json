@@ -1,19 +1,6 @@
 {
- "cash": 6385.996542101545,
- "positions": {
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "short",
-   "units": 0.07959452708691285,
-   "entry": 80874.55607,
-   "stop": 81125.0231475528,
-   "take_profit": 80385.75370489444,
-   "opened_ts": 1793235600,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 39.5",
-   "ai_note": ""
-  }
- },
+ "cash": 6373.393934176804,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -974,21 +961,37 @@
    "ai_note": "",
    "gross_pnl": -4.334426,
    "turnover": 21325.9828
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.07959452708691285,
+   "entry": 80874.55607,
+   "exit": 80389.77299257969,
+   "opened_ts": 1793235600,
+   "closed_ts": 1793238300,
+   "pnl": -64.099984,
+   "fees": 102.686064,
+   "exit_reason": "take_profit",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 39.5",
+   "ai_note": "",
+   "gross_pnl": 38.58608,
+   "turnover": 12835.758
   }
  ],
  "day": "2026-10-29",
  "day_start_equity": 6437.493918451591,
  "last_bar_ts": {
-  "BTC/USD": 1793235600,
-  "EUR/USD": 1793235600,
-  "GBP/USD": 1793235600,
-  "USD/JPY": 1793235600
+  "BTC/USD": 1793239200,
+  "EUR/USD": 1793239200,
+  "GBP/USD": 1793239200,
+  "USD/JPY": 1793239200
  },
  "last_prices": {
-  "BTC/USD": 80878.6,
-  "EUR/USD": 1.11404,
-  "GBP/USD": 1.33194,
-  "USD/JPY": 156.235
+  "BTC/USD": 79839.7,
+  "EUR/USD": 1.11527,
+  "GBP/USD": 1.3333,
+  "USD/JPY": 160.482
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -3343,6 +3346,10 @@
   [
    1793236635,
    6385.6747
+  ],
+  [
+   1793240235,
+   6373.3939
   ]
  ],
  "events": [
@@ -4075,6 +4082,11 @@
    "ts": 1793236500,
    "kind": "open",
    "text": "BTC/USD SHORT er\u00f6ffnet @ 80874.6 | Stop 81125 | Ziel 80385.8 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 39.5"
+  },
+  {
+   "ts": 1793239200,
+   "kind": "close",
+   "text": "BTC/USD SHORT geschlossen @ 80389.8 (Gewinnziel): -64.10 USD nach 102.69 Geb\u00fchren"
   }
  ],
  "flags": {
