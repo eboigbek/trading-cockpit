@@ -1,19 +1,6 @@
 {
- "cash": 6239.554302632475,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 15732.245517087045,
-   "entry": 159.87299325000004,
-   "stop": 159.23333844300026,
-   "take_profit": 161.1283231139995,
-   "opened_ts": 1793357100,
-   "bars_held": 10,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 61.6",
-   "ai_note": ""
-  }
- },
+ "cash": 6174.30804982656,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1022,21 +1009,37 @@
    "ai_note": "",
    "gross_pnl": -64.182364,
    "turnover": 22416.8076
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 15732.245517087045,
+   "entry": 159.87299325000004,
+   "exit": 159.22537677607812,
+   "opened_ts": 1793357100,
+   "closed_ts": 1793369700,
+   "pnl": -66.504832,
+   "fees": 2.517159,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 61.6",
+   "ai_note": "",
+   "gross_pnl": -63.987673,
+   "turnover": 31464.491
   }
  ],
  "day": "2026-10-30",
  "day_start_equity": 6240.812882273842,
  "last_bar_ts": {
-  "BTC/USD": 1793366100,
-  "EUR/USD": 1793366100,
-  "GBP/USD": 1793366100,
-  "USD/JPY": 1793366100
+  "BTC/USD": 1793369700,
+  "EUR/USD": 1793369700,
+  "GBP/USD": 1793369700,
+  "USD/JPY": 1793369700
  },
  "last_prices": {
-  "BTC/USD": 77162.4,
-  "EUR/USD": 1.11623,
-  "GBP/USD": 1.33952,
-  "USD/JPY": 159.864
+  "BTC/USD": 76715.4,
+  "EUR/USD": 1.11427,
+  "GBP/USD": 1.33852,
+  "USD/JPY": 159.386
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -3567,6 +3570,10 @@
   [
    1793367749,
    6238.6693
+  ],
+  [
+   1793370946,
+   6174.308
   ]
  ],
  "events": [
@@ -4344,6 +4351,11 @@
    "ts": 1793358000,
    "kind": "open",
    "text": "USD/JPY LONG er\u00f6ffnet @ 159.873 | Stop 159.233 | Ziel 161.128 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 61.6"
+  },
+  {
+   "ts": 1793370600,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 159.225 (Stop-Loss): -66.50 USD nach 2.52 Geb\u00fchren"
   }
  ],
  "flags": {
