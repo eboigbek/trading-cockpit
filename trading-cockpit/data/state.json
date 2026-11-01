@@ -1,19 +1,6 @@
 {
- "cash": 5961.065409819649,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 11825.071263125275,
-   "entry": 159.9759984,
-   "stop": 159.15133129090538,
-   "take_profit": 161.60133741818925,
-   "opened_ts": 1793468700,
-   "bars_held": 41,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 68.4",
-   "ai_note": ""
-  }
- },
+ "cash": 5898.251631086711,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1118,21 +1105,37 @@
    "ai_note": "",
    "gross_pnl": -8.906816,
    "turnover": 12124.453
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 11825.071263125275,
+   "entry": 159.9759984,
+   "exit": 159.14337372434082,
+   "opened_ts": 1793468700,
+   "closed_ts": 1793508300,
+   "pnl": -63.759784,
+   "fees": 1.892011,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 68.4",
+   "ai_note": "",
+   "gross_pnl": -61.867773,
+   "turnover": 23650.1425
   }
  ],
  "day": "2026-11-01",
  "day_start_equity": 5961.065528088101,
  "last_bar_ts": {
-  "BTC/USD": 1793505600,
-  "EUR/USD": 1793505600,
-  "GBP/USD": 1793505600,
-  "USD/JPY": 1793505600
+  "BTC/USD": 1793509200,
+  "EUR/USD": 1793509200,
+  "GBP/USD": 1793509200,
+  "USD/JPY": 1793509200
  },
  "last_prices": {
-  "BTC/USD": 77624.5,
-  "EUR/USD": 1.11566,
-  "GBP/USD": 1.33773,
-  "USD/JPY": 159.952
+  "BTC/USD": 77706.9,
+  "EUR/USD": 1.11567,
+  "GBP/USD": 1.33775,
+  "USD/JPY": 156.281
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -3883,6 +3886,10 @@
   [
    1793506787,
    5959.2912
+  ],
+  [
+   1793510136,
+   5898.2516
   ]
  ],
  "events": [
@@ -4725,6 +4732,11 @@
    "ts": 1793488500,
    "kind": "skip",
    "text": "BTC/USD SHORT-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
+  },
+  {
+   "ts": 1793509200,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 159.143 (Stop-Loss): -63.76 USD nach 1.89 Geb\u00fchren"
   }
  ],
  "flags": {
