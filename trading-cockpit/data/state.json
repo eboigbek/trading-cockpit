@@ -1,5 +1,5 @@
 {
- "cash": 5870.1657263523275,
+ "cash": 5920.931514555259,
  "positions": {
   "EUR/USD": {
    "symbol": "EUR/USD",
@@ -9,20 +9,8 @@
    "stop": 1.106738680917838,
    "take_profit": 1.1318226381643244,
    "opened_ts": 1793575800,
-   "bars_held": 22,
+   "bars_held": 26,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 56.6",
-   "ai_note": ""
-  },
-  "GBP/USD": {
-   "symbol": "GBP/USD",
-   "side": "long",
-   "units": 43951.27067752494,
-   "entry": 1.3389269430000001,
-   "stop": 1.3381618909710424,
-   "take_profit": 1.340256218057915,
-   "opened_ts": 1793592000,
-   "bars_held": 4,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.4",
    "ai_note": ""
   }
  },
@@ -1162,20 +1150,36 @@
    "ai_note": "",
    "gross_pnl": -15.830636,
    "turnover": 117955.1002
+  },
+  {
+   "symbol": "GBP/USD",
+   "side": "long",
+   "units": 43951.27067752494,
+   "entry": 1.3389269430000001,
+   "exit": 1.3401892052470121,
+   "opened_ts": 1793592000,
+   "closed_ts": 1793599200,
+   "pnl": 46.057985,
+   "fees": 9.420045,
+   "exit_reason": "take_profit",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.4",
+   "ai_note": "",
+   "gross_pnl": 55.47803,
+   "turnover": 117750.559
   }
  ],
  "day": "2026-11-02",
  "day_start_equity": 5876.800598292221,
  "last_bar_ts": {
-  "BTC/USD": 1793595600,
-  "EUR/USD": 1793595600,
-  "GBP/USD": 1793595600,
-  "USD/JPY": 1793595600
+  "BTC/USD": 1793599200,
+  "EUR/USD": 1793599200,
+  "GBP/USD": 1793599200,
+  "USD/JPY": 1793599200
  },
  "last_prices": {
-  "BTC/USD": 78187.2,
-  "EUR/USD": 1.11756,
-  "GBP/USD": 1.33998,
+  "BTC/USD": 78185.9,
+  "EUR/USD": 1.11777,
+  "GBP/USD": 1.33996,
   "USD/JPY": 156.269
  },
  "paper_start_ts": 1792017491,
@@ -4067,6 +4071,10 @@
   [
    1793596713,
    5933.3431
+  ],
+  [
+   1793600856,
+   5939.3013
   ]
  ],
  "events": [
@@ -4934,6 +4942,11 @@
    "ts": 1793592900,
    "kind": "open",
    "text": "GBP/USD LONG er\u00f6ffnet @ 1.33893 | Stop 1.33816 | Ziel 1.34026 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.4"
+  },
+  {
+   "ts": 1793600100,
+   "kind": "close",
+   "text": "GBP/USD LONG geschlossen @ 1.34019 (Gewinnziel): +46.06 USD nach 9.42 Geb\u00fchren"
   }
  ],
  "flags": {
