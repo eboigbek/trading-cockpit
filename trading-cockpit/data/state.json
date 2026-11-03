@@ -1,19 +1,6 @@
 {
- "cash": 5824.319323613769,
- "positions": {
-  "EUR/USD": {
-   "symbol": "EUR/USD",
-   "side": "short",
-   "units": 49987.60988778142,
-   "entry": 1.117564119,
-   "stop": 1.1187858231306216,
-   "take_profit": 1.1152883537387568,
-   "opened_ts": 1793718900,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.4",
-   "ai_note": ""
-  }
- },
+ "cash": 5757.097289137471,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1214,20 +1201,36 @@
    "ai_note": "",
    "gross_pnl": -56.474894,
    "turnover": 117773.6663
+  },
+  {
+   "symbol": "EUR/USD",
+   "side": "short",
+   "units": 49987.60988778142,
+   "entry": 1.117564119,
+   "exit": 1.1188417624217781,
+   "opened_ts": 1793718900,
+   "closed_ts": 1793720700,
+   "pnl": -70.573896,
+   "fees": 6.707555,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.4",
+   "ai_note": "",
+   "gross_pnl": -63.866341,
+   "turnover": 111792.5848
   }
  ],
  "day": "2026-11-03",
  "day_start_equity": 5953.121799108341,
  "last_bar_ts": {
-  "BTC/USD": 1793718900,
-  "EUR/USD": 1793718900,
-  "GBP/USD": 1793718900,
-  "USD/JPY": 1793718900
+  "BTC/USD": 1793722500,
+  "EUR/USD": 1793722500,
+  "GBP/USD": 1793722500,
+  "USD/JPY": 1793722500
  },
  "last_prices": {
-  "BTC/USD": 77240.1,
-  "EUR/USD": 1.11762,
-  "GBP/USD": 1.34102,
+  "BTC/USD": 77445.1,
+  "EUR/USD": 1.11926,
+  "GBP/USD": 1.34159,
   "USD/JPY": 159.483
  },
  "paper_start_ts": 1792017491,
@@ -4263,6 +4266,10 @@
   [
    1793720439,
    5821.526
+  ],
+  [
+   1793723526,
+   5757.0973
   ]
  ],
  "events": [
@@ -5165,6 +5172,11 @@
    "ts": 1793719800,
    "kind": "open",
    "text": "EUR/USD SHORT er\u00f6ffnet @ 1.11756 | Stop 1.11879 | Ziel 1.11529 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.4"
+  },
+  {
+   "ts": 1793721600,
+   "kind": "close",
+   "text": "EUR/USD SHORT geschlossen @ 1.11884 (Stop-Loss): -70.57 USD nach 6.71 Geb\u00fchren"
   }
  ],
  "flags": {
