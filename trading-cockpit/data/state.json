@@ -1,19 +1,6 @@
 {
- "cash": 5952.391927324178,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 9123.397302034986,
-   "entry": 160.74103665,
-   "stop": 159.69099784997852,
-   "take_profit": 162.817004300043,
-   "opened_ts": 1793693700,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 69.0",
-   "ai_note": ""
-  }
- },
+ "cash": 5891.212498779992,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1182,21 +1169,37 @@
    "ai_note": "",
    "gross_pnl": 32.662404,
    "turnover": 15704.6473
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 9123.397302034986,
+   "entry": 160.74103665,
+   "exit": 159.68301330008603,
+   "opened_ts": 1793693700,
+   "closed_ts": 1793697300,
+   "pnl": -61.9093,
+   "fees": 1.459744,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 69.0",
+   "ai_note": "",
+   "gross_pnl": -60.449557,
+   "turnover": 18246.7946
   }
  ],
  "day": "2026-11-03",
  "day_start_equity": 5953.121799108341,
  "last_bar_ts": {
-  "BTC/USD": 1793693700,
-  "EUR/USD": 1793693700,
-  "GBP/USD": 1793693700,
-  "USD/JPY": 1793693700
+  "BTC/USD": 1793697300,
+  "EUR/USD": 1793697300,
+  "GBP/USD": 1793697300,
+  "USD/JPY": 1793697300
  },
  "last_prices": {
-  "BTC/USD": 76517.6,
-  "EUR/USD": 1.11948,
-  "GBP/USD": 1.34173,
-  "USD/JPY": 160.733
+  "BTC/USD": 76775.7,
+  "EUR/USD": 1.11885,
+  "GBP/USD": 1.34167,
+  "USD/JPY": 156.29
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4203,6 +4206,10 @@
   [
    1793695128,
    5951.9358
+  ],
+  [
+   1793698395,
+   5891.2125
   ]
  ],
  "events": [
@@ -5085,6 +5092,11 @@
    "ts": 1793694600,
    "kind": "open",
    "text": "USD/JPY LONG er\u00f6ffnet @ 160.741 | Stop 159.691 | Ziel 162.817 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 69.0"
+  },
+  {
+   "ts": 1793698200,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 159.683 (Stop-Loss): -61.91 USD nach 1.46 Geb\u00fchren"
   }
  ],
  "flags": {
