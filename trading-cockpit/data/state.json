@@ -1,16 +1,16 @@
 {
- "cash": 5840.2310044620135,
+ "cash": 5779.717534178682,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
-   "side": "short",
-   "units": 7562.0236079074475,
-   "entry": 156.26718625,
-   "stop": 157.49144915210047,
-   "take_profit": 153.84210169579907,
-   "opened_ts": 1793812500,
-   "bars_held": 4,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 40.1",
+   "side": "long",
+   "units": 9372.809032097466,
+   "entry": 159.59297925,
+   "stop": 158.606828364241,
+   "take_profit": 161.54134327151803,
+   "opened_ts": 1793819700,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.9",
    "ai_note": ""
   }
  },
@@ -1262,21 +1262,37 @@
    "ai_note": "",
    "gross_pnl": 110.757629,
    "turnover": 91857.3166
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "short",
+   "units": 7562.0236079074475,
+   "entry": 156.26718625,
+   "exit": 157.49932372455808,
+   "opened_ts": 1793812500,
+   "closed_ts": 1793817900,
+   "pnl": -60.368607,
+   "fees": 1.209924,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 40.1",
+   "ai_note": "",
+   "gross_pnl": -59.158684,
+   "turnover": 15124.0472
   }
  ],
  "day": "2026-11-04",
  "day_start_equity": 5757.097289137471,
  "last_bar_ts": {
-  "BTC/USD": 1793816100,
-  "EUR/USD": 1793816100,
-  "GBP/USD": 1793816100,
-  "USD/JPY": 1793816100
+  "BTC/USD": 1793819700,
+  "EUR/USD": 1793819700,
+  "GBP/USD": 1793819700,
+  "USD/JPY": 1793819700
  },
  "last_prices": {
-  "BTC/USD": 80526.6,
-  "EUR/USD": 1.12284,
-  "GBP/USD": 1.34673,
-  "USD/JPY": 156.275
+  "BTC/USD": 80243.9,
+  "EUR/USD": 1.12206,
+  "GBP/USD": 1.34665,
+  "USD/JPY": 159.585
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4431,6 +4447,10 @@
   [
    1793817240,
    5839.8529
+  ],
+  [
+   1793821290,
+   5779.2489
   ]
  ],
  "events": [
@@ -5373,6 +5393,16 @@
    "ts": 1793813400,
    "kind": "open",
    "text": "USD/JPY SHORT er\u00f6ffnet @ 156.267 | Stop 157.491 | Ziel 153.842 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 40.1"
+  },
+  {
+   "ts": 1793818800,
+   "kind": "close",
+   "text": "USD/JPY SHORT geschlossen @ 157.499 (Stop-Loss): -60.37 USD nach 1.21 Geb\u00fchren"
+  },
+  {
+   "ts": 1793820600,
+   "kind": "open",
+   "text": "USD/JPY LONG er\u00f6ffnet @ 159.593 | Stop 158.607 | Ziel 161.541 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.9"
   }
  ],
  "flags": {
