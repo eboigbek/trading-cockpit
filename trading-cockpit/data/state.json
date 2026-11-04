@@ -1222,15 +1222,15 @@
  "day": "2026-11-03",
  "day_start_equity": 5953.121799108341,
  "last_bar_ts": {
-  "BTC/USD": 1793747700,
-  "EUR/USD": 1793747700,
-  "GBP/USD": 1793747700,
-  "USD/JPY": 1793747700
+  "BTC/USD": 1793749500,
+  "EUR/USD": 1793749500,
+  "GBP/USD": 1793749500,
+  "USD/JPY": 1793749500
  },
  "last_prices": {
-  "BTC/USD": 77821.8,
-  "EUR/USD": 1.11922,
-  "GBP/USD": 1.34131,
+  "BTC/USD": 77331.7,
+  "EUR/USD": 1.12053,
+  "GBP/USD": 1.34326,
   "USD/JPY": 161.083
  },
  "paper_start_ts": 1792017491,
@@ -4306,6 +4306,10 @@
   [
    1793748673,
    5757.0973
+  ],
+  [
+   1793750975,
+   5757.0973
   ]
  ],
  "events": [
@@ -5216,6 +5220,11 @@
   },
   {
    "ts": 1793726100,
+   "kind": "skip",
+   "text": "GBP/USD LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
+  },
+  {
+   "ts": 1793750400,
    "kind": "skip",
    "text": "GBP/USD LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
