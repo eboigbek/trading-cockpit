@@ -1,19 +1,6 @@
 {
- "cash": 5779.717534178682,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 9372.809032097466,
-   "entry": 159.59297925,
-   "stop": 158.606828364241,
-   "take_profit": 161.54134327151803,
-   "opened_ts": 1793819700,
-   "bars_held": 0,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.9",
-   "ai_note": ""
-  }
- },
+ "cash": 5720.219927341107,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1278,21 +1265,37 @@
    "ai_note": "",
    "gross_pnl": -59.158684,
    "turnover": 15124.0472
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 9372.809032097466,
+   "entry": 159.59297925,
+   "exit": 158.5988980228228,
+   "opened_ts": 1793819700,
+   "closed_ts": 1793822400,
+   "pnl": -60.247432,
+   "fees": 1.499649,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.9",
+   "ai_note": "",
+   "gross_pnl": -58.747782,
+   "turnover": 18745.6181
   }
  ],
  "day": "2026-11-04",
  "day_start_equity": 5757.097289137471,
  "last_bar_ts": {
-  "BTC/USD": 1793819700,
-  "EUR/USD": 1793819700,
-  "GBP/USD": 1793819700,
-  "USD/JPY": 1793819700
+  "BTC/USD": 1793823300,
+  "EUR/USD": 1793823300,
+  "GBP/USD": 1793823300,
+  "USD/JPY": 1793823300
  },
  "last_prices": {
-  "BTC/USD": 80243.9,
-  "EUR/USD": 1.12206,
-  "GBP/USD": 1.34665,
-  "USD/JPY": 159.585
+  "BTC/USD": 80128.3,
+  "EUR/USD": 1.1226,
+  "GBP/USD": 1.34703,
+  "USD/JPY": 157.38
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4451,6 +4454,10 @@
   [
    1793821290,
    5779.2489
+  ],
+  [
+   1793824224,
+   5720.2199
   ]
  ],
  "events": [
@@ -5403,6 +5410,11 @@
    "ts": 1793820600,
    "kind": "open",
    "text": "USD/JPY LONG er\u00f6ffnet @ 159.593 | Stop 158.607 | Ziel 161.541 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 58.9"
+  },
+  {
+   "ts": 1793823300,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 158.599 (Stop-Loss): -60.25 USD nach 1.50 Geb\u00fchren"
   }
  ],
  "flags": {
