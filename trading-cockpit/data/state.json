@@ -1,19 +1,6 @@
 {
- "cash": 5730.037263358767,
- "positions": {
-  "USD/JPY": {
-   "symbol": "USD/JPY",
-   "side": "long",
-   "units": 14806.855266872677,
-   "entry": 159.24096165000003,
-   "stop": 158.6135307044715,
-   "take_profit": 160.471938591057,
-   "opened_ts": 1793844900,
-   "bars_held": 33,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.7",
-   "ai_note": ""
-  }
- },
+ "cash": 5669.537611445697,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1326,21 +1313,37 @@
    "ai_note": "",
    "gross_pnl": -42.30341,
    "turnover": 116635.7081
+  },
+  {
+   "symbol": "USD/JPY",
+   "side": "long",
+   "units": 14806.855266872677,
+   "entry": 159.24096165000003,
+   "exit": 158.60560002793628,
+   "opened_ts": 1793844900,
+   "closed_ts": 1793877300,
+   "pnl": -61.6842,
+   "fees": 2.369097,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.7",
+   "ai_note": "",
+   "gross_pnl": -59.315103,
+   "turnover": 29613.7105
   }
  ],
  "day": "2026-11-05",
  "day_start_equity": 5722.585485338314,
  "last_bar_ts": {
-  "BTC/USD": 1793874600,
-  "EUR/USD": 1793874600,
-  "GBP/USD": 1793874600,
-  "USD/JPY": 1793874600
+  "BTC/USD": 1793878200,
+  "EUR/USD": 1793878200,
+  "GBP/USD": 1793878200,
+  "USD/JPY": 1793878200
  },
  "last_prices": {
-  "BTC/USD": 80256.5,
-  "EUR/USD": 1.12269,
-  "GBP/USD": 1.34593,
-  "USD/JPY": 160.118
+  "BTC/USD": 80284.0,
+  "EUR/USD": 1.12175,
+  "GBP/USD": 1.34505,
+  "USD/JPY": 158.001
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4563,6 +4566,10 @@
   [
    1793876022,
    5811.1411
+  ],
+  [
+   1793879294,
+   5669.5376
   ]
  ],
  "events": [
@@ -5545,6 +5552,11 @@
    "ts": 1793867400,
    "kind": "close",
    "text": "GBP/USD SHORT geschlossen @ 1.3481 (Stop-Loss): -51.63 USD nach 9.33 Geb\u00fchren"
+  },
+  {
+   "ts": 1793878200,
+   "kind": "close",
+   "text": "USD/JPY LONG geschlossen @ 158.606 (Stop-Loss): -61.68 USD nach 2.37 Geb\u00fchren"
   }
  ],
  "flags": {
