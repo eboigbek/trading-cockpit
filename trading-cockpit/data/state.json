@@ -9,7 +9,7 @@
    "stop": 158.6135307044715,
    "take_profit": 160.471938591057,
    "opened_ts": 1793844900,
-   "bars_held": 25,
+   "bars_held": 29,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 57.7",
    "ai_note": ""
   }
@@ -1331,16 +1331,16 @@
  "day": "2026-11-05",
  "day_start_equity": 5722.585485338314,
  "last_bar_ts": {
-  "BTC/USD": 1793867400,
-  "EUR/USD": 1793867400,
-  "GBP/USD": 1793867400,
-  "USD/JPY": 1793867400
+  "BTC/USD": 1793871000,
+  "EUR/USD": 1793871000,
+  "GBP/USD": 1793871000,
+  "USD/JPY": 1793871000
  },
  "last_prices": {
-  "BTC/USD": 80457.2,
-  "EUR/USD": 1.1239,
-  "GBP/USD": 1.34744,
-  "USD/JPY": 160.055
+  "BTC/USD": 80242.7,
+  "EUR/USD": 1.12326,
+  "GBP/USD": 1.34647,
+  "USD/JPY": 160.118
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4555,6 +4555,10 @@
   [
    1793868676,
    5805.3448
+  ],
+  [
+   1793872276,
+   5811.1411
   ]
  ],
  "events": [
