@@ -1,5 +1,5 @@
 {
- "cash": 5510.243087451326,
+ "cash": 5479.622247438373,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
@@ -9,20 +9,8 @@
    "stop": 159.4727168385705,
    "take_profit": 162.215566322859,
    "opened_ts": 1794042000,
-   "bars_held": 23,
+   "bars_held": 26,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 54.6",
-   "ai_note": ""
-  },
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "short",
-   "units": 0.07331251418868319,
-   "entry": 75873.706125,
-   "stop": 75975.19482494952,
-   "take_profit": 75682.11035010096,
-   "opened_ts": 1794047400,
-   "bars_held": 17,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.1",
    "ai_note": ""
   }
  },
@@ -1386,19 +1374,35 @@
    "ai_note": "",
    "gross_pnl": -34.868482,
    "turnover": 111986.9134
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.07331251418868319,
+   "entry": 75873.706125,
+   "exit": 75685.89445561847,
+   "opened_ts": 1794047400,
+   "closed_ts": 1794065400,
+   "pnl": -75.120777,
+   "fees": 88.889723,
+   "exit_reason": "take_profit",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.1",
+   "ai_note": "",
+   "gross_pnl": 13.768946,
+   "turnover": 11111.2154
   }
  ],
  "day": "2026-11-07",
  "day_start_equity": 5555.518236258817,
  "last_bar_ts": {
-  "BTC/USD": 1794062700,
-  "EUR/USD": 1794062700,
-  "GBP/USD": 1794062700,
-  "USD/JPY": 1794062700
+  "BTC/USD": 1794065400,
+  "EUR/USD": 1794065400,
+  "GBP/USD": 1794065400,
+  "USD/JPY": 1794065400
  },
  "last_prices": {
-  "BTC/USD": 75852.7,
-  "EUR/USD": 1.11376,
+  "BTC/USD": 75717.4,
+  "EUR/USD": 1.11372,
   "GBP/USD": 1.33504,
   "USD/JPY": 160.419
  },
@@ -4863,6 +4867,10 @@
   [
    1794064052,
    5513.2317
+  ],
+  [
+   1794066415,
+   5481.0708
   ]
  ],
  "events": [
@@ -5880,6 +5888,11 @@
    "ts": 1794048300,
    "kind": "open",
    "text": "BTC/USD SHORT er\u00f6ffnet @ 75873.7 | Stop 75975.2 | Ziel 75682.1 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 43.1"
+  },
+  {
+   "ts": 1794066300,
+   "kind": "close",
+   "text": "BTC/USD SHORT geschlossen @ 75685.9 (Gewinnziel): -75.12 USD nach 88.89 Geb\u00fchren"
   }
  ],
  "flags": {
