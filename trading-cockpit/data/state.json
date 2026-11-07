@@ -1,6 +1,19 @@
 {
- "cash": 5422.317234832825,
- "positions": {},
+ "cash": 5417.979597937649,
+ "positions": {
+  "GBP/USD": {
+   "symbol": "GBP/USD",
+   "side": "short",
+   "units": 40619.34688355638,
+   "entry": 1.3348432545,
+   "stop": 1.3352616178260837,
+   "take_profit": 1.3342067643478328,
+   "opened_ts": 1794083400,
+   "bars_held": 0,
+   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.2",
+   "ai_note": ""
+  }
+ },
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1398,16 +1411,16 @@
  "day": "2026-11-07",
  "day_start_equity": 5555.518236258817,
  "last_bar_ts": {
-  "BTC/USD": 1794080700,
-  "EUR/USD": 1794080700,
-  "GBP/USD": 1794080700,
-  "USD/JPY": 1794080700
+  "BTC/USD": 1794083400,
+  "EUR/USD": 1794083400,
+  "GBP/USD": 1794083400,
+  "USD/JPY": 1794083400
  },
  "last_prices": {
-  "BTC/USD": 75690.1,
-  "EUR/USD": 1.11366,
-  "GBP/USD": 1.33504,
-  "USD/JPY": 160.398
+  "BTC/USD": 75619.7,
+  "EUR/USD": 1.11367,
+  "GBP/USD": 1.33491,
+  "USD/JPY": 160.696
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -4902,6 +4915,10 @@
   [
    1794082477,
    5422.3172
+  ],
+  [
+   1794084664,
+   5415.2684
   ]
  ],
  "events": [
@@ -5929,6 +5946,11 @@
    "ts": 1794068100,
    "kind": "close",
    "text": "USD/JPY LONG geschlossen @ 159.465 (Stop-Loss): -58.08 USD nach 1.55 Geb\u00fchren"
+  },
+  {
+   "ts": 1794084300,
+   "kind": "open",
+   "text": "GBP/USD SHORT er\u00f6ffnet @ 1.33484 | Stop 1.33526 | Ziel 1.33421 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 42.2"
   }
  ],
  "flags": {
