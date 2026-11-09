@@ -1,19 +1,6 @@
 {
- "cash": 5158.758948241304,
- "positions": {
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "short",
-   "units": 0.06983048139503503,
-   "entry": 74467.47644,
-   "stop": 74907.27804437994,
-   "take_profit": 73599.0439112401,
-   "opened_ts": 1794248100,
-   "bars_held": 3,
-   "reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 44.2",
-   "ai_note": ""
-  }
- },
+ "cash": 5085.937267313691,
+ "positions": {},
  "trades": [
   {
    "symbol": "USD/JPY",
@@ -1502,21 +1489,37 @@
    "ai_note": "",
    "gross_pnl": -53.680749,
    "turnover": 22552.283
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "short",
+   "units": 0.06983048139503503,
+   "entry": 74467.47644,
+   "exit": 74911.02340828217,
+   "opened_ts": 1794248100,
+   "closed_ts": 1794252600,
+   "pnl": -114.422479,
+   "fees": 83.44938,
+   "exit_reason": "stop_loss",
+   "entry_reason": "EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 44.2",
+   "ai_note": "",
+   "gross_pnl": -30.973098,
+   "turnover": 10431.1726
   }
  ],
  "day": "2026-11-09",
  "day_start_equity": 5255.8446776791825,
  "last_bar_ts": {
-  "BTC/USD": 1794250800,
-  "EUR/USD": 1794250800,
-  "GBP/USD": 1794250800,
-  "USD/JPY": 1794250800
+  "BTC/USD": 1794254400,
+  "EUR/USD": 1794254400,
+  "GBP/USD": 1794254400,
+  "USD/JPY": 1794254400
  },
  "last_prices": {
-  "BTC/USD": 74562.0,
-  "EUR/USD": 1.12018,
-  "GBP/USD": 1.34181,
-  "USD/JPY": 161.088
+  "BTC/USD": 74913.6,
+  "EUR/USD": 1.122,
+  "GBP/USD": 1.34349,
+  "USD/JPY": 161.089
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -5235,6 +5238,10 @@
   [
    1794252520,
    5152.1583
+  ],
+  [
+   1794255752,
+   5085.9373
   ]
  ],
  "events": [
@@ -6347,6 +6354,16 @@
    "ts": 1794249000,
    "kind": "open",
    "text": "BTC/USD SHORT er\u00f6ffnet @ 74467.5 | Stop 74907.3 | Ziel 73599 | EMA9 kreuzt EMA21 nach unten, Trend abw\u00e4rts, RSI 44.2"
+  },
+  {
+   "ts": 1794253500,
+   "kind": "close",
+   "text": "BTC/USD SHORT geschlossen @ 74911 (Stop-Loss): -114.42 USD nach 83.45 Geb\u00fchren"
+  },
+  {
+   "ts": 1794255300,
+   "kind": "skip",
+   "text": "BTC/USD LONG-Signal nicht ausgef\u00fchrt: Tagesverlust-Limit erreicht \u2013 Pause bis 00:00 UTC"
   }
  ],
  "flags": {
