@@ -1,5 +1,5 @@
 {
- "cash": 4839.795543174811,
+ "cash": 4792.884050483054,
  "positions": {
   "USD/JPY": {
    "symbol": "USD/JPY",
@@ -9,20 +9,8 @@
    "stop": 157.50310912824324,
    "take_profit": 161.9907817435135,
    "opened_ts": 1794399300,
-   "bars_held": 40,
+   "bars_held": 44,
    "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 55.8",
-   "ai_note": ""
-  },
-  "BTC/USD": {
-   "symbol": "BTC/USD",
-   "side": "long",
-   "units": 0.06711162378888827,
-   "entry": 74107.20517500001,
-   "stop": 73682.9194868588,
-   "take_profit": 74944.66102628241,
-   "opened_ts": 1794412800,
-   "bars_held": 25,
-   "reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 63.6",
    "ai_note": ""
   }
  },
@@ -1578,21 +1566,37 @@
    "ai_note": "",
    "gross_pnl": -19.892818,
    "turnover": 9978.8302
+  },
+  {
+   "symbol": "BTC/USD",
+   "side": "long",
+   "units": 0.06711162378888827,
+   "entry": 74107.20517500001,
+   "exit": 74000.199805,
+   "opened_ts": 1794412800,
+   "closed_ts": 1794436200,
+   "pnl": -86.699132,
+   "fees": 79.517828,
+   "exit_reason": "gegensignal",
+   "entry_reason": "EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 63.6",
+   "ai_note": "",
+   "gross_pnl": -7.181304,
+   "turnover": 9939.7284
   }
  ],
  "day": "2026-11-11",
  "day_start_equity": 4979.717695509098,
  "last_bar_ts": {
-  "BTC/USD": 1794435300,
-  "EUR/USD": 1794435300,
-  "GBP/USD": 1794435300,
-  "USD/JPY": 1794435300
+  "BTC/USD": 1794438900,
+  "EUR/USD": 1794438900,
+  "GBP/USD": 1794438900,
+  "USD/JPY": 1794438900
  },
  "last_prices": {
-  "BTC/USD": 74226.8,
-  "EUR/USD": 1.1086,
-  "GBP/USD": 1.32754,
-  "USD/JPY": 161.799
+  "BTC/USD": 73715.1,
+  "EUR/USD": 1.1092,
+  "GBP/USD": 1.32755,
+  "USD/JPY": 161.793
  },
  "paper_start_ts": 1792017491,
  "equity_history": [
@@ -5531,6 +5535,10 @@
   [
    1794437055,
    4936.4875
+  ],
+  [
+   1794439988,
+   4881.3625
   ]
  ],
  "events": [
@@ -6693,6 +6701,11 @@
    "ts": 1794413700,
    "kind": "open",
    "text": "BTC/USD LONG er\u00f6ffnet @ 74107.2 | Stop 73682.9 | Ziel 74944.7 | EMA9 kreuzt EMA21 nach oben, Trend aufw\u00e4rts, RSI 63.6"
+  },
+  {
+   "ts": 1794437100,
+   "kind": "close",
+   "text": "BTC/USD LONG geschlossen @ 74000.2 (Gegensignal): -86.70 USD nach 79.52 Geb\u00fchren"
   }
  ],
  "flags": {
