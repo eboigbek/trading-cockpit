@@ -79,7 +79,7 @@ class AIReviewer:
             f"Einstieg ~{sig.price:.6g}, Stop {sig.stop:.6g} ({risk_pct:.2f}% entfernt), "
             f"Ziel {sig.take_profit:.6g}\n"
             f"Begründung der Regel: {sig.reason}\n"
-            f"Indikatoren: {json.dumps(sig.indicators)}\n"
+            f"Indikatoren: {json.dumps(sig.indicators, ensure_ascii=False)}\n"
             f"Offene Positionen: {json.dumps(positions)}\n"
             f"Kontostand (Paper): {broker.equity():.2f}\n\n"
             f"Letzte {len(recent)} Kerzen (15 min):\n" + "\n".join(rows)

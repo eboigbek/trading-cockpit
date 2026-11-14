@@ -4,4 +4,3 @@ data/*.tmp
 data/demo_*
 data/backtest_report.html
 data/agent.log
-config.json

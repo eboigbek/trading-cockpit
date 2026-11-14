@@ -1,9 +1,10 @@
 name: Trading-Bot
 
-# Läuft alle 15 Minuten, kurz nach jedem Kerzenschluss (:02, :17, :32, :47).
+# Startet alle 5 Minuten (GitHub verschiebt oder überspringt geplante Läufe manchmal; der Bot holt
+# verpasste Kerzen nach). Daten liegen im Zweig "data", nicht in main.
 on:
   schedule:
-    - cron: "2,17,32,47 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -12,10 +13,6 @@ permissions:
 concurrency:
   group: trading-bot
   cancel-in-progress: false
-
-defaults:
-  run:
-    working-directory: trading-cockpit
 
 jobs:
   run:
@@ -29,21 +26,14 @@ jobs:
           cache: pip
           cache-dependency-path: trading-cockpit/requirements.txt
       - name: Abhängigkeiten
-        run: pip install -r requirements.txt
+        run: pip install -q -r trading-cockpit/requirements.txt
+      - name: Daten laden
+        run: bash trading-cockpit/load_data.sh
       - name: Bot-Durchlauf
+        working-directory: trading-cockpit
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           COCKPIT_PASSWORT: ${{ secrets.COCKPIT_PASSWORT }}
         run: python run.py live --once
-      - name: Ergebnis speichern
-        run: |
-          git config user.name "trading-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if git diff --cached --quiet; then echo "Keine Änderungen"; exit 0; fi
-          git commit -q -m "Bot-Lauf $(date -u +'%Y-%m-%d %H:%M') UTC"
-          for i in 1 2 3; do
-            git pull -q --rebase -X theirs && git push -q && exit 0
-            sleep 5
-          done
-          echo "Push fehlgeschlagen" && exit 1
+      - name: Daten speichern
+        run: bash trading-cockpit/save_data.sh "Bot-Lauf"

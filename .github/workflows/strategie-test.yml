@@ -1,0 +1,35 @@
+name: Strategie-Test
+
+# Von Hand starten: Actions -> Strategie-Test -> Run workflow.
+# Testet alle Kandidaten auf ~2 Jahren echter Kurse und legt den Bericht in den Zweig "data"
+# (trading-cockpit/data/strategie_test.md).
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trading-bot
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Abhängigkeiten
+        run: pip install -q -r trading-cockpit/requirements.txt
+      - name: Daten laden
+        run: bash trading-cockpit/load_data.sh
+      - name: Strategien testen
+        working-directory: trading-cockpit
+        run: |
+          python strategie_test.py
+          cat data/strategie_test.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Bericht speichern
+        run: bash trading-cockpit/save_data.sh "Strategie-Test"

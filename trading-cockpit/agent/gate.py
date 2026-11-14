@@ -26,6 +26,20 @@ def max_drawdown_pct(history: List[List[float]], start: float) -> float:
     return mdd
 
 
+def t_stat(trades: List[Trade]) -> float:
+    """Ø-Ergebnis pro Trade geteilt durch seinen Standardfehler. Ab ~2 ist ein Gewinn mit
+    rund 95 % Sicherheit kein reiner Zufall (vereinfachter t-Test, Trades als unabhängig)."""
+    n = len(trades)
+    if n < 2:
+        return 0.0
+    xs = [t.pnl for t in trades]
+    m = sum(xs) / n
+    var = sum((x - m) ** 2 for x in xs) / (n - 1)
+    if var <= 0:
+        return 0.0
+    return m / (var ** 0.5 / n ** 0.5)
+
+
 def progress(state: AccountState, gate: GateConfig, starting_cash: float, now_ts: int) -> Dict:
     days = (now_ts - state.paper_start_ts) / 86_400 if state.paper_start_ts else 0.0
     trades = state.trades
@@ -50,6 +64,12 @@ def progress(state: AccountState, gate: GateConfig, starting_cash: float, now_ts
              1 - dd / gate.max_drawdown_pct if gate.max_drawdown_pct else 1,
              f"{dd:.1f} % / max. {gate.max_drawdown_pct:.0f} %"),
     ]
+    if gate.min_t_stat > 0:
+        ts = t_stat(trades)
+        items.append(item("tstat", "Zufallstest (t-Wert)", round(ts, 2), gate.min_t_stat,
+                          len(trades) >= 2 and ts >= gate.min_t_stat,
+                          ts / gate.min_t_stat if gate.min_t_stat else 1,
+                          f"{ts:.2f} / mind. {gate.min_t_stat:.1f}" if len(trades) >= 2 else "noch zu wenige Trades"))
     if gate.require_net_profit:
         items.append(item("net", "Ergebnis nach Gebühren", round(net, 2), 0, net > 0,
                           1.0 if net > 0 else 0.0, f"{net:+,.2f}"))

@@ -1,0 +1,13 @@
+{
+  "interval_min": 60,
+  "data_source": "kraken",
+  "strategy": {
+    "name": "breakout",
+    "breakout_bars": 20,
+    "stop_atr": 2.0,
+    "take_profit_atr": 4.0,
+    "max_hold_bars": 24,
+    "session_start_utc": 0,
+    "session_end_utc": 24
+  }
+}

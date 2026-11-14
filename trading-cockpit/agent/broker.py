@@ -31,6 +31,7 @@ class Position:
     bars_held: int = 0
     reason: str = ""
     ai_note: str = ""
+    mc: Dict = field(default_factory=dict)     # Time-Machine-Ergebnis beim Einstieg
 
 
 @dataclass
@@ -49,6 +50,8 @@ class Trade:
     ai_note: str = ""
     gross_pnl: float = 0.0   # vor Gebühren, in Kontowährung
     turnover: float = 0.0    # gehandelter Nominalwert Ein- + Ausstieg, in Kontowährung (Basis der Gebühren)
+    mc_p_tp: float = -1.0    # von der Time Machine vorhergesagte Ziel-Wahrscheinlichkeit (-1 = keine)
+    mc_ev_r: float = 0.0
 
 
 @dataclass
@@ -64,6 +67,8 @@ class AccountState:
     equity_history: List[List[float]] = field(default_factory=list)   # [ts, equity]
     events: List[Dict] = field(default_factory=list)                  # {ts, kind, text}
     flags: Dict[str, str] = field(default_factory=dict)               # z.B. zuletzt gemeldeter Modus-Status
+    mc_skipped: int = 0                                               # von der Time Machine aussortierte Signale
+    last_mc: Dict = field(default_factory=dict)                       # letzte Simulation (fürs Cockpit)
 
 
 def to_account(amount_quote: float, price: float, sym: SymbolConfig, account_ccy: str) -> float:
@@ -103,6 +108,8 @@ class PaperBroker:
             equity_history=raw.get("equity_history", []),
             events=raw.get("events", []),
             flags=raw.get("flags", {}),
+            mc_skipped=raw.get("mc_skipped", 0),
+            last_mc=raw.get("last_mc", {}),
         )
 
     def save(self) -> None:
@@ -111,16 +118,15 @@ class PaperBroker:
         vault.write_text(self.cfg.state_file, json.dumps(asdict(self.state), indent=1))
 
     def _append_trade_csv(self, t: Trade) -> None:
+        """Schreibt die komplette Trade-Liste neu (klein, und robust bei neuen Spalten)."""
         if not self.persist:
             return
-        path = self.cfg.trades_file
-        existing = vault.read_text(path) or ""
         buf = io.StringIO()
         w = csv.DictWriter(buf, fieldnames=list(asdict(t).keys()), lineterminator="\n")
-        if not existing:
-            w.writeheader()
-        w.writerow(asdict(t))
-        vault.write_text(path, existing + buf.getvalue())
+        w.writeheader()
+        for tr in self.state.trades:
+            w.writerow(asdict(tr))
+        vault.write_text(self.cfg.trades_file, buf.getvalue())
 
     # ---------------- Protokoll & Verlauf ----------------
     MAX_EVENTS = 300
@@ -174,12 +180,13 @@ class PaperBroker:
         return price * (1 + s) if buying else price * (1 - s)
 
     def open(self, sym: SymbolConfig, side: str, units: float, price: float, stop: float,
-             take_profit: float, ts: int, reason: str = "", ai_note: str = "") -> Position:
+             take_profit: float, ts: int, reason: str = "", ai_note: str = "",
+             mc: Optional[Dict] = None) -> Position:
         if sym.name in self.state.positions:
             raise RuntimeError(f"{sym.name}: Position bereits offen")
         fill = self._slip(price, side, opening=True)
         self.state.cash -= self._fee(sym, units, fill)
-        pos = Position(sym.name, side, units, fill, stop, take_profit, ts, 0, reason, ai_note)
+        pos = Position(sym.name, side, units, fill, stop, take_profit, ts, 0, reason, ai_note, dict(mc or {}))
         self.state.positions[sym.name] = pos
         self.mark(sym, price)
         return pos
@@ -199,7 +206,8 @@ class PaperBroker:
                     + to_account(pos.units * fill, fill, sym, ccy))
         t = Trade(sym.name, pos.side, pos.units, pos.entry, fill, pos.opened_ts, ts,
                   round(gross - exit_fee - entry_fee, 6), round(entry_fee + exit_fee, 6),
-                  exit_reason, pos.reason, pos.ai_note, round(gross, 6), round(turnover, 4))
+                  exit_reason, pos.reason, pos.ai_note, round(gross, 6), round(turnover, 4),
+                  pos.mc.get("p_tp", -1.0), pos.mc.get("ev_r", 0.0))
         self.state.trades.append(t)
         self.mark(sym, price)
         self._append_trade_csv(t)

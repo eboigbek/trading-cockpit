@@ -12,6 +12,7 @@ from .broker import PaperBroker, Trade
 from .config import Config, SymbolConfig
 from .data import Candle
 from .risk import RiskManager
+from .montecarlo import describe, seed_for, simulate
 from .strategy import Signal, generate_signal, opposite_cross
 
 log = logging.getLogger("agent.engine")
@@ -25,6 +26,25 @@ class BarResult:
     review: Optional[Review] = None
     opened: bool = False
     skipped_reason: str = ""
+    mc: Optional[dict] = None
+    skip_kind: str = ""          # "quality", "cost", "timemachine", "risk", "ai"
+
+
+def cost_r(price: float, stop: float, fee_pct: float, slippage_pct: float) -> float:
+    """Kosten für Ein- und Ausstieg (Gebühr + Slippage) als Anteil des Risikos bis zum Stop."""
+    dist = abs(price - stop)
+    if dist <= 0:
+        return float("inf")
+    return 2 * (fee_pct + slippage_pct) / 100.0 * price / dist
+
+
+def unchanged_share(candles: List[Candle], window: int) -> float:
+    """Anteil der Kerzen ohne jede Kursänderung – hoch bei illiquiden/eingefrorenen Daten."""
+    w = candles[-window:]
+    if len(w) < 2:
+        return 0.0
+    same = sum(1 for a, b in zip(w, w[1:]) if b.close == a.close and b.high == b.low)
+    return same / (len(w) - 1)
 
 
 class TradingEngine:
@@ -63,11 +83,51 @@ class TradingEngine:
             return res
         res.signal = sig
 
+        # 2a) Datenqualität: bei eingefrorenen/illiquiden Kursen nicht handeln
+        share = unchanged_share(candles, self.cfg.quality.window_bars)
+        if share > self.cfg.quality.max_unchanged_share:
+            res.skip_kind = "quality"
+            res.skipped_reason = (f"Kursdaten unzuverlässig ({share * 100:.0f} % der letzten Kerzen ohne "
+                                  f"Kursänderung) – kein Handel")
+            return res
+
+        # 2b) Kosten-Filter: fressen Gebühren + Slippage zu viel vom Risiko, ist der Trade chancenlos
+        c_r = cost_r(sig.price, sig.stop, sym.fee_pct, self.cfg.risk.slippage_pct)
+        sig.indicators["kosten_r"] = round(c_r, 3)
+        if c_r > self.cfg.risk.max_cost_r:
+            res.skip_kind = "cost"
+            res.skipped_reason = (f"Kosten {c_r:.2f} R – mehr als {self.cfg.risk.max_cost_r:.2f} R erlaubt "
+                                  f"(Stop zu nah für die Gebühren)")
+            return res
+
         decision = self.risk.size(sym, sig.price, sig.stop)
         if not decision.allowed:
+            res.skip_kind = "risk"
             res.skipped_reason = decision.reason
             log.info("%s %s-Signal verworfen: %s", sym.name, sig.side, decision.reason)
             return res
+
+        # 2c) Time Machine: 10.000 Pfade durchspielen, Erwartungswert nach Kosten
+        mc_dict = None
+        tm = self.cfg.timemachine
+        if tm.enabled:
+            try:
+                r = simulate(candles, sig.side, sig.price, sig.stop, sig.take_profit, sym.fee_pct,
+                             self.cfg.risk.slippage_pct, self.cfg.strategy.max_hold_bars,
+                             paths=tm.paths, lookback=tm.lookback_bars, seed=seed_for(sym.name, bar.ts))
+                mc_dict = r.as_dict()
+                res.mc = mc_dict
+                approved = r.ev_r >= tm.min_ev_r
+                st.last_mc = {**mc_dict, "symbol": sym.name, "side": sig.side,
+                              "ts": bar.ts + self.cfg.interval_min * 60, "approved": approved}
+                if not approved:
+                    st.mc_skipped += 1
+                    res.skip_kind = "timemachine"
+                    res.skipped_reason = f"Time Machine: {describe(mc_dict)} – Kosten zu hoch für den möglichen Gewinn, Trade ausgelassen"
+                    return res
+                sig.indicators["time_machine"] = describe(mc_dict)
+            except ValueError as e:
+                log.warning("Time Machine übersprungen: %s", e)
 
         # 3) Optionale KI-Prüfung durch Claude
         ai_note = ""
@@ -76,11 +136,12 @@ class TradingEngine:
             res.review = review
             ai_note = f"{review.decision} ({review.confidence:.2f}): {review.reason}"
             if not review.approved:
+                res.skip_kind = "ai"
                 res.skipped_reason = f"KI abgelehnt: {review.reason}"
                 log.info("%s %s-Signal von Claude abgelehnt: %s", sym.name, sig.side, review.reason)
                 return res
 
         self.broker.open(sym, sig.side, decision.units, sig.price, sig.stop, sig.take_profit,
-                         bar.ts, sig.reason, ai_note)
+                         bar.ts, sig.reason, ai_note, mc_dict)
         res.opened = True
         return res

@@ -124,7 +124,7 @@ dl.limits dt{color:var(--text-2)} dl.limits dd{margin:0;font-weight:600;text-ali
 .events li:last-child{border:0}
 .events time{display:block;font-size:12px;color:var(--muted)}
 .ev-ic{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface-2);color:var(--text-2)}
-.ev-ic.open{color:var(--accent)} .ev-ic.ai{color:#9085e9} .ev-ic.warn{color:var(--warn)} .ev-ic.close{color:var(--text)}
+.ev-ic.tm{color:var(--accent)} .ev-ic.open{color:var(--accent)} .ev-ic.ai{color:#9085e9} .ev-ic.warn{color:var(--warn)} .ev-ic.close{color:var(--text)}
 .tbl-wrap{overflow-x:auto;max-height:520px}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
@@ -139,6 +139,13 @@ td.r,th.r{text-align:right}
 .empty{padding:28px 8px;text-align:center;color:var(--text-2)}
 footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
 .skeleton{opacity:.55}
+.stack{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin:10px 0 6px;background:var(--surface)}
+.stack i{display:block;height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--text-2)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;background:var(--c);vertical-align:-1px}
+.tm-grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:820px){.tm-grid{grid-template-columns:3fr 2fr}}
+.tag.bad{background:#d03b3b22;color:var(--bad)}
 .lockform{margin-top:16px;display:grid;gap:12px;max-width:420px}
 .lockform input[type=password]{font:inherit;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);min-height:44px}
 .lockform .btn{justify-content:center;background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
@@ -178,6 +185,8 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
       <h2>Offene Positionen</h2>
       <div class="grid" id="positions"></div>
     </div>
+
+    <div class="section card" id="tm"></div>
 
     <div class="section grid two">
       <div class="card" id="gate"></div>
@@ -352,7 +361,8 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
       const p = open[m.symbol];
       return `<div class="card">
         <div class="mkt-top"><span class="mkt-name">${esc(m.symbol)}</span>
-          ${p ? `<span class="tag ${p.side}">${p.side === "long" ? "Long offen" : "Short offen"}</span>` : ""}</div>
+          ${p ? `<span class="tag ${p.side}">${p.side === "long" ? "Long offen" : "Short offen"}</span>`
+              : m.quality_ok === false ? `<span class="tag bad" title="${NF(0).format(m.unchanged_share * 100)} % der letzten Kerzen ohne Kursänderung">Daten unzuverlässig · kein Handel</span>` : ""}</div>
         <div class="mkt-price num">${price(m.symbol, m.price)}</div>
         <div class="mkt-meta"><span class="${cls(m.change_24h_pct)} num">${pct(m.change_24h_pct)} 24 h</span>
           <span>Trend ${m.trend === "auf" ? "↗ aufwärts" : m.trend === "ab" ? "↘ abwärts" : "–"}</span>
@@ -375,9 +385,34 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
         <div class="small t2 num">Einstieg ${price(p.symbol, p.entry)} · jetzt ${price(p.symbol, p.price)} · seit ${dt(p.opened)}</div>
         <div><div class="range" role="img" aria-label="Kurs zwischen Stop-Loss und Gewinnziel"><i style="left:calc(${(left * 100).toFixed(1)}% - 1px)"></i></div>
         <div class="range-l num"><span>Stop ${price(p.symbol, p.stop)}</span><span>Ziel ${price(p.symbol, p.tp)}</span></div></div>
-        <div class="small t2">${esc(p.reason)}${p.ai ? `<br><span style="color:#9085e9">Claude:</span> ${esc(p.ai)}` : ""}</div>
+        <div class="small t2">${esc(p.reason)}${p.mc && p.mc.paths ? `<br><b>Time Machine:</b> Ziel ${pct(p.mc.p_tp * 100, 0, false)} · Stop ${pct(p.mc.p_sl * 100, 0, false)} · Ø ${(p.mc.ev_r > 0 ? "+" : "") + NF(2).format(p.mc.ev_r)} R` : ""}${p.ai ? `<br><span style="color:#9085e9">Claude:</span> ${esc(p.ai)}` : ""}</div>
       </div>`;
     }).join("") || `<div class="card empty">Gerade keine offene Position. Der Bot wartet auf ein Signal, bei dem alle Regeln passen.</div>`;
+  }
+
+  function renderTimeMachine(d) {
+    const tm = d.time_machine;
+    if (!tm) { $("tm").innerHTML = ""; return; }
+    const L = tm.last, c = tm.calibration;
+    const sign = (v) => (v > 0 ? "+" : "") + NF(2).format(v);
+    const last = L ? `
+      <div class="small t2"><b>${esc(L.symbol)} · ${L.side === "long" ? "Kauf (Long)" : "Verkauf (Short)"}</b> · ${dt(L.ts)} ·
+        ${L.approved ? '<span class="pos">ausgeführt</span>' : '<span class="neg">ausgelassen</span>'}</div>
+      <div class="stack" role="img" aria-label="Ziel ${Math.round(L.p_tp * 100)} Prozent, Stop ${Math.round(L.p_sl * 100)} Prozent, Zeitablauf ${Math.round(L.p_timeout * 100)} Prozent">
+        <i style="width:${L.p_tp * 100}%;background:var(--good-mark)"></i><i style="width:${L.p_sl * 100}%;background:var(--bad-mark)"></i><i style="width:${L.p_timeout * 100}%;background:var(--muted)"></i></div>
+      <div class="legend num"><span style="--c:var(--good-mark)">Ziel ${pct(L.p_tp * 100, 0, false)}</span><span style="--c:var(--bad-mark)">Stop ${pct(L.p_sl * 100, 0, false)}</span><span style="--c:var(--muted)">Zeitablauf ${pct(L.p_timeout * 100, 0, false)}</span></div>
+      <p class="small" style="margin:10px 0 0">Ø Ergebnis pro Trade: <b class="num ${cls(L.ev_r)}">${sign(L.ev_r)} R</b> <span class="muted num">(${sign(L.ev_pct)} % nach ${NF(2).format(L.cost_pct)} % Kosten)</span></p>`
+      : `<div class="small muted" style="margin-top:8px">Noch keine Simulation – sie läuft beim nächsten Signal.</div>`;
+    $("tm").innerHTML = `<h2>Time Machine</h2>
+      <div class="tm-grid"><div>
+        <p class="small t2" style="margin-top:0">Vor jedem Trade spielt der Bot ${NF(0).format(tm.paths)} mögliche Kursverläufe aus echten Kerzen durch – bewusst ohne Trend und mit allen Gebühren. Fressen die Kosten zu viel vom möglichen Gewinn (schlechter als ${NF(2).format(tm.min_ev_r)} R im Schnitt), wird der Trade ausgelassen. Keine Vorhersage, sondern ein Realitäts-Check.</p>
+        ${last}</div>
+        <div><dl class="limits num">
+          <dt>Ausgelassene Signale</dt><dd>${tm.skipped}</dd>
+          <dt>Vorhergesagt: Ziel erreicht</dt><dd>${c ? pct(c.predicted_tp * 100, 0, false) : "–"}</dd>
+          <dt>Tatsächlich: Ziel erreicht</dt><dd>${c ? pct(c.actual_tp * 100, 0, false) : "–"}</dd>
+          <dt>Trades mit Vorhersage</dt><dd>${c ? c.n : 0}</dd></dl>
+          <p class="small muted" style="margin-bottom:0">Liegen Vorhersage und Wirklichkeit über viele Trades weit auseinander, ist die Simulation zu optimistisch oder zu vorsichtig.</p></div></div>`;
   }
 
   function renderGate(d) {
@@ -388,6 +423,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
       pf: d.account.trades ? `${NF(2).format(i.value)} / mind. ${NF(2).format(i.target)}` : "noch keine Trades",
       dd: `${NF(1).format(i.value)} % / max. ${NF(0).format(i.target)} %`,
       net: money(i.value, d.account.currency, true),
+      tstat: d.account.trades >= 2 ? `${NF(2).format(i.value)} / mind. ${NF(1).format(i.target)}` : "noch zu wenige Trades",
     }[i.key] ?? i.display);
     const items = g.items.map((i) => `<div class="req">
       <div class="req-top"><span>${esc(i.label)}</span><span class="num ${i.ok ? "ok" : ""}">${i.ok ? "✓ " : ""}${esc(show(i))}</span></div>
@@ -430,14 +466,14 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     $("fees").innerHTML = `<h2>Gebühren</h2>
       <p class="small t2" style="margin-top:0">Jeder Trade zahlt Gebühren beim Kauf und Verkauf. Sie sind in allen Zahlen oben schon abgezogen: bisher <b class="num">${money(d.account.fees_total, ccy)}</b>.</p>
       <dl class="limits num">${cfg}</dl>
-      <p class="small muted" style="margin:6px 0 16px">Werte pro Kauf bzw. Verkauf inkl. Spread. BTC: 0,80 % = Kraken Pro Einstiegsstufe mit Market-Order.</p>
-      <h2>Was wäre bei anderen BTC-Gebühren?</h2>
-      ${sc.length && d.account.trades ? rows + `<p class="small muted" style="margin-bottom:0">Gesamtergebnis aller Trades, wenn BTC-Trades die links genannte Gebühr gekostet hätten. ◂ = aktuelle Annahme.</p>`
-        : `<div class="small muted">Erscheint nach den ersten abgeschlossenen Trades.</div>`}`;
+      <p class="small muted" style="margin:6px 0 16px">Werte pro Kauf bzw. Verkauf inkl. Spread.${d.strategy ? ` Kosten-Filter: Ein Trade wird ausgelassen, wenn Gebühren und Slippage mehr als ${NF(2).format(d.strategy.max_cost_r)} R kosten würden (1 R = Verlust beim Stop).` : ""}</p>
+      ${sc.length ? `<h2>Was wäre bei anderen BTC-Gebühren?</h2>
+      ${d.account.trades ? rows + `<p class="small muted" style="margin-bottom:0">Gesamtergebnis aller Trades, wenn BTC-Trades die links genannte Gebühr gekostet hätten. ◂ = aktuelle Annahme.</p>`
+        : `<div class="small muted">Erscheint nach den ersten abgeschlossenen Trades.</div>`}` : ""}`;
   }
 
   function renderEvents(d) {
-    const ic = { open: "+", close: "✓", ai: "C", warn: "!", skip: "–", info: "i" };
+    const ic = { open: "+", close: "✓", ai: "C", warn: "!", skip: "–", info: "i", tm: "T" };
     $("events").innerHTML = d.events.map((e) => `<li><span class="ev-ic ${esc(e.kind)}">${ic[e.kind] || "·"}</span>
       <div><time>${dt(e.ts)}</time>${esc(e.text)}</div></li>`).join("") || `<li><span class="ev-ic">i</span><div class="muted">Noch keine Ereignisse.</div></li>`;
   }
@@ -445,7 +481,8 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
   function renderControl(d) {
     const act = REPO_URL ? `${REPO_URL}/actions/workflows/control.yml` : null;
     $("control").innerHTML = `<h2>Steuerung</h2>
-      <p class="small t2" style="margin-top:0">Der Bot läuft auf GitHub alle 15 Minuten, auch wenn dieses Cockpit geschlossen ist.
+      ${d.strategy ? `<p class="small" style="margin-top:0"><b>Strategie:</b> ${esc(d.strategy.label)}<br><span class="t2">${esc(d.strategy.detail)}</span></p>` : ""}
+      <p class="small t2" style="margin-top:0">Der Bot startet auf GitHub alle 5 Minuten, auch wenn dieses Cockpit geschlossen ist.
       Steuern kannst du ihn über GitHub (Browser oder GitHub-App): <b>„Run workflow“</b> tippen und die Aktion wählen.</p>
       <div class="btns">
         ${act ? `<a class="btn stop" href="${act}" target="_blank" rel="noopener">Not-Aus / Steuerung</a>` : ""}
@@ -468,7 +505,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     if (!d.trades.length) { $("trades").innerHTML = `<div class="empty">Noch keine abgeschlossenen Trades.</div>`; return; }
     $("trades").innerHTML = `<table class="num"><thead><tr><th>Geschlossen</th><th>Markt</th><th>Richtung</th>
       <th class="r">Einstieg</th><th class="r">Ausstieg</th><th class="r">Gebühren</th><th class="r">Ergebnis</th><th>Grund</th></tr></thead><tbody>
-      ${d.trades.map((t) => `<tr title="${esc(t.entry_reason)}${t.ai ? " | Claude: " + esc(t.ai) : ""}"><td>${dt(t.closed)}</td><td>${esc(t.symbol)}</td>
+      ${d.trades.map((t) => `<tr title="${esc(t.entry_reason)}${t.mc_p_tp >= 0 ? " | Time Machine: Ziel " + Math.round(t.mc_p_tp * 100) + " %, Ø " + NF(2).format(t.mc_ev_r) + " R" : ""}${t.ai ? " | Claude: " + esc(t.ai) : ""}"><td>${dt(t.closed)}</td><td>${esc(t.symbol)}</td>
         <td><span class="tag ${t.side}">${t.side === "long" ? "Long" : "Short"}</span></td>
         <td class="r">${price(t.symbol, t.entry)}</td><td class="r">${price(t.symbol, t.exit)}</td>
         <td class="r muted">${money(t.fees, ccy)}</td><td class="r ${cls(t.pnl)}"><b>${money(t.pnl, ccy, true)}</b></td>
@@ -479,7 +516,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     $("app").classList.remove("skeleton");
     $("app").style.display = "";
     renderHeader(d); renderAccount(d); renderMarkets(d); renderPositions(d);
-    renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
+    renderTimeMachine(d); renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
     $("src").innerHTML = REPO_URL ? `Daten: <a href="${REPO_URL}" target="_blank" rel="noopener">${esc(repo.owner)}/${esc(repo.name)}</a> · aktualisiert sich jede Minute` : "";
   }
 
@@ -550,7 +587,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     } catch (e) {
       if (!lastGen) {
         $("pills").innerHTML = `<span class="pill warn"><span class="dot"></span>Warte auf ersten Bot-Lauf</span>`;
-        $("banners").innerHTML = `<div class="banner warn"><span><b>Noch keine Daten.</b> Sobald der Bot das erste Mal gelaufen ist (spätestens in 15 Minuten), erscheint hier alles. (${esc(e.message)})</span></div>`;
+        $("banners").innerHTML = `<div class="banner warn"><span><b>Noch keine Daten.</b> Sobald der Bot das erste Mal gelaufen ist (in wenigen Minuten), erscheint hier alles. (${esc(e.message)})</span></div>`;
       }
     }
   }

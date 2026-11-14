@@ -1,5 +1,5 @@
 {
-  "interval_min": 15,
+  "interval_min": 60,
   "data_source": "kraken",
   "risk": {
     "starting_cash": 10000.0,
@@ -7,7 +7,8 @@
     "risk_per_trade_pct": 1.0,
     "max_daily_loss_pct": 3.0,
     "max_open_positions": 3,
-    "slippage_pct": 0.005
+    "slippage_pct": 0.005,
+    "max_cost_r": 0.25
   },
   "strategy": {
     "ema_fast": 9,
@@ -19,17 +20,25 @@
     "rsi_long_max": 70.0,
     "rsi_short_min": 30.0,
     "rsi_short_max": 50.0,
-    "stop_atr": 1.5,
-    "take_profit_atr": 3.0,
-    "max_hold_bars": 96,
-    "allow_short": true
+    "stop_atr": 2.0,
+    "take_profit_atr": 4.0,
+    "max_hold_bars": 24,
+    "allow_short": true,
+    "name": "breakout",
+    "breakout_bars": 20,
+    "pullback_rsi_period": 3,
+    "pullback_long_max": 20.0,
+    "pullback_short_min": 80.0,
+    "session_start_utc": 0,
+    "session_end_utc": 24
   },
   "gate": {
     "min_days": 42,
-    "min_trades": 50,
+    "min_trades": 200,
     "min_profit_factor": 1.2,
     "max_drawdown_pct": 15.0,
-    "require_net_profit": true
+    "require_net_profit": true,
+    "min_t_stat": 2.0
   },
   "live": {
     "max_capital": 200.0,
@@ -39,10 +48,11 @@
     "max_total_loss_pct": 15.0,
     "max_open_positions": 1,
     "symbols": [
-      "BTC/EUR"
+      "EUR/USD",
+      "GBP/USD"
     ],
-    "long_only": true,
-    "leverage": 1.0,
+    "long_only": false,
+    "leverage": 10.0,
     "withdrawals_allowed": false
   },
   "ai": {
@@ -52,15 +62,6 @@
     "timeout_s": 30
   },
   "symbols": [
-    {
-      "name": "BTC/USD",
-      "base": "BTC",
-      "quote": "USD",
-      "kraken": "XBTUSD",
-      "yahoo": "BTC-USD",
-      "fee_pct": 0.8,
-      "max_leverage": 1.0
-    },
     {
       "name": "EUR/USD",
       "base": "EUR",
@@ -76,15 +77,6 @@
       "quote": "USD",
       "kraken": "GBPUSD",
       "yahoo": "GBPUSD=X",
-      "fee_pct": 0.008,
-      "max_leverage": 10.0
-    },
-    {
-      "name": "USD/JPY",
-      "base": "USD",
-      "quote": "JPY",
-      "kraken": "USDJPY",
-      "yahoo": "JPY=X",
       "fee_pct": 0.008,
       "max_leverage": 10.0
     }

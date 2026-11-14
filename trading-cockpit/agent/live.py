@@ -18,6 +18,7 @@ from .control import load_control
 from .data import Candle, SyntheticFeed, fetch_candles
 from .engine import TradingEngine
 from .gate import progress
+from .montecarlo import describe
 
 log = logging.getLogger("agent.live")
 
@@ -77,6 +78,7 @@ class LiveAgent:
         st = self.broker.state
         now = self.clock()
         ctl = load_control(self.cfg.control_file)
+        before = self._signature()
         if not st.paper_start_ts:
             st.paper_start_ts = now
             self.broker.event(now, "info", f"Spielgeld-Konto gestartet mit {self.cfg.risk.starting_cash:,.0f} "
@@ -128,13 +130,25 @@ class LiveAgent:
                                                 f"Ergebnis {t.pnl:+.2f} (Gebühren {t.fees:.2f})")
 
         mode_note = self._mode_note(ctl.mode, now)
-        self.broker.snapshot(now)
         prev = export.read(self.cfg.cockpit_file)
+        # Nichts Neues (keine neue Kerze, kein Ereignis) und Cockpit-Stand jünger als 14 Minuten:
+        # nichts schreiben. So erzeugen die zusätzlichen 5-Minuten-Läufe keine unnötigen Commits.
+        if (self._signature() == before and prev and not ctl.stop
+                and now - int(prev.get("generated_at", 0)) < self.REFRESH_S):
+            return processed
+        self.broker.snapshot(now)
         data = export.build(self.cfg, self.broker, now, markets, self.reviewer.active,
                             self.reviewer.model_name, ctl.mode, ctl.stop, mode_note, prev)
         export.write(self.cfg.cockpit_file, data)
         self.broker.save()
         return processed
+
+    REFRESH_S = 14 * 60
+
+    def _signature(self):
+        st = self.broker.state
+        return (len(st.events), len(st.trades), tuple(sorted(st.positions)),
+                tuple(sorted(st.last_bar_ts.items())), st.mc_skipped, st.paper_start_ts)
 
     def _mode_note(self, requested: str, now: int) -> str:
         if requested != "live":
@@ -165,11 +179,13 @@ class LiveAgent:
             text = (f"{p.symbol} {p.side.upper()} eröffnet @ {p6(p.entry)} | Stop {p6(p.stop)} | "
                     f"Ziel {p6(p.take_profit)} | {p.reason}")
             self.broker.event(ts, "open", text)
+            if p.mc:
+                self.broker.event(ts, "tm", f"Time Machine zu {p.symbol}: {describe(p.mc)}")
             if p.ai_note:
                 self.broker.event(ts, "ai", f"Claude zu {p.symbol}: {p.ai_note}")
             log.info(text)
         elif res.signal and res.skipped_reason:
-            kind = "ai" if res.review is not None and not res.review.approved else "skip"
+            kind = {"ai": "ai", "timemachine": "tm", "quality": "warn"}.get(res.skip_kind, "skip")
             text = f"{sym.name} {res.signal.side.upper()}-Signal nicht ausgeführt: {res.skipped_reason}"
             self.broker.event(ts, kind, text)
             log.info(text)

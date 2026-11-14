@@ -23,16 +23,29 @@ class SymbolConfig:
     max_leverage: float  # Max. Nominalwert / Kontostand für dieses Instrument
 
 
+# Seit 06.11.2026 nur noch EUR/USD und GBP/USD:
+#  - BTC/USD raus: 0,8 % Gebühr je Seite (Kraken Pro, Taker) kosteten im Spielgeld-Lauf ~1,2 R pro
+#    Trade – kein Daytrade kann das tragen. Über config.json wieder aufnehmbar.
+#  - USD/JPY raus: Kraken-Kurse illiquide (22 von 24 Trades im Stop).
 DEFAULT_SYMBOLS: List[SymbolConfig] = [
-    SymbolConfig("BTC/USD", "BTC", "USD", "XBTUSD", "BTC-USD", fee_pct=0.80, max_leverage=1.0),
     SymbolConfig("EUR/USD", "EUR", "USD", "EURUSD", "EURUSD=X", fee_pct=0.006, max_leverage=10.0),
     SymbolConfig("GBP/USD", "GBP", "USD", "GBPUSD", "GBPUSD=X", fee_pct=0.008, max_leverage=10.0),
+]
+
+
+# Frühere Märkte (bis 01.11.2026) – nur noch für Tests und zum Wiederaufnehmen per config.json
+LEGACY_SYMBOLS: List[SymbolConfig] = [
+    SymbolConfig("BTC/USD", "BTC", "USD", "XBTUSD", "BTC-USD", fee_pct=0.80, max_leverage=1.0),
+    *DEFAULT_SYMBOLS,
     SymbolConfig("USD/JPY", "USD", "JPY", "USDJPY", "JPY=X", fee_pct=0.008, max_leverage=10.0),
 ]
 
 
 @dataclass
 class StrategyConfig:
+    # "ema_cross" (alte Startstrategie), "breakout" (Ausbruch über das N-Kerzen-Hoch/-Tief in
+    # Trendrichtung) oder "pullback" (Rücksetzer im Trend, kurzer RSI überverkauft/-kauft)
+    name: str = "breakout"
     ema_fast: int = 9
     ema_slow: int = 21
     ema_trend: int = 100
@@ -46,6 +59,12 @@ class StrategyConfig:
     take_profit_atr: float = 3.0  # Take-Profit-Abstand in ATR (=> Chance/Risiko 1:2)
     max_hold_bars: int = 96       # Daytrading: nach 96 x 15 min = 24 h wird geschlossen
     allow_short: bool = True
+    breakout_bars: int = 20       # Ausbruch: Hoch/Tief der letzten N Kerzen (ohne die aktuelle)
+    pullback_rsi_period: int = 3  # Rücksetzer: kurzer RSI
+    pullback_long_max: float = 20.0   # Kauf im Aufwärtstrend, wenn RSI darunter fällt
+    pullback_short_min: float = 80.0  # Verkauf im Abwärtstrend, wenn RSI darüber steigt
+    session_start_utc: int = 0    # Einstiege nur zwischen diesen Stunden (UTC), 0–24 = immer
+    session_end_utc: int = 24
 
 
 @dataclass
@@ -56,6 +75,9 @@ class RiskConfig:
     max_daily_loss_pct: float = 3.0     # Tagesverlust-Stopp: danach keine neuen Trades bis 00:00 UTC
     max_open_positions: int = 3
     slippage_pct: float = 0.005         # Zusätzliche Ausführungsabweichung pro Order (0.005 % ≈ 0,5 Pip EUR/USD)
+    # Kosten-Filter: Gebühren + Slippage für Ein- und Ausstieg dürfen höchstens diesen Anteil des
+    # riskierten Betrags (1 R) ausmachen. 0,25 = ein Viertel. Darüber wird das Signal ausgelassen.
+    max_cost_r: float = 0.25
 
 
 @dataclass
@@ -70,13 +92,36 @@ class AIConfig:
 
 
 @dataclass
+class TimeMachineConfig:
+    """Monte-Carlo-Prüfung vor jedem Trade (siehe agent/montecarlo.py)."""
+    enabled: bool = True
+    paths: int = 10_000
+    lookback_bars: int = 500
+    # Die Simulation unterstellt bewusst KEINEN Vorteil (Trend herausgerechnet). Ohne Kosten
+    # läge der Erwartungswert also bei ~0 R. Die Schwelle prüft daher, ob Kosten und
+    # unrealistische Ziele zu viel vom Risiko auffressen: Kosten dürfen höchstens ein Viertel
+    # des riskierten Betrags verschlingen (schlechter als -0,25 R -> auslassen).
+    min_ev_r: float = -0.25
+
+
+@dataclass
+class DataQualityConfig:
+    """Wächter gegen unzuverlässige Kursdaten (z.B. illiquide Märkte)."""
+    window_bars: int = 96
+    max_unchanged_share: float = 0.25   # mehr als 25 % Kerzen ohne Kursänderung = verdächtig
+
+
+@dataclass
 class GateConfig:
     """Bedingungen, die der Spielgeld-Lauf erfüllen muss, bevor Echtgeld freigeschaltet wird."""
     min_days: int = 42                 # 6 Wochen
-    min_trades: int = 50
+    # 200 Trades: erst ab dieser Größenordnung lässt sich ein Vorteil von ~0,2 R pro Trade
+    # statistisch von Glück unterscheiden (bei 50 Trades kann PF 1,2 reiner Zufall sein).
+    min_trades: int = 200
     min_profit_factor: float = 1.2
     max_drawdown_pct: float = 15.0
     require_net_profit: bool = True    # Ergebnis nach Gebühren im Plus
+    min_t_stat: float = 2.0            # Zufallstest: Ø-Ergebnis / Standardfehler (≈ 95 % Sicherheit)
 
 
 @dataclass
@@ -88,9 +133,10 @@ class LiveConfig:
     max_daily_loss_pct: float = 3.0
     max_total_loss_pct: float = 15.0   # Gesamt-Notbremse: danach automatisch zurück auf Spielgeld
     max_open_positions: int = 1
-    symbols: List[str] = field(default_factory=lambda: ["BTC/EUR"])
-    long_only: bool = True
-    leverage: float = 1.0
+    symbols: List[str] = field(default_factory=lambda: ["EUR/USD", "GBP/USD"])
+    long_only: bool = False
+    # Devisen-Stops liegen oft nur 0,1–0,3 % entfernt; 1 % Risiko geht dann nur mit Hebel.
+    leverage: float = 10.0
     withdrawals_allowed: bool = False  # Börsen-Schlüssel darf nur handeln
 
 
@@ -109,6 +155,8 @@ class Config:
     risk: RiskConfig = field(default_factory=RiskConfig)
     ai: AIConfig = field(default_factory=AIConfig)
     gate: GateConfig = field(default_factory=GateConfig)
+    timemachine: TimeMachineConfig = field(default_factory=TimeMachineConfig)
+    quality: DataQualityConfig = field(default_factory=DataQualityConfig)
     live: LiveConfig = field(default_factory=LiveConfig)
 
     def symbol(self, name: str) -> SymbolConfig:
@@ -132,7 +180,8 @@ def load_config(path: str = "config.json") -> Config:
         if key in raw:
             setattr(cfg, key, raw[key])
     for section, cls in (("strategy", StrategyConfig), ("risk", RiskConfig), ("ai", AIConfig),
-                         ("gate", GateConfig), ("live", LiveConfig)):
+                         ("gate", GateConfig), ("live", LiveConfig),
+                         ("timemachine", TimeMachineConfig), ("quality", DataQualityConfig)):
         if section in raw:
             current = asdict(getattr(cfg, section))
             current.update(raw[section])

@@ -27,8 +27,9 @@ jobs:
         run: |
           mkdir _site
           cp -r trading-cockpit/docs/. _site/
-          sed -i 's#/main/data/cockpit.json#/main/trading-cockpit/data/cockpit.json#' _site/index.html
-          grep -c "trading-cockpit/data/cockpit.json" _site/index.html
+          # Daten kommen aus dem Zweig "data"
+          sed -i 's#/main/data/cockpit.json#/data/trading-cockpit/data/cockpit.json#' _site/index.html
+          grep -c "/data/trading-cockpit/data/cockpit.json" _site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

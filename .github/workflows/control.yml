@@ -22,35 +22,36 @@ concurrency:
   group: trading-bot
   cancel-in-progress: false
 
-defaults:
-  run:
-    working-directory: trading-cockpit
-
 jobs:
   control:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Aktion ausführen
+      - name: Abhängigkeiten
+        run: pip install -q -r trading-cockpit/requirements.txt
+      - name: Daten laden
+        run: bash trading-cockpit/load_data.sh
+      - name: Aktion ausführen und Bot einmal laufen lassen
+        working-directory: trading-cockpit
         env:
           AKTION: ${{ inputs.aktion }}
-          COCKPIT_PASSWORT: ${{ secrets.COCKPIT_PASSWORT }}
-        run: python control_action.py "$AKTION"
-      - name: Bot sofort einmal laufen lassen
-        env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           COCKPIT_PASSWORT: ${{ secrets.COCKPIT_PASSWORT }}
-        run: pip install -q -r requirements.txt && python run.py live --once
-      - name: Speichern
+        run: |
+          python control_action.py "$AKTION"
+          python run.py live --once
+      - name: Steuerdatei in main speichern
         run: |
           git config user.name "trading-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A control.json data/
-          git diff --cached --quiet && exit 0
-          git commit -q -m "Steuerung"
-          for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && exit 0; sleep 5; done
-          exit 1
+          git add trading-cockpit/control.json
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Steuerung: ${{ inputs.aktion }}"
+            for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done
+          fi
+      - name: Daten speichern
+        run: bash trading-cockpit/save_data.sh "Steuerung"

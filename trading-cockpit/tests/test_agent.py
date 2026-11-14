@@ -8,9 +8,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from agent.ai_reviewer import AIReviewer, Review  # noqa: E402
 from agent.backtest import run_backtest  # noqa: E402
 from agent.broker import PaperBroker  # noqa: E402
-from agent.config import AIConfig, Config  # noqa: E402
+from agent.config import LEGACY_SYMBOLS, AIConfig, Config  # noqa: E402
 from agent.data import Candle, synthetic_series  # noqa: E402
-from agent.engine import TradingEngine  # noqa: E402
+from agent.engine import TradingEngine, cost_r  # noqa: E402
+from datetime import datetime, timezone  # noqa: E402
 from agent.indicators import atr, ema, rsi  # noqa: E402
 from agent.live import LiveAgent  # noqa: E402
 from agent.risk import RiskManager  # noqa: E402
@@ -26,6 +27,11 @@ def cfg_tmp():
     cfg.cockpit_file = os.path.join(d, "cockpit.json")
     cfg.control_file = os.path.join(d, "control.json")
     cfg.ai.enabled = False
+    cfg.timemachine.enabled = False  # Mechanik-Tests ohne Filter; Time Machine hat eigene Tests
+    # Mechanik-Tests laufen weiter mit den früheren vier Märkten und der alten Strategie
+    cfg.symbols = list(LEGACY_SYMBOLS)
+    cfg.strategy.name = "ema_cross"
+    cfg.risk.max_cost_r = 99.0
     return cfg
 
 
@@ -49,9 +55,85 @@ class TestIndicators(unittest.TestCase):
         self.assertAlmostEqual(atr([11.0] * n, [9.0] * n, [10.0] * n, 14)[-1], 2.0)
 
 
+class TestNewStrategies(unittest.TestCase):
+    @staticmethod
+    def _cs(closes, start=1_760_000_000, step=3600):
+        return [Candle(start + j * step, c, c + 0.2, c - 0.2, c) for j, c in enumerate(closes)]
+
+    def test_breakout_long_in_uptrend(self):
+        cfg = Config().strategy
+        cfg.name = "breakout"
+        closes = [100 + i * 0.05 for i in range(150)] + [107.5 + (0.1 if i % 2 else -0.1) for i in range(25)]
+        closes.append(closes[-1] + 1.5)                         # Ausbruch nach oben
+        sig = generate_signal("X", self._cs(closes), cfg)
+        self.assertIsNotNone(sig)
+        self.assertEqual(sig.side, "long")
+        self.assertIn("Ausbruch", sig.reason)
+
+    def test_breakout_needs_trend(self):
+        cfg = Config().strategy
+        cfg.name = "breakout"
+        closes = [120 - i * 0.1 for i in range(150)] + [105 + (0.1 if i % 2 else -0.1) for i in range(25)]
+        closes.append(closes[-1] + 1.5)                         # Ausbruch nach oben im Abwärtstrend
+        sig = generate_signal("X", self._cs(closes), cfg)
+        self.assertTrue(sig is None or sig.side != "long")
+
+    def test_pullback_long(self):
+        cfg = Config().strategy
+        cfg.name = "pullback"
+        closes = [100 + i * 0.1 for i in range(180)] + [117.9 - 0.3 * i for i in range(1, 4)]
+        sig = generate_signal("X", self._cs(closes), cfg)
+        self.assertIsNotNone(sig)
+        self.assertEqual(sig.side, "long")
+
+    def test_session_filter(self):
+        cfg = Config().strategy
+        cfg.name = "pullback"
+        closes = [100 + i * 0.1 for i in range(180)] + [117.9 - 0.3 * i for i in range(1, 4)]
+        cs = self._cs(closes)
+        hour = datetime.fromtimestamp(cs[-1].ts, tz=timezone.utc).hour
+        cfg.session_start_utc, cfg.session_end_utc = (hour + 1) % 24, (hour + 2) % 24 or 24
+        self.assertIsNone(generate_signal("X", cs, cfg))
+        cfg.session_start_utc, cfg.session_end_utc = hour, hour + 1
+        self.assertIsNotNone(generate_signal("X", cs, cfg))
+
+
+class TestCostFilter(unittest.TestCase):
+    def test_cost_r(self):
+        # BTC: 0,8 % je Seite + 0,005 % Slippage, Stop 0,5 % entfernt -> ~3,2 R Kosten
+        self.assertAlmostEqual(cost_r(100.0, 99.5, 0.8, 0.005), 3.22, places=2)
+        # EUR/USD: 0,006 % + 0,005 %, Stop 0,2 % -> 0,11 R
+        self.assertAlmostEqual(cost_r(1.0, 0.998, 0.006, 0.005), 0.11, places=2)
+
+    def test_engine_skips_expensive_trade(self):
+        cfg = cfg_tmp()
+        cfg.risk.max_cost_r = 0.25
+        cfg.symbols = [s for s in LEGACY_SYMBOLS if s.name == "BTC/USD"]
+        series = synthetic_series("BTC/USD", 1500, seed=3)
+        b = PaperBroker(cfg)
+        e = TradingEngine(cfg, b)
+        kinds = set()
+        for i in range(150, len(series)):
+            r = e.on_bar(cfg.symbols[0], series[: i + 1])
+            if r.signal:
+                kinds.add(r.skip_kind)
+        self.assertIn("cost", kinds)
+        self.assertEqual(len(b.state.trades), 0)
+
+
+class TestTStat(unittest.TestCase):
+    def test_t_stat(self):
+        from agent.gate import t_stat
+        self.assertEqual(t_stat([]), 0.0)
+        ts = t_stat([mk_trade(30)] * 60 + [mk_trade(-20)] * 60)
+        self.assertGreater(ts, 2.0)
+        self.assertLess(t_stat([mk_trade(30)] * 5 + [mk_trade(-25)] * 5), 2.0)
+
+
 class TestStrategy(unittest.TestCase):
     def test_long_signal_on_cross_in_uptrend(self):
         cfg = Config().strategy
+        cfg.name = "ema_cross"
         closes = [100 + i * 0.5 for i in range(150)]          # Aufwärtstrend
         for _ in range(15):                                     # Rücksetzer -> EMA9 unter EMA21
             closes.append(closes[-1] - 0.6)
@@ -230,7 +312,7 @@ class TestGate(unittest.TestCase):
 
     def test_unlocks_only_when_all_met(self):
         day = 86_400
-        trades = [mk_trade(30) for _ in range(30)] + [mk_trade(-20) for _ in range(25)]  # PF 1.8
+        trades = ([mk_trade(30) for _ in range(30)] + [mk_trade(-20) for _ in range(25)]) * 4  # PF 1.8, 220 Trades
         st = AccountState(cash=10_000, trades=trades, paper_start_ts=1,
                           equity_history=[[0, 10_000], [1, 9_500], [2, 10_400]])
         self.assertTrue(progress(st, GateConfig(), 10_000, 43 * day)["unlocked"])
@@ -368,3 +450,119 @@ class TestVault(unittest.TestCase):
         with mock.patch.dict(os.environ, {vault.ENV: "falsches-passwort"}):
             with self.assertRaises(vault.VaultError):
                 mk()
+
+
+# ---------------------------------------------------------------------------
+# Time Machine (Monte Carlo) und Datenqualitäts-Wächter
+# ---------------------------------------------------------------------------
+import math  # noqa: E402
+import random  # noqa: E402
+
+from agent.engine import TradingEngine as _TE, unchanged_share  # noqa: E402
+from agent.montecarlo import simulate  # noqa: E402
+
+
+def random_walk(n=600, vol=0.001, seed=1):
+    rng, p, cs = random.Random(seed), 100.0, []
+    for i in range(n):
+        o = p
+        p = p * math.exp(rng.gauss(0, vol))
+        cs.append(Candle(i * 900, o, max(o, p), min(o, p), p))
+    return cs
+
+
+class TestTimeMachine(unittest.TestCase):
+    def test_matches_theory_for_random_walk(self):
+        # Ohne Trend und ohne Kosten: Ziel bei +2R vor Stop bei -1R in ~1/3 der Fälle
+        r = simulate(random_walk(), "long", 100, 99, 102, 0, 0, horizon=5000, paths=10000)
+        self.assertAlmostEqual(r.p_tp, 1 / 3, delta=0.03)
+        self.assertAlmostEqual(r.ev_r, 0.0, delta=0.12)
+
+    def test_costs_make_expectation_negative(self):
+        cs = random_walk()
+        r = simulate(cs, "short", 100, 100.5, 99, 0.8, 0.005, horizon=96)
+        self.assertLess(r.ev_r, -1.0)  # 1,6 % Kosten bei 0,5 % Risiko
+        self.assertAlmostEqual(r.p_tp + r.p_sl + r.p_timeout, 1.0, places=6)
+
+    def test_reproducible(self):
+        cs = random_walk()
+        a = simulate(cs, "long", 100, 99, 102, 0.1, 0, horizon=96, seed=7)
+        b = simulate(cs, "long", 100, 99, 102, 0.1, 0, horizon=96, seed=7)
+        self.assertEqual(a, b)
+
+    def test_engine_skips_negative_expectation_and_records_it(self):
+        cfg = cfg_tmp()
+        cfg.timemachine.enabled = True
+        cfg.timemachine.paths = 2000
+        data = {s.name: synthetic_series(s.name, 2000, seed=11) for s in cfg.symbols}
+        res = run_backtest(cfg, data)
+        st_trades = res.trades
+        self.assertTrue(all(t.mc_p_tp >= 0 for t in st_trades if t.exit_reason != "backtest_ende" or True))
+        # Bei 0,8 % BTC-Gebühren rechnet sich auf Zufallsdaten kein BTC-Trade
+        self.assertEqual([t for t in st_trades if t.symbol == "BTC/USD"], [])
+
+    def test_export_has_time_machine_and_calibration(self):
+        cfg = cfg_tmp()
+        cfg.timemachine.enabled = True
+        cfg.timemachine.paths = 1000
+        cfg.timemachine.min_ev_r = -99  # alles durchlassen, damit Trades mit Vorhersage entstehen
+        series = {s.name: synthetic_series(s.name, 1200, seed=5) for s in cfg.symbols}
+        pos = {"n": 300}
+        clock = lambda: series["BTC/USD"][pos["n"] - 1].ts + 120  # noqa: E731
+        a = LiveAgent(cfg, fetcher=lambda s, iv: series[s.name][: pos["n"]], clock=clock)
+        for _ in range(800):
+            a.cycle(); pos["n"] += 1
+        with open(cfg.cockpit_file) as f:
+            d = json.load(f)
+        tmi = d["time_machine"]
+        self.assertTrue(tmi["enabled"])
+        self.assertIsNotNone(tmi["last"])
+        self.assertGreater(tmi["calibration"]["n"], 0)
+        self.assertTrue(0 <= tmi["calibration"]["predicted_tp"] <= 1)
+        self.assertTrue(any(e["kind"] == "tm" for e in d["events"]))
+
+
+class TestDataQuality(unittest.TestCase):
+    def test_frozen_market_is_not_traded(self):
+        cs = random_walk(300)
+        frozen = cs[:200] + [Candle(c.ts, cs[199].close, cs[199].close, cs[199].close, cs[199].close)
+                             for c in cs[200:]]
+        self.assertGreater(unchanged_share(frozen, 96), 0.9)
+        self.assertLess(unchanged_share(cs, 96), 0.05)
+        cfg = cfg_tmp()
+        eng = _TE(cfg, PaperBroker(cfg, persist=False))
+        sym = cfg.symbol("EUR/USD")
+        import agent.engine as E
+        orig = E.generate_signal
+        E.generate_signal = lambda name, c, scfg: __import__("agent.strategy", fromlist=["Signal"]).Signal(
+            name, "long", c[-1].close, c[-1].close * 0.99, c[-1].close * 1.02, "test")
+        try:
+            r = eng.on_bar(sym, frozen)
+        finally:
+            E.generate_signal = orig
+        self.assertFalse(r.opened)
+        self.assertEqual(r.skip_kind, "quality")
+
+
+class TestQuietRuns(unittest.TestCase):
+    def test_no_write_without_news_but_heartbeat_every_15_min(self):
+        cfg = cfg_tmp()
+        series = {s.name: synthetic_series(s.name, 600, seed=8) for s in cfg.symbols}
+        pos = {"n": 300}
+        t = {"now": series["BTC/USD"][299].ts + 960}
+        a = LiveAgent(cfg, fetcher=lambda s, iv: series[s.name][: pos["n"]], clock=lambda: t["now"])
+        a.cycle()
+        m1 = os.path.getmtime(cfg.cockpit_file)
+        gen1 = json.load(open(cfg.cockpit_file))["generated_at"]
+        t["now"] += 300  # 5 Minuten später, keine neue Kerze
+        a.cycle()
+        self.assertEqual(json.load(open(cfg.cockpit_file))["generated_at"], gen1)
+        t["now"] += 600  # nach 15 Minuten: Lebenszeichen wird geschrieben
+        a.cycle()
+        self.assertGreater(json.load(open(cfg.cockpit_file))["generated_at"], gen1)
+        gen2 = json.load(open(cfg.cockpit_file))["generated_at"]
+        pos["n"] += 1  # neue Kerze -> sofort schreiben
+        t["now"] += 60
+        a.cycle()
+        self.assertGreater(json.load(open(cfg.cockpit_file))["generated_at"], gen2)
+        self.assertGreater(m1, 0)

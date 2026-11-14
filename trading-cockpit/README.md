@@ -1,8 +1,12 @@
-# Trading-Cockpit: Paper-Trading-Bot für BTC und Devisen
+# Trading-Cockpit: Paper-Trading-Bot für Devisen (EUR/USD, GBP/USD)
 
 **Cockpit:** https://eboigbek.github.io/trading-cockpit/
 
-Der Bot läuft automatisch alle 15 Minuten über GitHub Actions, auch wenn kein Computer an ist. Er handelt mit Spielgeld (10.000 USD), berücksichtigt Gebühren und Spreads und schreibt nach jedem Lauf seine Daten nach `data/`. Das Cockpit zeigt Kontostand, Märkte, Positionen, Gebühren, die Echtgeld-Freischaltung und das Protokoll.
+Der Bot läuft automatisch über GitHub Actions (Start alle 5 Minuten, Handel auf 1-Stunden-Kerzen), auch wenn kein Computer an ist. Er handelt mit Spielgeld (10.000 USD), berücksichtigt Gebühren und Spreads und schreibt nach jedem Lauf seine Daten nach `data/`. Das Cockpit zeigt Kontostand, Märkte, Positionen, Gebühren, die Echtgeld-Freischaltung und das Protokoll.
+
+## Wo die Daten liegen
+
+Der Code liegt im Zweig `main`. Kontostand, Trades und Cockpit-Daten liegen im Zweig `data`, der bei jedem Speichern durch einen einzigen neuen Commit ersetzt wird (`load_data.sh` / `save_data.sh`). So wächst das Projekt nicht mit jedem Bot-Lauf. Der Bot startet alle 5 Minuten; neue Daten entstehen nach jedem Kerzenschluss, dazwischen wird nur alle 15 Minuten ein Lebenszeichen geschrieben.
 
 ## Bedienung über GitHub
 
@@ -10,13 +14,31 @@ Der Bot läuft automatisch alle 15 Minuten über GitHub Actions, auch wenn kein 
 - **Claude-Prüfung einschalten:** *Settings* → *Secrets and variables* → *Actions* → *New repository secret*, Name `ANTHROPIC_API_KEY`, Wert = API-Key von console.anthropic.com. Wird separat abgerechnet, nicht über das Claude-Abo.
 - **Bot-Läufe ansehen:** Reiter *Actions* → *Trading-Bot*.
 
+## Strategie (seit 06.11.2026)
+
+Die alte EMA-Crossover-Strategie auf 15-Minuten-Kerzen hatte im Spielgeld-Lauf keinen Vorteil (17,8 Tage, −41 %, 71 Trades, Profit-Faktor 0,11). Gründe: BTC-Gebühren von 0,8 % je Seite kosteten ~1,2 R pro Trade, USD/JPY-Kurse von Kraken waren unzuverlässig, und bei EUR/USD und GBP/USD lag die Trefferquote mit 21 % weit unter den nötigen 37 %.
+
+Jetzt:
+- **Märkte:** nur EUR/USD und GBP/USD (BTC und USD/JPY lassen sich per `config.json` wieder aufnehmen).
+- **Strategie** wählbar in `config.json` → `strategy.name`: `breakout` (Ausbruch über das N-Kerzen-Hoch/-Tief in Trendrichtung), `pullback` (Rücksetzer im Trend, RSI3) oder `ema_cross` (alt). Optional nur Einstiege zwischen `session_start_utc` und `session_end_utc`.
+- **Kosten-Filter:** Ein Signal wird ausgelassen, wenn Gebühren und Slippage für Ein- und Ausstieg mehr als 0,25 R kosten würden (`risk.max_cost_r`).
+- **Strategie-Test:** Workflow *Strategie-Test* (von Hand starten) spielt alle Kandidaten auf ~2 Jahren echter 1-h-Kerzen und 60 Tagen 15-min-Kerzen durch. Ausgewählt wird nur auf den ersten 60 % („Lernen“), bewertet auf den letzten 40 % („Prüfen“). Bericht: `trading-cockpit/data/strategie_test.md` im Zweig `data` und in der Zusammenfassung des Laufs.
+
+## Time Machine (Monte-Carlo-Prüfung)
+
+Vor jedem Trade spielt der Bot 10.000 mögliche Kursverläufe durch, zusammengesetzt aus den letzten 500 echten Kerzen. Der Trend wird dabei herausgerechnet, die Simulation unterstellt also bewusst keinen Vorteil. Ergebnis: Wahrscheinlichkeit für Ziel, Stop und Zeitablauf sowie der durchschnittliche Ertrag nach Gebühren in R (1 R = Verlust beim Stop). Fressen die Kosten mehr als ein Viertel des riskierten Betrags (schlechter als −0,25 R), wird der Trade ausgelassen. Das Cockpit vergleicht außerdem die vorhergesagte mit der tatsächlichen Trefferquote. Einstellungen: `TimeMachineConfig` in `agent/config.py`.
+
+## Datenqualitäts-Wächter
+
+Sind mehr als 25 % der letzten 96 Kerzen eines Marktes völlig unverändert (typisch für illiquide Kursquellen), handelt der Bot dort nicht und das Cockpit markiert den Markt als „Daten unzuverlässig“.
+
 ## Tresor-Modus (Verschlüsselung)
 
 Ist bei GitHub das Secret `COCKPIT_PASSWORT` hinterlegt (*Settings* → *Secrets and variables* → *Actions*), speichert der Bot Kontostand, Trades und Cockpit-Daten nur noch verschlüsselt (`data/*.enc`, AES-256-GCM, Schlüssel per PBKDF2-SHA256 aus dem Passwort). In den öffentlichen GitHub-Logs stehen dann keine Beträge mehr. Das Cockpit fragt einmal pro Gerät nach dem Passwort und entschlüsselt die Daten direkt im Browser. Ohne Passwort oder mit falschem Passwort bricht der Bot ab, statt Daten zu überschreiben. **Passwort vergessen = Daten nicht wiederherstellbar** (dann über *Steuerung* das Konto zurücksetzen).
 
 ## Echtgeld-Freischaltung
 
-Der Echtgeld-Modus wird erst frei, wenn der Spielgeld-Lauf ALLE Bedingungen erfüllt: mindestens 42 Tage (6 Wochen), mindestens 50 Trades, Profit-Faktor nach Gebühren mindestens 1,2, größter Rückgang höchstens 15 %, Ergebnis nach Gebühren im Plus. Grenzen im Echtgeld-Betrieb: höchstens 200 €, 1 % Risiko pro Trade, 3 % Tagesverlust-Limit, Notbremse bei 15 % Gesamtverlust (automatisch zurück auf Spielgeld), 1 Position, nur BTC/EUR, nur Kauf, kein Hebel, Börsen-Schlüssel ohne Auszahlungsrecht. Die Börsenanbindung wird eingerichtet, sobald ein Börsenkonto existiert. Vor Echtgeld wird dieses Projekt auf privat gestellt.
+Der Echtgeld-Modus wird erst frei, wenn der Spielgeld-Lauf ALLE Bedingungen erfüllt: mindestens 42 Tage (6 Wochen), mindestens 200 Trades, Profit-Faktor nach Gebühren mindestens 1,2, Zufallstest (t-Wert) mindestens 2, größter Rückgang höchstens 15 %, Ergebnis nach Gebühren im Plus. 200 Trades, weil sich erst ab dieser Größenordnung ein Vorteil von etwa 0,2 R pro Trade von Glück unterscheiden lässt. Grenzen im Echtgeld-Betrieb: höchstens 200 €, 1 % Risiko pro Trade, 3 % Tagesverlust-Limit, Notbremse bei 15 % Gesamtverlust (automatisch zurück auf Spielgeld), 1 Position, EUR/USD und GBP/USD, Hebel höchstens 10×, Broker-Schlüssel ohne Auszahlungsrecht. Eine Broker-Anbindung ist nicht gebaut. Vor Echtgeld wird dieses Projekt auf privat gestellt.
 
 Alle Werte stehen in `agent/config.py` (Abschnitte `GateConfig` und `LiveConfig`).
 
@@ -24,20 +46,20 @@ Alle Werte stehen in `agent/config.py` (Abschnitte `GateConfig` und `LiveConfig`
 
 ## Lokal ausführen (optional)
 
-Ein Daytrading-Agent, der BTC/USD, EUR/USD, GBP/USD und USD/JPY rund um die Uhr auf 15-Minuten-Kerzen beobachtet, nach festen Regeln Trades eröffnet und schließt und jedes Signal vor der Ausführung von Claude gegenprüfen lässt. **Er handelt ausschließlich mit Spielgeld (Paper-Trading).** Es wird kein Konto benötigt, keine echte Order gesendet und kein echtes Geld bewegt.
+Ein Trading-Agent, der EUR/USD und GBP/USD rund um die Uhr beobachtet, nach festen Regeln Trades eröffnet und schließt und jedes Signal vor der Ausführung von Claude gegenprüfen lässt. **Er handelt ausschließlich mit Spielgeld (Paper-Trading).** Es wird kein Konto benötigt, keine echte Order gesendet und kein echtes Geld bewegt.
 
 > Kein Finanzrat. Die eingebaute Strategie ist ein transparenter Lern- und Teststand, kein Gewinnversprechen. Die allermeisten Daytrader verlieren Geld, vor allem wegen Gebühren und Spreads.
 
 ## So funktioniert der Agent
 
-Alle 60 Sekunden holt der Agent öffentliche Kursdaten von Kraken (ohne API-Key; Yahoo Finance als Ausweichquelle). Sobald eine 15-Minuten-Kerze abgeschlossen ist, passiert für jedes Symbol Folgendes:
+Bei jedem Lauf holt der Agent öffentliche Kursdaten von Kraken (ohne API-Key; Yahoo Finance als Ausweichquelle). Sobald eine Kerze abgeschlossen ist, passiert für jedes Symbol Folgendes (Beispiel: frühere Startstrategie `ema_cross`; die aktuelle steht oben unter „Strategie“):
 
 1. **Offene Position prüfen:** Wurde Stop-Loss oder Take-Profit in der Kerze berührt? Gibt es ein Gegensignal? Ist die maximale Haltedauer (24 h) erreicht? Dann wird geschlossen.
 2. **Signal suchen** (nur wenn keine Position offen ist):
    - LONG: EMA 9 kreuzt EMA 21 nach oben, Kurs über EMA 100, RSI zwischen 50 und 70
    - SHORT: EMA 9 kreuzt EMA 21 nach unten, Kurs unter EMA 100, RSI zwischen 30 und 50
    - Stop-Loss 1,5 × ATR, Take-Profit 3 × ATR (Chance/Risiko 1:2)
-3. **Risiko prüfen:** Positionsgröße so, dass ein Stop-Loss maximal 1 % des Kontos kostet; höchstens 3 Positionen gleichzeitig; Hebel-Limit (BTC 1×, Devisen 10×); nach 3 % Tagesverlust Pause bis 00:00 UTC.
+3. **Risiko prüfen:** Positionsgröße so, dass ein Stop-Loss maximal 1 % des Kontos kostet; höchstens 3 Positionen gleichzeitig; Hebel-Limit (Devisen 10×); Kosten-Filter 0,25 R; nach 3 % Tagesverlust Pause bis 00:00 UTC.
 4. **Claude fragen** (optional): Claude sieht das Signal, die letzten 40 Kerzen und die offenen Positionen und antwortet mit Genehmigen/Ablehnen plus Begründung. Claude kann Trades nur verhindern, nie selbst erfinden oder vergrößern.
 5. **Ausführen und protokollieren:** Simulierte Order inklusive Gebühren und Slippage, Zustand wird gespeichert, jeder Trade landet in `data/trades.csv`.
 
