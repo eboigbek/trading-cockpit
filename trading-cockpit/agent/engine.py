@@ -13,7 +13,7 @@ from .config import Config, SymbolConfig
 from .data import Candle
 from .risk import RiskManager
 from .montecarlo import describe, seed_for, simulate
-from .session import blackout, entry_time_ok, load_calendar, must_flatten
+from .session import blackout, entry_time_ok, is_fx, load_calendar, must_flatten
 from .strategy import Signal, generate_signal, opposite_cross
 
 log = logging.getLogger("agent.engine")
@@ -65,8 +65,7 @@ class TradingEngine:
         bar = candles[-1]
         st = self.broker.state
         iv = self.cfg.interval_min
-        fiat = {"USD", "EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"}
-        is_fx = sym.base in fiat and sym.quote in fiat
+        fx = is_fx(sym)
         self.risk.roll_day(bar.ts)
 
         # 1) Offene Position: Stop/Target innerhalb der Kerze, dann Zeit-/Signal-Ausstieg
@@ -76,7 +75,7 @@ class TradingEngine:
             t = self.broker.check_stops(sym, bar.high, bar.low, bar.ts, bar.open)
             if t:
                 res.closed.append(t)
-            elif is_fx and must_flatten(bar.ts, iv, self.cfg.hours):
+            elif fx and must_flatten(bar.ts, iv, self.cfg.hours):
                 res.closed.append(self.broker.close(sym, bar.close, bar.ts, "wochenende"))
             elif pos.bars_held >= self.cfg.strategy.max_hold_bars:
                 res.closed.append(self.broker.close(sym, bar.close, bar.ts, "max_haltedauer"))
@@ -88,7 +87,7 @@ class TradingEngine:
         # 2) Neues Signal nur, wenn flach, Markt offen und Kontobremse nicht ausgelöst
         if sym.name in st.positions or not (allow_entry or stale_reason):
             return res
-        if self.risk.brake_active() or (is_fx and not entry_time_ok(bar.ts, iv, self.cfg.hours)):
+        if self.risk.brake_active() or (fx and not entry_time_ok(bar.ts, iv, self.cfg.hours)):
             return res
         sig = generate_signal(sym.name, candles, self.cfg.strategy)
         if not sig:

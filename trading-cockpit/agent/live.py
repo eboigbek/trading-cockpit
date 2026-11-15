@@ -19,6 +19,7 @@ from .data import Candle, SyntheticFeed, fetch_candles
 from .engine import TradingEngine
 from .gate import progress
 from .montecarlo import describe
+from .session import in_market, is_fx
 
 log = logging.getLogger("agent.live")
 
@@ -99,6 +100,8 @@ class LiveAgent:
                 log.error("%s: Daten nicht verfügbar – %s", sym.name, e)
                 self._once(f"data:{sym.name}", "err", now, "warn", f"{sym.name}: Kursdaten nicht verfügbar")
                 continue
+            if is_fx(sym):   # Wochenend-Kerzen aussortieren (siehe session.in_market)
+                candles = [c for c in candles if in_market(c.ts, self.cfg.interval_min, self.cfg.hours)]
             if not candles:
                 continue
             markets[sym.name] = candles

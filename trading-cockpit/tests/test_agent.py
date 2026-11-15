@@ -726,3 +726,33 @@ class TestGuards(unittest.TestCase):
         self.assertAlmostEqual(s["payoff"], 2.0)
         self.assertAlmostEqual(s["kelly"], 1 / 3 - (2 / 3) / 2.0, places=3)   # = 0: kein Vorteil
         self.assertEqual(pro_stats([mk_trade(5)]), {"n": 0})
+
+
+class TestWeekendCandles(unittest.TestCase):
+    def test_weekend_candles_are_dropped_before_evaluation(self):
+        from agent.session import in_market
+        h = HoursConfig()
+        self.assertTrue(in_market(utc(2026, 11, 13, 21), 60, h))     # Freitag 21–22 Uhr
+        self.assertFalse(in_market(utc(2026, 11, 13, 22), 60, h))
+        self.assertFalse(in_market(utc(2026, 11, 15, 21), 60, h))    # Sonntag vor Öffnung
+        self.assertTrue(in_market(utc(2026, 11, 15, 22), 60, h))
+        days = [utc(2026, 11, d) for d in range(9, 17)]              # Mo 9.11. bis Mo 16.11.
+        kept = [datetime.fromtimestamp(t, tz=timezone.utc).day for t in days if in_market(t, 1440, h)]
+        self.assertEqual(kept, [9, 10, 11, 12, 13, 16])
+
+    def test_live_agent_ignores_weekend_candles_on_daily(self):
+        cfg = cfg_tmp()
+        cfg.hours.enabled = True
+        cfg.interval_min = 1440
+        cfg.symbols = [cfg.symbol("EUR/USD")]
+        start = utc(2026, 1, 5)                                      # ein Montag
+        series = [Candle(start + i * 86400, 1.1, 1.101, 1.099, 1.1 + 0.0001 * (i % 5)) for i in range(140)]
+        a = LiveAgent(cfg, fetcher=lambda s, iv: series, clock=lambda: series[-1].ts + 86400 + 60)
+        a.cycle()
+        with open(cfg.cockpit_file) as f:
+            d = json.load(f)
+        self.assertEqual(d["markets"][0]["spark_label"], "Letzte 30 Tage")
+        self.assertEqual(len(d["markets"][0]["closes"]), 30)
+        last = datetime.fromtimestamp(a.broker.state.last_bar_ts["EUR/USD"], tz=timezone.utc)
+        self.assertLess(last.weekday(), 5)
+        self.assertIn("Tages", d["strategy"]["detail"])

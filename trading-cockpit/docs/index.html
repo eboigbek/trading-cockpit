@@ -371,7 +371,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
           <span>Trend ${m.trend === "auf" ? "↗ aufwärts" : m.trend === "ab" ? "↘ abwärts" : "–"}</span>
           <span class="num">RSI ${m.rsi == null ? "–" : NF(0).format(m.rsi)}</span></div>
         ${sparkline(m.closes)}
-        <div class="small muted">${m.stale ? "Daten gerade nicht erreichbar · " : ""}Letzte 24 h · Stand ${dt(m.ts + d.interval_min * 60, false)}</div>
+        <div class="small muted">${m.stale ? "Daten gerade nicht erreichbar · " : ""}${esc(m.spark_label || "Letzte 24 h")} · Stand ${dt(m.ts + d.interval_min * 60, false)}</div>
       </div>`;
     }).join("") || `<div class="card empty">Noch keine Kursdaten – der erste Bot-Lauf kommt gleich.</div>`;
   }

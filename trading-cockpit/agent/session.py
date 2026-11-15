@@ -30,6 +30,25 @@ class Event:
     symbols: List[str]      # leer = gilt für alle Märkte
 
 
+FIAT = {"USD", "EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"}
+
+
+def is_fx(sym) -> bool:
+    """Devisenpaar (beide Seiten Währungen)? Nur dafür gelten die Handelszeiten."""
+    return sym.base in FIAT and sym.quote in FIAT
+
+
+def in_market(bar_ts: int, interval_min: int, h: HoursConfig) -> bool:
+    """Gehört diese Kerze zur Handelszeit? Wochenend-Kerzen dünner Kursquellen werden vor der
+    Auswertung aussortiert, damit Durchschnitte und Ausbruchsmarken wie im Strategie-Test (Kurse nur
+    aus der Handelszeit) gerechnet werden."""
+    if not h.enabled:
+        return True
+    if interval_min >= 1440:
+        return datetime.fromtimestamp(bar_ts + interval_min * 30, tz=timezone.utc).weekday() < 5
+    return fx_open(bar_ts, h)
+
+
 def _wd_hour(ts: int):
     d = datetime.fromtimestamp(ts, tz=timezone.utc)
     return d.weekday(), d.hour + d.minute / 60.0     # Montag = 0 ... Sonntag = 6

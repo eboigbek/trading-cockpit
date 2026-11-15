@@ -2,7 +2,7 @@
 
 **Cockpit:** https://eboigbek.github.io/trading-cockpit/
 
-Der Bot läuft automatisch über GitHub Actions (Start alle 5 Minuten, Handel auf 1-Stunden-Kerzen), auch wenn kein Computer an ist. Er handelt mit Spielgeld (10.000 USD), berücksichtigt Gebühren und Spreads und schreibt nach jedem Lauf seine Daten nach `data/`. Das Cockpit zeigt Kontostand, Märkte, Positionen, Gebühren, die Echtgeld-Freischaltung und das Protokoll.
+Der Bot läuft automatisch über GitHub Actions (Start alle 5 Minuten, Handel auf Tageskerzen), auch wenn kein Computer an ist. Er handelt mit Spielgeld (10.000 USD), berücksichtigt Gebühren und Spreads und schreibt nach jedem Lauf seine Daten nach `data/`. Das Cockpit zeigt Kontostand, Märkte, Positionen, Gebühren, die Echtgeld-Freischaltung und das Protokoll.
 
 ## Wo die Daten liegen
 
@@ -17,6 +17,8 @@ Der Code liegt im Zweig `main`. Kontostand, Trades und Cockpit-Daten liegen im Z
 ## Strategie (seit 06.11.2026)
 
 Die alte EMA-Crossover-Strategie auf 15-Minuten-Kerzen hatte im Spielgeld-Lauf keinen Vorteil (17,8 Tage, −41 %, 71 Trades, Profit-Faktor 0,11). Gründe: BTC-Gebühren von 0,8 % je Seite kosteten ~1,2 R pro Trade, USD/JPY-Kurse von Kraken waren unzuverlässig, und bei EUR/USD und GBP/USD lag die Trefferquote mit 21 % weit unter den nötigen 37 %.
+
+Stand 15.11.2026: Der Strategie-Test auf echten Kursen hat keine Variante bestanden. Auf 1-Stunden- und 15-Minuten-Kerzen verlieren alle. Auf Tageskerzen (10 Jahre) lag als einzige Familie der „Rücksetzer im Trend“ in beiden Testhälften im Plus, aber nicht deutlich genug, um Zufall auszuschließen. Der Bot läuft deshalb mit dieser Variante auf Tageskerzen nur als Beobachtung (etwa 10 Trades im Jahr); Echtgeld bleibt gesperrt.
 
 Jetzt:
 - **Märkte:** nur EUR/USD und GBP/USD (BTC und USD/JPY lassen sich per `config.json` wieder aufnehmen).

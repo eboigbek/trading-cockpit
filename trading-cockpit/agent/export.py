@@ -69,14 +69,16 @@ def market_info(name: str, candles: List[Candle], max_unchanged: float = 0.25, w
                 interval_min: int = 15) -> Dict:
     closes = [c.close for c in candles]
     last = closes[-1]
-    day = max(2, 24 * 60 // interval_min)          # Kerzen pro 24 h
+    day = max(1, 24 * 60 // interval_min)          # Kerzen pro 24 h
+    spark = day if interval_min < 1440 else 30     # Verlaufslinie: 24 h, bei Tageskerzen 30 Tage
     day_ago = closes[-day - 1] if len(closes) > day else closes[0]
     r = rsi(closes, 14)[-1]
     e = ema(closes, 100)[-1]
     return {
         "symbol": name, "price": last, "ts": candles[-1].ts,
         "change_24h_pct": round((last / day_ago - 1) * 100, 3) if day_ago else 0.0,
-        "closes": [round(c, 6) for c in closes[-day:]],
+        "closes": [round(c, 6) for c in closes[-spark:]],
+        "spark_label": "Letzte 24 h" if interval_min < 1440 else "Letzte 30 Tage",
         "rsi": round(r, 1) if r is not None else None,
         "trend": None if e is None else ("auf" if last > e else "ab"),
         "unchanged_share": round(unchanged_share(candles, window), 3),
@@ -90,11 +92,12 @@ def strategy_info(cfg: Config) -> Dict:
              "breakout": f"Ausbruch über {s.breakout_bars}-Kerzen-Hoch/-Tief",
              "pullback": f"Rücksetzer im Trend (RSI{s.pullback_rsi_period} "
                          f"{s.pullback_long_max:.0f}/{s.pullback_short_min:.0f})"}
-    tf = f"{cfg.interval_min // 60} h" if cfg.interval_min >= 60 else f"{cfg.interval_min} min"
+    tf = "Tageskerzen" if cfg.interval_min >= 1440 else \
+        f"{cfg.interval_min // 60} h-Kerzen" if cfg.interval_min >= 60 else f"{cfg.interval_min} min-Kerzen"
     session = "" if s.session_start_utc <= 0 and s.session_end_utc >= 24 else \
         f", Einstiege {s.session_start_utc:02d}–{s.session_end_utc:02d} Uhr UTC"
     return {"name": s.name, "label": names.get(s.name, s.name),
-            "detail": (f"{tf}-Kerzen, Trendfilter EMA{s.ema_trend}, Stop {s.stop_atr:g} ATR, "
+            "detail": (f"{tf}, Trendfilter EMA{s.ema_trend}, Stop {s.stop_atr:g} ATR, "
                        f"Ziel {s.take_profit_atr:g} ATR, max. {s.max_hold_bars} Kerzen{session}"),
             "max_cost_r": cfg.risk.max_cost_r}
 
