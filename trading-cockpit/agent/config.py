@@ -78,6 +78,34 @@ class RiskConfig:
     # Kosten-Filter: Gebühren + Slippage für Ein- und Ausstieg dürfen höchstens diesen Anteil des
     # riskierten Betrags (1 R) ausmachen. 0,25 = ein Viertel. Darüber wird das Signal ausgelassen.
     max_cost_r: float = 0.25
+    # Kontobremse: fällt das Konto so weit unter seinen Höchststand, eröffnet der Bot nichts mehr,
+    # bis das Konto zurückgesetzt wird (üblicher Standard bei Handelskonten: 10 %). 0 = aus.
+    max_total_drawdown_pct: float = 10.0
+    # Kommt ein Lauf später als so viele Minuten nach Kerzenschluss, wird nicht mehr eingestiegen:
+    # der Schlusskurs der Kerze wäre am echten Markt dann nicht mehr zu bekommen.
+    max_signal_age_min: int = 20
+    # EUR/USD und GBP/USD laufen meist gleich. Höchstens so viele Positionen in dieselbe
+    # Dollar-Richtung gleichzeitig (Klumpenrisiko). 0 = aus.
+    max_same_direction: int = 1
+
+
+@dataclass
+class HoursConfig:
+    """Handelszeiten für Devisen (siehe agent/session.py). Stunden in UTC."""
+    enabled: bool = True
+    close_fri_utc: float = 22.0            # Marktschluss am Freitag
+    open_sun_utc: float = 22.0             # Öffnung am Sonntag
+    no_entry_before_close_h: float = 3.0   # so lange vor Freitagsschluss kein neuer Einstieg
+    flat_before_weekend: bool = True       # offene Positionen vor dem Wochenende schließen
+
+
+@dataclass
+class NewsConfig:
+    """Sperrzeiten um Termine aus kalender.json (Zinsentscheide, Arbeitsmarkt, Inflation)."""
+    enabled: bool = True
+    file: str = "kalender.json"
+    before_min: int = 30
+    after_min: int = 60
 
 
 @dataclass
@@ -157,6 +185,8 @@ class Config:
     gate: GateConfig = field(default_factory=GateConfig)
     timemachine: TimeMachineConfig = field(default_factory=TimeMachineConfig)
     quality: DataQualityConfig = field(default_factory=DataQualityConfig)
+    hours: HoursConfig = field(default_factory=HoursConfig)
+    news: NewsConfig = field(default_factory=NewsConfig)
     live: LiveConfig = field(default_factory=LiveConfig)
 
     def symbol(self, name: str) -> SymbolConfig:
@@ -181,7 +211,8 @@ def load_config(path: str = "config.json") -> Config:
             setattr(cfg, key, raw[key])
     for section, cls in (("strategy", StrategyConfig), ("risk", RiskConfig), ("ai", AIConfig),
                          ("gate", GateConfig), ("live", LiveConfig),
-                         ("timemachine", TimeMachineConfig), ("quality", DataQualityConfig)):
+                         ("timemachine", TimeMachineConfig), ("quality", DataQualityConfig),
+                         ("hours", HoursConfig), ("news", NewsConfig)):
         if section in raw:
             current = asdict(getattr(cfg, section))
             current.update(raw[section])

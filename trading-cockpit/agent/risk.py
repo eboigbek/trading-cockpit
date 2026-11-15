@@ -35,7 +35,31 @@ class RiskManager:
         limit = st.day_start_equity * (1 - self.cfg.risk.max_daily_loss_pct / 100.0)
         return self.broker.equity() <= limit
 
-    def size(self, sym: SymbolConfig, price: float, stop: float) -> RiskDecision:
+    def drawdown_pct(self) -> float:
+        """Rückgang vom Höchststand in Prozent; schreibt den Höchststand fort."""
+        st = self.broker.state
+        eq = self.broker.equity()
+        st.peak_equity = max(st.peak_equity or self.cfg.risk.starting_cash, eq)
+        return (st.peak_equity - eq) / st.peak_equity * 100.0 if st.peak_equity > 0 else 0.0
+
+    def brake_active(self) -> bool:
+        """Kontobremse: einmal ausgelöst, bleibt sie bis zum Zurücksetzen des Kontos."""
+        lim = self.cfg.risk.max_total_drawdown_pct
+        st = self.broker.state
+        if lim > 0 and not st.flags.get("brake") and self.drawdown_pct() >= lim:
+            st.flags["brake"] = "1"
+        return lim > 0 and bool(st.flags.get("brake"))
+
+    @staticmethod
+    def usd_direction(sym: SymbolConfig, side: str) -> Optional[str]:
+        """'long' = setzt auf einen stärkeren Dollar, 'short' = auf einen schwächeren."""
+        if sym.quote == "USD":
+            return "short" if side == "long" else "long"
+        if sym.base == "USD":
+            return side
+        return None
+
+    def size(self, sym: SymbolConfig, price: float, stop: float, side: Optional[str] = None) -> RiskDecision:
         st = self.broker.state
         if sym.name in st.positions:
             return RiskDecision(False, reason="Position in diesem Symbol bereits offen")
@@ -43,6 +67,16 @@ class RiskManager:
             return RiskDecision(False, reason="Maximale Anzahl offener Positionen erreicht")
         if self.daily_loss_hit():
             return RiskDecision(False, reason="Tagesverlust-Limit erreicht – Pause bis 00:00 UTC")
+        if self.brake_active():
+            return RiskDecision(False, reason="Kontobremse aktiv – keine neuen Trades")
+        lim = self.cfg.risk.max_same_direction
+        want = self.usd_direction(sym, side) if side else None
+        if lim > 0 and want:
+            same = sum(1 for p in st.positions.values()
+                       if self.usd_direction(self.cfg.symbol(p.symbol), p.side) == want)
+            if same >= lim:
+                return RiskDecision(False, reason="Klumpenrisiko: schon eine Position in dieselbe "
+                                                  "Dollar-Richtung offen")
 
         equity = self.broker.equity()
         if equity <= 0:

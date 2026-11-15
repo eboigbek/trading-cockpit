@@ -32,6 +32,7 @@ class Position:
     reason: str = ""
     ai_note: str = ""
     mc: Dict = field(default_factory=dict)     # Time-Machine-Ergebnis beim Einstieg
+    risk: float = 0.0     # riskierter Betrag bis zum Stop beim Einstieg, in Kontowährung (= 1 R)
 
 
 @dataclass
@@ -52,6 +53,7 @@ class Trade:
     turnover: float = 0.0    # gehandelter Nominalwert Ein- + Ausstieg, in Kontowährung (Basis der Gebühren)
     mc_p_tp: float = -1.0    # von der Time Machine vorhergesagte Ziel-Wahrscheinlichkeit (-1 = keine)
     mc_ev_r: float = 0.0
+    r: float = 0.0           # Ergebnis nach Gebühren in R (Vielfache des riskierten Betrags)
 
 
 @dataclass
@@ -69,6 +71,8 @@ class AccountState:
     flags: Dict[str, str] = field(default_factory=dict)               # z.B. zuletzt gemeldeter Modus-Status
     mc_skipped: int = 0                                               # von der Time Machine aussortierte Signale
     last_mc: Dict = field(default_factory=dict)                       # letzte Simulation (fürs Cockpit)
+    peak_equity: float = 0.0                                          # Höchststand des Kontos (für die Kontobremse)
+    late_skipped: int = 0                                             # Signale, für die der Lauf zu spät kam
 
 
 def to_account(amount_quote: float, price: float, sym: SymbolConfig, account_ccy: str) -> float:
@@ -110,6 +114,8 @@ class PaperBroker:
             flags=raw.get("flags", {}),
             mc_skipped=raw.get("mc_skipped", 0),
             last_mc=raw.get("last_mc", {}),
+            peak_equity=raw.get("peak_equity", 0.0),
+            late_skipped=raw.get("late_skipped", 0),
         )
 
     def save(self) -> None:
@@ -186,7 +192,9 @@ class PaperBroker:
             raise RuntimeError(f"{sym.name}: Position bereits offen")
         fill = self._slip(price, side, opening=True)
         self.state.cash -= self._fee(sym, units, fill)
-        pos = Position(sym.name, side, units, fill, stop, take_profit, ts, 0, reason, ai_note, dict(mc or {}))
+        risk = to_account(abs(fill - stop) * units, stop, sym, self.cfg.risk.account_currency)
+        pos = Position(sym.name, side, units, fill, stop, take_profit, ts, 0, reason, ai_note, dict(mc or {}),
+                       round(risk, 6))
         self.state.positions[sym.name] = pos
         self.mark(sym, price)
         return pos
@@ -207,24 +215,29 @@ class PaperBroker:
         t = Trade(sym.name, pos.side, pos.units, pos.entry, fill, pos.opened_ts, ts,
                   round(gross - exit_fee - entry_fee, 6), round(entry_fee + exit_fee, 6),
                   exit_reason, pos.reason, pos.ai_note, round(gross, 6), round(turnover, 4),
-                  pos.mc.get("p_tp", -1.0), pos.mc.get("ev_r", 0.0))
+                  pos.mc.get("p_tp", -1.0), pos.mc.get("ev_r", 0.0),
+                  round((gross - exit_fee - entry_fee) / pos.risk, 4) if pos.risk > 0 else 0.0)
         self.state.trades.append(t)
         self.mark(sym, price)
         self._append_trade_csv(t)
         return t
 
-    def check_stops(self, sym: SymbolConfig, high: float, low: float, ts: int) -> Optional[Trade]:
+    def check_stops(self, sym: SymbolConfig, high: float, low: float, ts: int,
+                    open_: Optional[float] = None) -> Optional[Trade]:
         """Prüft, ob die Kerze Stop-Loss oder Take-Profit erreicht hat.
-        Werden beide in derselben Kerze berührt, wird konservativ der Stop angenommen."""
+        Werden beide in derselben Kerze berührt, wird konservativ der Stop angenommen.
+        Eröffnet die Kerze schon jenseits des Stops (Kurslücke), gilt der schlechtere Eröffnungskurs."""
         pos = self.state.positions.get(sym.name)
         if not pos:
             return None
         if pos.side == "long":
             hit_sl, hit_tp = low <= pos.stop, high >= pos.take_profit
+            fill = min(pos.stop, open_) if open_ is not None else pos.stop
         else:
             hit_sl, hit_tp = high >= pos.stop, low <= pos.take_profit
+            fill = max(pos.stop, open_) if open_ is not None else pos.stop
         if hit_sl:
-            return self.close(sym, pos.stop, ts, "stop_loss")
+            return self.close(sym, fill, ts, "stop_loss")
         if hit_tp:
             return self.close(sym, pos.take_profit, ts, "take_profit")
         return None

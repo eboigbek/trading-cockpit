@@ -72,9 +72,11 @@ class BacktestResult:
 
 
 def run_backtest(cfg: Config, data: Dict[str, List[Candle]],
-                 reviewer: Optional[AIReviewer] = None) -> BacktestResult:
+                 reviewer: Optional[AIReviewer] = None, events: Optional[List] = None) -> BacktestResult:
     broker = PaperBroker(cfg, persist=False)
     engine = TradingEngine(cfg, broker, reviewer)
+    if events is not None:          # Termine für Sperrzeiten vorgeben (z.B. historische im Strategie-Test)
+        engine.events = events
     warmup = min_bars(cfg.strategy)
 
     index: Dict[str, Dict[int, int]] = {n: {c.ts: i for i, c in enumerate(cs)} for n, cs in data.items()}

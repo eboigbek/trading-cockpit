@@ -188,6 +188,8 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
 
     <div class="section card" id="tm"></div>
 
+    <div class="section card" id="guards"></div>
+
     <div class="section grid two">
       <div class="card" id="gate"></div>
       <div class="card" id="fees"></div>
@@ -234,7 +236,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     return h < 48 ? `vor ${h} Std. ${m % 60} Min.` : `vor ${Math.floor(h / 24)} Tagen`;
   };
   const sideDe = (s) => (s === "long" ? "Kauf (Long)" : "Verkauf (Short)");
-  const reasonDe = { stop_loss: "Stop-Loss", take_profit: "Gewinnziel", gegensignal: "Gegensignal", max_haltedauer: "Max. Haltedauer", not_aus: "Not-Aus", backtest_ende: "Ende" };
+  const reasonDe = { stop_loss: "Stop-Loss", take_profit: "Gewinnziel", gegensignal: "Gegensignal", max_haltedauer: "Max. Haltedauer", not_aus: "Not-Aus", backtest_ende: "Ende", wochenende: "Wochenende" };
 
   // ---------- Datenquelle bestimmen ----------
   const params = new URLSearchParams(location.search);
@@ -347,6 +349,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
       ["Trades", a.trades],
       ["Trefferquote", a.win_rate == null ? "–" : pct(a.win_rate, 1, false)],
       ["Profit-Faktor", a.profit_factor == null ? "–" : NF(2).format(a.profit_factor)],
+      ["Ø je Trade", d.stats && d.stats.n ? (d.stats.expectancy_r > 0 ? "+" : "") + NF(2).format(d.stats.expectancy_r) + " R" : "–"],
       ["Gebühren gesamt", money(a.fees_total, ccy)],
       ["Größter Rückgang", pct(a.max_drawdown_pct, 1, false)],
       ["Läuft seit", a.paper_start ? dt(a.paper_start) : "–"],
@@ -413,6 +416,32 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
           <dt>Tatsächlich: Ziel erreicht</dt><dd>${c ? pct(c.actual_tp * 100, 0, false) : "–"}</dd>
           <dt>Trades mit Vorhersage</dt><dd>${c ? c.n : 0}</dd></dl>
           <p class="small muted" style="margin-bottom:0">Liegen Vorhersage und Wirklichkeit über viele Trades weit auseinander, ist die Simulation zu optimistisch oder zu vorsichtig.</p></div></div>`;
+  }
+
+  function renderGuards(d) {
+    const g = d.guards;
+    if (!g) { $("guards").innerHTML = ""; return; }
+    const ok = (on, text) => `<dd>${on ? text : "aus"}</dd>`;
+    const ne = g.next_event;
+    const s = d.stats && d.stats.n ? d.stats : null;
+    $("guards").innerHTML = `<h2>Schutzregeln</h2>
+      <p class="small t2" style="margin-top:0">Diese Regeln gelten vor jedem Einstieg, zusätzlich zu Kosten-Filter, Time Machine und Tagesverlust-Limit.</p>
+      <dl class="limits num">
+        <dt>Devisenmarkt</dt>${ok(g.hours, g.market_open ? "offen" : "geschlossen (Wochenende) · kein Einstieg")}
+        <dt>Sperrzeit um Termine</dt>${ok(g.news, `${g.news_before_min} min davor bis ${g.news_after_min} min danach`)}
+        <dt>Nächster Termin</dt><dd>${ne ? `${esc(ne.name)} · ${dt(ne.ts)}` : "keiner eingetragen – Kalender nachpflegen"}</dd>
+        <dt>Kontobremse</dt>${ok(g.brake_pct > 0, g.brake_active ? `<span class="neg">ausgelöst · keine neuen Trades</span>` : `bei ${NF(0).format(g.brake_pct)} % unter Höchststand · jetzt ${NF(1).format(g.drawdown_now_pct)} %`)}
+        <dt>Zu späte Läufe</dt><dd>${g.late_skipped} Signale ausgelassen (Grenze ${g.max_signal_age_min} min)</dd>
+        <dt>Gleiche Dollar-Richtung</dt>${ok(g.max_same_direction > 0, `höchstens ${g.max_same_direction} Position`)}
+      </dl>
+      ${s ? `<h2 style="margin-top:20px">Kennzahlen in R</h2>
+      <dl class="limits num">
+        <dt>Ø Ergebnis je Trade</dt><dd class="${cls(s.expectancy_r)}">${(s.expectancy_r > 0 ? "+" : "") + NF(2).format(s.expectancy_r)} R</dd>
+        <dt>Ø Gewinn / Ø Verlust</dt><dd>${NF(2).format(s.avg_win_r)} R / ${NF(2).format(s.avg_loss_r)} R</dd>
+        <dt>Kelly-Anteil</dt><dd>${s.kelly == null ? "–" : NF(2).format(s.kelly)}</dd>
+        <dt>Zufallstest (t-Wert)</dt><dd>${NF(2).format(s.t)}</dd>
+      </dl>
+      <p class="small muted" style="margin-bottom:0">1 R = der Betrag, der bei einem Trade riskiert wird. Ein negativer Kelly-Anteil heißt: Die Strategie verliert im Schnitt.</p>` : ""}`;
   }
 
   function renderGate(d) {
@@ -516,7 +545,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center;lin
     $("app").classList.remove("skeleton");
     $("app").style.display = "";
     renderHeader(d); renderAccount(d); renderMarkets(d); renderPositions(d);
-    renderTimeMachine(d); renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
+    renderTimeMachine(d); renderGuards(d); renderGate(d); renderFees(d); renderEvents(d); renderControl(d); renderTrades(d);
     $("src").innerHTML = REPO_URL ? `Daten: <a href="${REPO_URL}" target="_blank" rel="noopener">${esc(repo.owner)}/${esc(repo.name)}</a> · aktualisiert sich jede Minute` : "";
   }
 

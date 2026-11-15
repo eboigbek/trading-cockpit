@@ -32,12 +32,34 @@ def t_stat(trades: List[Trade]) -> float:
     n = len(trades)
     if n < 2:
         return 0.0
-    xs = [t.pnl for t in trades]
+    xs = [t.r for t in trades]
+    if not any(xs):                      # ältere Trades ohne R-Angabe: Beträge nehmen
+        xs = [t.pnl for t in trades]
     m = sum(xs) / n
     var = sum((x - m) ** 2 for x in xs) / (n - 1)
     if var <= 0:
         return 0.0
     return m / (var ** 0.5 / n ** 0.5)
+
+
+def pro_stats(trades: List[Trade]) -> Dict:
+    """Kennzahlen in R (1 R = riskierter Betrag je Trade), unabhängig von der Kontogröße."""
+    rs = [t.r for t in trades if t.r]
+    if not rs:
+        return {"n": 0}
+    wins = [r for r in rs if r > 0]
+    losses = [-r for r in rs if r <= 0]
+    p = len(wins) / len(rs)
+    avg_win = sum(wins) / len(wins) if wins else 0.0
+    avg_loss = sum(losses) / len(losses) if losses else 0.0
+    payoff = avg_win / avg_loss if avg_loss > 0 else None
+    # Kelly-Anteil: p - (1 - p) / Auszahlungsverhältnis. Negativ = Strategie verliert im Schnitt.
+    kelly = p - (1 - p) / payoff if payoff else None
+    return {"n": len(rs), "expectancy_r": round(sum(rs) / len(rs), 3),
+            "avg_win_r": round(avg_win, 2), "avg_loss_r": round(avg_loss, 2),
+            "payoff": round(payoff, 2) if payoff else None,
+            "kelly": round(kelly, 3) if kelly is not None else None,
+            "t": round(t_stat(trades), 2)}
 
 
 def progress(state: AccountState, gate: GateConfig, starting_cash: float, now_ts: int) -> Dict:

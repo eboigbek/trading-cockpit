@@ -13,6 +13,7 @@ from .config import Config, SymbolConfig
 from .data import Candle
 from .risk import RiskManager
 from .montecarlo import describe, seed_for, simulate
+from .session import blackout, entry_time_ok, load_calendar, must_flatten
 from .strategy import Signal, generate_signal, opposite_cross
 
 log = logging.getLogger("agent.engine")
@@ -27,7 +28,7 @@ class BarResult:
     opened: bool = False
     skipped_reason: str = ""
     mc: Optional[dict] = None
-    skip_kind: str = ""          # "quality", "cost", "timemachine", "risk", "ai"
+    skip_kind: str = ""          # "late", "news", "quality", "cost", "timemachine", "risk", "ai"
 
 
 def cost_r(price: float, stop: float, fee_pct: float, slippage_pct: float) -> float:
@@ -53,35 +54,59 @@ class TradingEngine:
         self.broker = broker
         self.risk = RiskManager(cfg, broker)
         self.reviewer = reviewer
+        self.events = load_calendar(cfg.news.file) if cfg.news.enabled else []
 
-    def on_bar(self, sym: SymbolConfig, candles: List[Candle], allow_entry: bool = True) -> BarResult:
+    def on_bar(self, sym: SymbolConfig, candles: List[Candle], allow_entry: bool = True,
+               stale_reason: str = "") -> BarResult:
         """`candles` = alle bisher abgeschlossenen Kerzen; die letzte ist neu.
-        allow_entry=False: nur Ausstiege prüfen (z.B. beim Nachholen verpasster Kerzen)."""
+        allow_entry=False: nur Ausstiege prüfen (z.B. beim Nachholen verpasster Kerzen).
+        stale_reason: der Lauf kam zu spät – ein Signal wird nur noch protokolliert."""
         res = BarResult(sym.name)
         bar = candles[-1]
         st = self.broker.state
+        iv = self.cfg.interval_min
+        fiat = {"USD", "EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"}
+        is_fx = sym.base in fiat and sym.quote in fiat
         self.risk.roll_day(bar.ts)
 
         # 1) Offene Position: Stop/Target innerhalb der Kerze, dann Zeit-/Signal-Ausstieg
         pos = st.positions.get(sym.name)
         if pos:
             pos.bars_held += 1
-            t = self.broker.check_stops(sym, bar.high, bar.low, bar.ts)
+            t = self.broker.check_stops(sym, bar.high, bar.low, bar.ts, bar.open)
             if t:
                 res.closed.append(t)
+            elif is_fx and must_flatten(bar.ts, iv, self.cfg.hours):
+                res.closed.append(self.broker.close(sym, bar.close, bar.ts, "wochenende"))
             elif pos.bars_held >= self.cfg.strategy.max_hold_bars:
                 res.closed.append(self.broker.close(sym, bar.close, bar.ts, "max_haltedauer"))
             elif opposite_cross(pos.side, candles, self.cfg.strategy):
                 res.closed.append(self.broker.close(sym, bar.close, bar.ts, "gegensignal"))
         self.broker.mark(sym, bar.close)
+        self.risk.drawdown_pct()   # Höchststand fortschreiben
 
-        # 2) Neues Signal nur, wenn flach
-        if sym.name in st.positions or not allow_entry:
+        # 2) Neues Signal nur, wenn flach, Markt offen und Kontobremse nicht ausgelöst
+        if sym.name in st.positions or not (allow_entry or stale_reason):
+            return res
+        if self.risk.brake_active() or (is_fx and not entry_time_ok(bar.ts, iv, self.cfg.hours)):
             return res
         sig = generate_signal(sym.name, candles, self.cfg.strategy)
         if not sig:
             return res
         res.signal = sig
+
+        # 2·) Lauf kam zu spät: der Kerzenschlusskurs ist nicht mehr zu bekommen
+        if stale_reason:
+            st.late_skipped += 1
+            res.skip_kind, res.skipped_reason = "late", stale_reason
+            return res
+
+        # 2··) Sperrzeit um einen angekündigten Termin
+        ev = blackout(bar.ts + iv * 60, sym.name, self.events, self.cfg.news.before_min,
+                      self.cfg.news.after_min) if self.cfg.news.enabled else None
+        if ev:
+            res.skip_kind, res.skipped_reason = "news", f"Sperrzeit um „{ev.name}“ – kein Einstieg"
+            return res
 
         # 2a) Datenqualität: bei eingefrorenen/illiquiden Kursen nicht handeln
         share = unchanged_share(candles, self.cfg.quality.window_bars)
@@ -100,7 +125,7 @@ class TradingEngine:
                                   f"(Stop zu nah für die Gebühren)")
             return res
 
-        decision = self.risk.size(sym, sig.price, sig.stop)
+        decision = self.risk.size(sym, sig.price, sig.stop, sig.side)
         if not decision.allowed:
             res.skip_kind = "risk"
             res.skipped_reason = decision.reason

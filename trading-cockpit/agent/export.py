@@ -9,7 +9,8 @@ from . import vault
 from .broker import PaperBroker, Trade
 from .config import Config
 from .data import Candle
-from .gate import max_drawdown_pct, profit_factor, progress
+from .gate import max_drawdown_pct, pro_stats, profit_factor, progress
+from .session import fx_open, next_event
 from .engine import unchanged_share
 from .indicators import ema, rsi
 
@@ -98,9 +99,27 @@ def strategy_info(cfg: Config) -> Dict:
             "max_cost_r": cfg.risk.max_cost_r}
 
 
+def guards_info(cfg: Config, broker: PaperBroker, now_ts: int, events: List) -> Dict:
+    """Schutzregeln und ihr aktueller Zustand (fürs Cockpit)."""
+    st = broker.state
+    peak = st.peak_equity or cfg.risk.starting_cash
+    ne = next_event(now_ts, events)
+    return {
+        "hours": cfg.hours.enabled,
+        "market_open": fx_open(now_ts, cfg.hours) if cfg.hours.enabled else True,
+        "news": cfg.news.enabled, "news_before_min": cfg.news.before_min, "news_after_min": cfg.news.after_min,
+        "next_event": {"ts": ne.ts, "name": ne.name, "symbols": ne.symbols} if ne else None,
+        "events_left": sum(1 for e in events if e.ts >= now_ts),
+        "brake_pct": cfg.risk.max_total_drawdown_pct, "brake_active": bool(st.flags.get("brake")),
+        "drawdown_now_pct": round((peak - broker.equity()) / peak * 100, 2) if peak > 0 else 0.0,
+        "max_signal_age_min": cfg.risk.max_signal_age_min, "late_skipped": st.late_skipped,
+        "max_same_direction": cfg.risk.max_same_direction,
+    }
+
+
 def build(cfg: Config, broker: PaperBroker, now_ts: int, markets: Dict[str, List[Candle]],
           ai_active: bool, ai_model: str, mode_requested: str, stop: bool,
-          mode_note: str, prev: Optional[Dict] = None) -> Dict:
+          mode_note: str, prev: Optional[Dict] = None, events: Optional[List] = None) -> Dict:
     st = broker.state
     start = cfg.risk.starting_cash
     eq = broker.equity()
@@ -146,6 +165,8 @@ def build(cfg: Config, broker: PaperBroker, now_ts: int, markets: Dict[str, List
         "events": list(reversed(st.events[-80:])),
         "gate": progress(st, cfg.gate, start, now_ts),
         "time_machine": time_machine_info(cfg, st),
+        "stats": pro_stats(trades),
+        "guards": guards_info(cfg, broker, now_ts, events or []),
         "limits": {
             "paper": {"risk_per_trade_pct": cfg.risk.risk_per_trade_pct,
                       "max_daily_loss_pct": cfg.risk.max_daily_loss_pct,

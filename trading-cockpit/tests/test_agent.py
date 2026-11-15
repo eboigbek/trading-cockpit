@@ -32,6 +32,13 @@ def cfg_tmp():
     cfg.symbols = list(LEGACY_SYMBOLS)
     cfg.strategy.name = "ema_cross"
     cfg.risk.max_cost_r = 99.0
+    # ... und ohne die Schutzregeln (Handelszeiten, Sperrzeiten, Kontobremse, Signal-Alter,
+    # Klumpenrisiko); die haben eigene Tests in TestGuards
+    cfg.hours.enabled = False
+    cfg.news.enabled = False
+    cfg.risk.max_total_drawdown_pct = 0.0
+    cfg.risk.max_signal_age_min = 10 ** 6
+    cfg.risk.max_same_direction = 0
     return cfg
 
 
@@ -566,3 +573,156 @@ class TestQuietRuns(unittest.TestCase):
         a.cycle()
         self.assertGreater(json.load(open(cfg.cockpit_file))["generated_at"], gen2)
         self.assertGreater(m1, 0)
+
+
+# ---------------------------------------------------------------------------
+# Schutzregeln: Handelszeiten, Sperrzeiten, Kontobremse, Kurslücken, R-Kennzahlen
+# ---------------------------------------------------------------------------
+from agent.config import HoursConfig  # noqa: E402
+from agent.gate import pro_stats  # noqa: E402
+from agent.session import (Event, blackout, entry_time_ok, fx_open, load_calendar,  # noqa: E402
+                           must_flatten, to_ts)
+
+
+def utc(y, m, d, h=0, mi=0):
+    return int(datetime(y, m, d, h, mi, tzinfo=timezone.utc).timestamp())
+
+
+def cfg_guards():
+    cfg = cfg_tmp()
+    cfg.hours.enabled = True
+    cfg.news.enabled = True
+    cfg.risk.max_total_drawdown_pct = 10.0
+    cfg.risk.max_same_direction = 1
+    return cfg
+
+
+def forced_signal(side="long"):
+    """Ersetzt die Strategie durch ein festes Signal (für Tests der Regeln davor/danach)."""
+    import agent.engine as E
+    from agent.strategy import Signal
+    orig = E.generate_signal
+    k = 0.99 if side == "long" else 1.01
+    E.generate_signal = lambda name, c, scfg: Signal(name, side, c[-1].close, c[-1].close * k,
+                                                     c[-1].close * (2 - k) ** 2, "test")
+    return lambda: setattr(E, "generate_signal", orig)
+
+
+def hourly(start_ts, n, price=1.1):
+    return [Candle(start_ts + i * 3600, price, price * 1.0005, price * 0.9995, price * (1 + 0.0001 * (i % 3)))
+            for i in range(n)]
+
+
+class TestGuards(unittest.TestCase):
+    def test_fx_hours(self):
+        h = HoursConfig()
+        self.assertTrue(fx_open(utc(2026, 11, 13, 21, 59), h))    # Freitag kurz vor Schluss
+        self.assertFalse(fx_open(utc(2026, 11, 13, 22, 0), h))
+        self.assertFalse(fx_open(utc(2026, 11, 14, 12, 0), h))    # Samstag
+        self.assertFalse(fx_open(utc(2026, 11, 15, 21, 59), h))   # Sonntag vor Öffnung
+        self.assertTrue(fx_open(utc(2026, 11, 15, 22, 0), h))
+        # Stundenkerze, die Freitag 18:00 schließt: Einstieg erlaubt; 19:00: zu nah am Schluss
+        self.assertTrue(entry_time_ok(utc(2026, 11, 13, 17), 60, h))
+        self.assertFalse(entry_time_ok(utc(2026, 11, 13, 18), 60, h))
+        self.assertFalse(must_flatten(utc(2026, 11, 13, 19), 60, h))
+        self.assertTrue(must_flatten(utc(2026, 11, 13, 20), 60, h))  # schließt 21:00, nächste wäre zu
+        # Tageskerzen: nur Wochenend-Kerzen überspringen, nie zwangsschließen
+        self.assertTrue(entry_time_ok(utc(2026, 11, 13), 1440, h))
+        self.assertFalse(entry_time_ok(utc(2026, 11, 14), 1440, h))
+        self.assertFalse(must_flatten(utc(2026, 11, 13), 1440, h))
+
+    def test_calendar_times_and_blackout(self):
+        self.assertEqual(to_ts("2026-12-09 14:00", "America/New_York"), utc(2026, 12, 9, 19))  # Winterzeit
+        self.assertEqual(to_ts("2026-07-29 14:00", "America/New_York"), utc(2026, 7, 29, 18))  # Sommerzeit
+        ev = [Event(utc(2026, 12, 17, 13, 15), "EZB", ["EUR/USD"])]
+        self.assertIsNotNone(blackout(utc(2026, 12, 17, 12, 46), "EUR/USD", ev, 30, 60))
+        self.assertIsNone(blackout(utc(2026, 12, 17, 12, 44), "EUR/USD", ev, 30, 60))
+        self.assertIsNone(blackout(utc(2026, 12, 17, 13, 15), "GBP/USD", ev, 30, 60))
+        self.assertIsNone(blackout(utc(2026, 12, 17, 14, 16), "EUR/USD", ev, 30, 60))
+        here = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "kalender.json")
+        cal = load_calendar(here)
+        self.assertGreaterEqual(len(cal), 9)
+        self.assertEqual(cal, sorted(cal, key=lambda e: e.ts))
+        self.assertEqual(load_calendar("gibt-es-nicht.json"), [])
+
+    def test_gap_fills_at_open_and_r_multiple(self):
+        cfg = cfg_tmp()
+        b = PaperBroker(cfg, persist=False)
+        eur = cfg.symbol("EUR/USD")
+        b.open(eur, "long", 50_000, 1.1000, 1.0980, 1.1040, ts=0)
+        t = b.check_stops(eur, high=1.0960, low=1.0940, ts=1, open_=1.0950)   # Lücke unter den Stop
+        self.assertEqual(t.exit_reason, "stop_loss")
+        self.assertLess(t.exit, 1.0951)
+        self.assertLess(t.r, -2.0)                       # Verlust größer als geplant (1 R)
+        b.open(eur, "long", 50_000, 1.1000, 1.0980, 1.1040, ts=2)
+        t2 = b.check_stops(eur, high=1.1005, low=1.0975, ts=3, open_=1.1000)  # normaler Stop
+        self.assertAlmostEqual(t2.r, -1.0, delta=0.15)
+
+    def test_account_brake_latches(self):
+        cfg = cfg_guards()
+        b = PaperBroker(cfg, persist=False)
+        rm = RiskManager(cfg, b)
+        eur = cfg.symbol("EUR/USD")
+        self.assertFalse(rm.brake_active())
+        self.assertTrue(rm.size(eur, 1.1, 1.09, "long").allowed)
+        b.state.cash = 8_990.0                            # -10,1 % vom Höchststand
+        self.assertTrue(rm.brake_active())
+        self.assertFalse(rm.size(eur, 1.1, 1.09, "long").allowed)
+        b.state.cash = 9_900.0                            # Erholung löst die Bremse nicht
+        self.assertTrue(rm.brake_active())
+
+    def test_same_dollar_direction_limit(self):
+        cfg = cfg_guards()
+        b = PaperBroker(cfg, persist=False)
+        rm = RiskManager(cfg, b)
+        b.open(cfg.symbol("EUR/USD"), "long", 10_000, 1.1, 1.09, 1.12, ts=0)
+        gbp = cfg.symbol("GBP/USD")
+        self.assertFalse(rm.size(gbp, 1.3, 1.29, "long").allowed)     # wieder gegen den Dollar
+        self.assertTrue(rm.size(gbp, 1.3, 1.31, "short").allowed)
+        self.assertFalse(rm.size(cfg.symbol("USD/JPY"), 150, 151, "short").allowed)  # auch gegen den Dollar
+
+    def test_engine_weekend_news_and_late(self):
+        cfg = cfg_guards()
+        cfg.interval_min = 60
+        eur = cfg.symbol("EUR/USD")
+        restore = forced_signal("long")
+        try:
+            # Mittwoch: Einstieg; Sperrzeit: kein Einstieg; zu spät: kein Einstieg, wird gezählt
+            wed = hourly(utc(2026, 11, 11, 0), 12)
+            eng = TradingEngine(cfg, PaperBroker(cfg, persist=False))
+            self.assertTrue(eng.on_bar(eur, wed).opened)
+            eng = TradingEngine(cfg, PaperBroker(cfg, persist=False))
+            eng.events = [Event(wed[-1].ts + 3600 + 600, "Test-Termin", [])]
+            r = eng.on_bar(eur, wed)
+            self.assertEqual((r.opened, r.skip_kind), (False, "news"))
+            eng = TradingEngine(cfg, PaperBroker(cfg, persist=False))
+            r = eng.on_bar(eur, wed, allow_entry=False, stale_reason="zu spät")
+            self.assertEqual((r.opened, r.skip_kind, eng.broker.state.late_skipped), (False, "late", 1))
+            # Freitag: Einstieg um 15:00 erlaubt, Position wird mit der Kerze bis 21:00 geschlossen
+            fri = hourly(utc(2026, 11, 13, 0), 21)       # letzte Kerze 20:00–21:00
+            eng = TradingEngine(cfg, PaperBroker(cfg, persist=False))
+            self.assertTrue(eng.on_bar(eur, fri[:15]).opened)
+            reasons = []
+            for i in range(16, 22):
+                reasons += [t.exit_reason for t in eng.on_bar(eur, fri[:i]).closed]
+            self.assertEqual(reasons, ["wochenende"])
+            self.assertFalse(eng.on_bar(eur, fri).opened)  # und kein neuer Einstieg mehr
+            # Samstag (dünne Kurse mancher Quellen): gar kein Signal
+            sat = hourly(utc(2026, 11, 14, 0), 12)
+            eng = TradingEngine(cfg, PaperBroker(cfg, persist=False))
+            self.assertIsNone(eng.on_bar(eur, sat).signal)
+        finally:
+            restore()
+
+    def test_pro_stats(self):
+        ts = []
+        for r in [2.0, -1.0, -1.0, 2.0, -1.0, -1.0]:
+            t = mk_trade(100 * r)
+            t.r = r
+            ts.append(t)
+        s = pro_stats(ts)
+        self.assertEqual(s["n"], 6)
+        self.assertAlmostEqual(s["expectancy_r"], 0.0)
+        self.assertAlmostEqual(s["payoff"], 2.0)
+        self.assertAlmostEqual(s["kelly"], 1 / 3 - (2 / 3) / 2.0, places=3)   # = 0: kein Vorteil
+        self.assertEqual(pro_stats([mk_trade(5)]), {"n": 0})

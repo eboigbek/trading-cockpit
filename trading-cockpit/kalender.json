@@ -1,0 +1,14 @@
+{
+  "hinweis": "Termine, um die der Bot nicht einsteigt (30 Minuten davor bis 60 Minuten danach, einstellbar in config.json unter news). Quelle: Trado, Aktien-Grundgerüst vom 15.11.2026. 'zeit' ist Ortszeit in der Zeitzone 'tz'. 'maerkte' leer = alle Märkte. Termine mit 'geprueft': false stammen aus dem üblichen Rhythmus und sind nicht gegen die Behörde geprüft.",
+  "termine": [
+    {"zeit": "2026-11-18 14:00", "tz": "America/New_York", "name": "Fed-Protokoll", "maerkte": [], "geprueft": false},
+    {"zeit": "2026-11-25 08:30", "tz": "America/New_York", "name": "US-Konsumpreise (PCE)", "maerkte": [], "geprueft": false},
+    {"zeit": "2026-12-04 08:30", "tz": "America/New_York", "name": "US-Arbeitsmarkt", "maerkte": [], "geprueft": true},
+    {"zeit": "2026-12-09 14:00", "tz": "America/New_York", "name": "Fed-Zinsentscheid", "maerkte": [], "geprueft": true},
+    {"zeit": "2026-12-09 14:30", "tz": "America/New_York", "name": "Fed-Pressekonferenz", "maerkte": [], "geprueft": true},
+    {"zeit": "2026-12-10 08:30", "tz": "America/New_York", "name": "US-Verbraucherpreise", "maerkte": [], "geprueft": true},
+    {"zeit": "2026-12-17 12:00", "tz": "Europe/London", "name": "Bank of England", "maerkte": ["GBP/USD"], "geprueft": true},
+    {"zeit": "2026-12-17 14:15", "tz": "Europe/Berlin", "name": "EZB-Zinsentscheid", "maerkte": ["EUR/USD"], "geprueft": true},
+    {"zeit": "2026-12-17 14:45", "tz": "Europe/Berlin", "name": "EZB-Pressekonferenz", "maerkte": ["EUR/USD"], "geprueft": true}
+  ]
+}

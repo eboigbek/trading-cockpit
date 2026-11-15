@@ -113,7 +113,13 @@ class LiveAgent:
             new_idx = [i for i, c in enumerate(candles) if c.ts > last]
             for n, i in enumerate(new_idx):
                 newest = n == len(new_idx) - 1
-                res = self.engine.on_bar(sym, candles[: i + 1], allow_entry=newest and not ctl.stop)
+                # Wie lange ist der Kerzenschluss her? Zu spät = Signal nur noch protokollieren.
+                age_min = (now - candles[i].ts - self.cfg.interval_min * 60) // 60
+                limit = max(self.cfg.risk.max_signal_age_min, self.cfg.interval_min // 10)
+                stale = (f"Lauf kam {age_min} min nach Kerzenschluss (erlaubt: {limit}) – der Kurs wäre "
+                         f"nicht mehr zu bekommen") if newest and not ctl.stop and age_min > limit and not self.feed else ""
+                res = self.engine.on_bar(sym, candles[: i + 1], allow_entry=newest and not ctl.stop and not stale,
+                                         stale_reason=stale)
                 processed += 1
                 self._report(sym, candles[i], res)
             if new_idx:
@@ -129,6 +135,10 @@ class LiveAgent:
                 self.broker.event(now, "close", f"Not-Aus: {t.symbol} {t.side} geschlossen @ {p6(t.exit)}, "
                                                 f"Ergebnis {t.pnl:+.2f} (Gebühren {t.fees:.2f})")
 
+        if st.flags.get("brake"):
+            self._once("brake_note", "1", now, "warn",
+                       f"Kontobremse ausgelöst: Konto liegt {self.cfg.risk.max_total_drawdown_pct:.0f} % unter "
+                       f"seinem Höchststand. Keine neuen Trades, bis das Konto zurückgesetzt wird.")
         mode_note = self._mode_note(ctl.mode, now)
         prev = export.read(self.cfg.cockpit_file)
         # Nichts Neues (keine neue Kerze, kein Ereignis) und Cockpit-Stand jünger als 14 Minuten:
@@ -138,7 +148,8 @@ class LiveAgent:
             return processed
         self.broker.snapshot(now)
         data = export.build(self.cfg, self.broker, now, markets, self.reviewer.active,
-                            self.reviewer.model_name, ctl.mode, ctl.stop, mode_note, prev)
+                            self.reviewer.model_name, ctl.mode, ctl.stop, mode_note, prev,
+                            self.engine.events)
         export.write(self.cfg.cockpit_file, data)
         self.broker.save()
         return processed
@@ -169,7 +180,8 @@ class LiveAgent:
         ts = bar.ts + self.cfg.interval_min * 60  # Zeitpunkt des Kerzenschlusses
         for t in res.closed:
             reason = {"stop_loss": "Stop-Loss", "take_profit": "Gewinnziel", "gegensignal": "Gegensignal",
-                      "max_haltedauer": "max. Haltedauer"}.get(t.exit_reason, t.exit_reason)
+                      "max_haltedauer": "max. Haltedauer",
+                      "wochenende": "vor dem Wochenende"}.get(t.exit_reason, t.exit_reason)
             text = (f"{t.symbol} {t.side.upper()} geschlossen @ {p6(t.exit)} ({reason}): "
                     f"{t.pnl:+.2f} {self.cfg.risk.account_currency} nach {t.fees:.2f} Gebühren")
             self.broker.event(ts, "close", text)
@@ -185,7 +197,7 @@ class LiveAgent:
                 self.broker.event(ts, "ai", f"Claude zu {p.symbol}: {p.ai_note}")
             log.info(text)
         elif res.signal and res.skipped_reason:
-            kind = {"ai": "ai", "timemachine": "tm", "quality": "warn"}.get(res.skip_kind, "skip")
+            kind = {"ai": "ai", "timemachine": "tm", "quality": "warn", "news": "warn"}.get(res.skip_kind, "skip")
             text = f"{sym.name} {res.signal.side.upper()}-Signal nicht ausgeführt: {res.skipped_reason}"
             self.broker.event(ts, kind, text)
             log.info(text)

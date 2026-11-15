@@ -22,7 +22,20 @@ Jetzt:
 - **Märkte:** nur EUR/USD und GBP/USD (BTC und USD/JPY lassen sich per `config.json` wieder aufnehmen).
 - **Strategie** wählbar in `config.json` → `strategy.name`: `breakout` (Ausbruch über das N-Kerzen-Hoch/-Tief in Trendrichtung), `pullback` (Rücksetzer im Trend, RSI3) oder `ema_cross` (alt). Optional nur Einstiege zwischen `session_start_utc` und `session_end_utc`.
 - **Kosten-Filter:** Ein Signal wird ausgelassen, wenn Gebühren und Slippage für Ein- und Ausstieg mehr als 0,25 R kosten würden (`risk.max_cost_r`).
-- **Strategie-Test:** Workflow *Strategie-Test* (von Hand starten) spielt alle Kandidaten auf ~2 Jahren echter 1-h-Kerzen und 60 Tagen 15-min-Kerzen durch. Ausgewählt wird nur auf den ersten 60 % („Lernen“), bewertet auf den letzten 40 % („Prüfen“). Bericht: `trading-cockpit/data/strategie_test.md` im Zweig `data` und in der Zusammenfassung des Laufs.
+- **Strategie-Test:** Workflow *Strategie-Test* (von Hand starten) spielt alle Kandidaten auf ~10 Jahren Tageskerzen, ~2 Jahren 1-h-Kerzen und 60 Tagen 15-min-Kerzen durch, mit denselben Schutzregeln wie der Bot. Ausgewählt wird nur auf den ersten 60 % („Lernen“), bewertet auf den letzten 40 % („Prüfen“). Bericht: `trading-cockpit/data/strategie_test.md` im Zweig `data` und in der Zusammenfassung des Laufs.
+
+## Schutzregeln (seit 15.11.2026)
+
+Vor jedem Einstieg prüft der Bot zusätzlich (Stand und nächster Termin stehen im Cockpit unter „Schutzregeln“):
+
+- **Handelszeiten:** Der Devisenmarkt ist von Freitag 22:00 bis Sonntag 22:00 UTC geschlossen. In dieser Zeit und in den letzten 3 Stunden davor wird nicht eingestiegen; offene Positionen werden vor dem Wochenende geschlossen. Bei Tageskerzen werden nur Samstags- und Sonntagskerzen übersprungen. Einstellungen: `hours` in `config.json`.
+- **Sperrzeiten um Termine:** Von 30 Minuten vor bis 60 Minuten nach einem Termin aus `kalender.json` (Zinsentscheide, Arbeitsmarkt, Inflation) kein Einstieg. Die Liste kommt von Trado und muss nachgepflegt werden; sind keine Termine mehr eingetragen, zeigt das Cockpit das an. Einstellungen: `news`.
+- **Zu späte Läufe:** GitHub startet geplante Läufe unpünktlich (werktags etwa stündlich, am Wochenende seltener). Kommt ein Lauf mehr als 20 Minuten nach Kerzenschluss (bei Tageskerzen: 10 % der Kerzenlänge), wird ein Signal nur protokolliert, nicht ausgeführt – der Schlusskurs wäre am echten Markt nicht mehr zu bekommen. `risk.max_signal_age_min`.
+- **Kurslücken:** Eröffnet eine Kerze schon jenseits des Stops, zählt der schlechtere Eröffnungskurs, nicht der Stop.
+- **Klumpenrisiko:** EUR/USD und GBP/USD laufen meist gleich. Höchstens eine Position in dieselbe Dollar-Richtung. `risk.max_same_direction`.
+- **Kontobremse:** Fällt das Konto 10 % unter seinen Höchststand, eröffnet der Bot nichts mehr, bis das Konto über *Steuerung* zurückgesetzt wird. `risk.max_total_drawdown_pct`.
+
+Jeder Trade wird außerdem in **R** gemessen (1 R = der riskierte Betrag). Cockpit und Echtgeld-Tor rechnen den Zufallstest auf diesen R-Werten, damit die Kontogröße das Ergebnis nicht verzerrt.
 
 ## Time Machine (Monte-Carlo-Prüfung)
 

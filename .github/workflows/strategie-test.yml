@@ -1,7 +1,7 @@
 name: Strategie-Test
 
 # Von Hand starten: Actions -> Strategie-Test -> Run workflow.
-# Testet alle Kandidaten auf ~2 Jahren echter Kurse und legt den Bericht in den Zweig "data"
+# Testet alle Kandidaten auf echten Kursen (Tag ~10 Jahre, 1 h ~2 Jahre, 15 min ~60 Tage) und legt den Bericht in den Zweig "data"
 # (trading-cockpit/data/strategie_test.md).
 on:
   workflow_dispatch: {}
@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Abhängigkeiten
-        run: pip install -q -r trading-cockpit/requirements.txt
+        run: pip install -q -r trading-cockpit/requirements.txt "yfinance>=0.2.60"
       - name: Daten laden
         run: bash trading-cockpit/load_data.sh
       - name: Strategien testen

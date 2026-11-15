@@ -8,7 +8,10 @@
     "max_daily_loss_pct": 3.0,
     "max_open_positions": 3,
     "slippage_pct": 0.005,
-    "max_cost_r": 0.25
+    "max_cost_r": 0.25,
+    "max_total_drawdown_pct": 10.0,
+    "max_signal_age_min": 20,
+    "max_same_direction": 1
   },
   "strategy": {
     "ema_fast": 9,
@@ -80,5 +83,18 @@
       "fee_pct": 0.008,
       "max_leverage": 10.0
     }
-  ]
+  ],
+  "hours": {
+    "enabled": true,
+    "close_fri_utc": 22.0,
+    "open_sun_utc": 22.0,
+    "no_entry_before_close_h": 3.0,
+    "flat_before_weekend": true
+  },
+  "news": {
+    "enabled": true,
+    "file": "kalender.json",
+    "before_min": 30,
+    "after_min": 60
+  }
 }
