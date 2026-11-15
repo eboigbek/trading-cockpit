@@ -115,7 +115,7 @@ def guards_info(cfg: Config, broker: PaperBroker, now_ts: int, events: List) -> 
         "events_left": sum(1 for e in events if e.ts >= now_ts),
         "brake_pct": cfg.risk.max_total_drawdown_pct, "brake_active": bool(st.flags.get("brake")),
         "drawdown_now_pct": round((peak - broker.equity()) / peak * 100, 2) if peak > 0 else 0.0,
-        "max_signal_age_min": cfg.risk.max_signal_age_min, "late_skipped": st.late_skipped,
+        "max_signal_age_min": max(cfg.risk.max_signal_age_min, cfg.interval_min // 10), "late_skipped": st.late_skipped,
         "max_same_direction": cfg.risk.max_same_direction,
     }
 
