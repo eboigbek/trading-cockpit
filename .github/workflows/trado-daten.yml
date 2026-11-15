@@ -1,0 +1,49 @@
+name: Trado Daten-Abholer
+
+# Holt Kurse und Kennzahlen fuer die Beobachtungsliste. Getrennt vom Trading-Bot:
+# eigener Ordner trado-daten/, eigener Zweig trado-daten. Zeiten in UTC.
+on:
+  schedule:
+    - cron: "23 6 * * 1-5"    # 07:23 MEZ, nach US-Schluss des Vortags
+    - cron: "47 17 * * 1-5"   # 18:47 MEZ, nach Xetra-Schluss
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ["trado-daten/**", ".github/workflows/trado-daten.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trado-daten
+  cancel-in-progress: false
+
+jobs:
+  holen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: trado-daten/requirements.txt
+      - name: Abhaengigkeiten
+        run: pip install -q -r trado-daten/requirements.txt
+      - name: Tests
+        run: python -m unittest discover -s trado-daten -p "test_*.py"
+      - name: Bisherige Ausgabe laden
+        run: |
+          mkdir -p trado-daten/ausgabe
+          if git fetch -q --depth 1 origin trado-daten 2>/dev/null; then
+            git archive FETCH_HEAD | tar -x -C trado-daten/ausgabe
+          fi
+      - name: Daten holen
+        working-directory: trado-daten
+        run: python abholer.py
+      - name: Speichern
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash trado-daten/speichern.sh
