@@ -62,6 +62,14 @@ class Umformen(unittest.TestCase):
                                     "unbekannt": 1})
         self.assertEqual(kz, {"kgv": 25.3, "kgv_erwartet": 17.4, "waehrung": "USD"})
 
+    def test_paare(self):
+        from datetime import datetime
+        paare = [(datetime(2026, 11, 12), 10.0), (datetime(2026, 11, 13), float("nan")), (datetime(2026, 11, 16), 12)]
+        self.assertEqual(A.paare_zu_reihe(paare), [("2026-11-12", 10.0), ("2026-11-16", 12.0)])
+
+    def test_notkurs_leer(self):
+        self.assertEqual(A.notkurs_aus_info({"trailingPE": 5}), {})
+
     def test_fmt(self):
         self.assertEqual(A.fmt(1234.567, " €", 2), "1.234,57 €")
         self.assertEqual(A.fmt(None), "–")
@@ -98,49 +106,77 @@ class Ausgabe(unittest.TestCase):
         self.assertEqual(len(zeilen), 3)  # Kopf + 2 Werte mit Kurs, Leer AG fehlt
         self.assertTrue(zeilen[0].startswith("datum,symbol,schluss"))
 
-    def test_hauptlauf_ohne_netz_schreibt_status(self):
+    def lauf(self, **ersatz):
+        """Startet main() mit ersetzten Holern in einem leeren Ordner."""
+        namen = ("hole_kurse_yfinance", "hole_kurse_yahoo", "hole_kurse_stooq", "hole_angaben")
+
+        def kaputt(sym):
+            raise RuntimeError("kein Netz")
+
         with tempfile.TemporaryDirectory() as tmp:
-            alt = (A.AUSGABE, A.hole_kurse_yahoo, A.hole_kurse_stooq, A.hole_kennzahlen, A.time.sleep)
-            A.AUSGABE = tmp
-            A.time.sleep = lambda s: None
-
-            def kaputt(sym):
-                raise RuntimeError("kein Netz")
-
-            A.hole_kurse_yahoo, A.hole_kurse_stooq, A.hole_kennzahlen = kaputt, kaputt, kaputt
+            alt = {n: getattr(A, n) for n in namen}
+            alt_ausgabe, alt_sleep = A.AUSGABE, A.time.sleep
+            A.AUSGABE, A.time.sleep = tmp, lambda s: None
+            for n in namen:
+                setattr(A, n, ersatz.get(n, kaputt))
             try:
                 code = A.main()
                 status = json.load(open(os.path.join(tmp, "status.json"), encoding="utf-8"))
+                pfad = os.path.join(tmp, "daten.json")
+                daten = json.load(open(pfad, encoding="utf-8")) if os.path.exists(pfad) else None
             finally:
-                A.AUSGABE, A.hole_kurse_yahoo, A.hole_kurse_stooq, A.hole_kennzahlen, A.time.sleep = alt
-            self.assertEqual(code, 1)
-            self.assertEqual(status["ergebnis"], "fehlgeschlagen")
-            self.assertEqual(status["kurse_ok"], 0)
-            self.assertFalse(os.path.exists(os.path.join(tmp, "daten.json")))
+                A.AUSGABE, A.time.sleep = alt_ausgabe, alt_sleep
+                for n in namen:
+                    setattr(A, n, alt[n])
+        return code, status, daten
+
+    def test_hauptlauf_ohne_netz_schreibt_status(self):
+        code, status, daten = self.lauf()
+        self.assertEqual(code, 1)
+        self.assertEqual(status["ergebnis"], "fehlgeschlagen")
+        self.assertEqual(status["kurse_ok"], 0)
+        self.assertIsNone(daten)
+
+    def test_hauptlauf_normalfall(self):
+        code, status, daten = self.lauf(
+            hole_kurse_yfinance=lambda sym: reihe(),
+            hole_angaben=lambda sym: ({"trailingPE": 11.0, "currency": "EUR"}, "2027-01-01"))
+        self.assertEqual(code, 0)
+        self.assertEqual(status["ergebnis"], "ok")
+        self.assertEqual(daten["werte"][0]["kursquelle"], "yfinance")
+        self.assertEqual(daten["werte"][0]["kennzahlen"], {"kgv": 11.0, "waehrung": "EUR"})
+        self.assertEqual(daten["werte"][0]["naechste_zahlen"], "2027-01-01")
+        self.assertNotIn("kennzahlen", daten["maerkte"][0])
 
     def test_hauptlauf_mit_ausweichquelle(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            alt = (A.AUSGABE, A.hole_kurse_yahoo, A.hole_kurse_stooq, A.hole_kennzahlen, A.time.sleep)
-            A.AUSGABE = tmp
-            A.time.sleep = lambda s: None
+        code, status, daten = self.lauf(
+            hole_kurse_stooq=lambda sym: reihe(),
+            hole_angaben=lambda sym: ({"trailingPE": 11.0, "currency": "EUR"}, "2027-01-01"))
+        self.assertEqual(code, 0)
+        self.assertEqual(status["ergebnis"], "ok")
+        self.assertEqual(daten["werte"][0]["kursquelle"], "Stooq")
+        self.assertEqual(status["kurse_ok"], status["kurse_gesamt"])
+        erster = next(iter(status["einzeln"].values()))
+        self.assertIn("kurse_fehler_yfinance", erster)
 
-            def kaputt(sym):
-                raise RuntimeError("gesperrt")
-
-            A.hole_kurse_yahoo = kaputt
-            A.hole_kurse_stooq = lambda sym: reihe()
-            A.hole_kennzahlen = lambda sym: ({"kgv": 11.0, "waehrung": "EUR"}, "2027-01-01")
-            try:
-                code = A.main()
-                status = json.load(open(os.path.join(tmp, "status.json"), encoding="utf-8"))
-                daten = json.load(open(os.path.join(tmp, "daten.json"), encoding="utf-8"))
-            finally:
-                A.AUSGABE, A.hole_kurse_yahoo, A.hole_kurse_stooq, A.hole_kennzahlen, A.time.sleep = alt
-            self.assertEqual(code, 0)
-            self.assertEqual(status["ergebnis"], "ok")
-            self.assertEqual(daten["werte"][0]["kursquelle"], "Stooq")
-            self.assertEqual(daten["werte"][0]["kennzahlen"]["kgv"], 11.0)
-            self.assertEqual(status["kurse_ok"], status["kurse_gesamt"])
+    def test_hauptlauf_nur_eckdaten(self):
+        """Keine Kursreihe zu bekommen: Kennzahlen und Eckdaten werden trotzdem gespeichert."""
+        info = {"trailingPE": 30.0, "currency": "USD", "regularMarketPrice": 90.0,
+                "regularMarketPreviousClose": 100.0, "fiftyTwoWeekHigh": 120.0, "fiftyTwoWeekLow": 60.0,
+                "twoHundredDayAverage": 80.0, "regularMarketTime": 1767312000}
+        code, status, daten = self.lauf(hole_angaben=lambda sym: (info, None))
+        self.assertEqual(code, 0)
+        self.assertEqual(status["ergebnis"], "teilweise")
+        self.assertEqual(status["kursreihen_ok"], 0)
+        w = daten["werte"][0]
+        self.assertEqual(w["kursquelle"], "Yahoo-Eckdaten")
+        self.assertEqual(w["kurs"]["schluss"], 90.0)
+        self.assertEqual(w["kurs"]["tag"], -10.0)
+        self.assertEqual(w["kurs"]["abstand_hoch_52w"], -25.0)
+        self.assertEqual(w["kurs"]["abstand_schnitt_200"], 12.5)
+        self.assertEqual(w["kurs"]["datum"], "2026-01-02")
+        self.assertIsNone(w["kurs"]["monat"])
+        self.assertEqual(daten["maerkte"][0]["kursquelle"], "Yahoo-Eckdaten")
 
 
 if __name__ == "__main__":

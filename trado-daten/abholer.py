@@ -1,8 +1,9 @@
 """Trado Daten-Abholer: holt Kurse und Kennzahlen fuer die Beobachtungsliste.
 
 Laeuft auf GitHub Actions (dort sind die Datenquellen erreichbar), braucht keinen
-Schluessel und bewegt kein Geld. Quellen: Yahoo (Kurse ueber die Chart-Schnittstelle,
-Kennzahlen ueber yfinance), Stooq als Ausweichquelle fuer Kurse.
+Schluessel und bewegt kein Geld. Quellen: Yahoo ueber das Paket yfinance (Kurse und
+Kennzahlen). Ausweichquellen fuer Kurse: Yahoo direkt, Stooq, zuletzt die Eckdaten
+aus den Kennzahlen (letzter Kurs, 52-Wochen-Spanne, Schnitte).
 
 Ausgabe im Ordner ausgabe/: daten.json (alles), uebersicht.md (lesbar),
 status.json (was hat geklappt, was nicht), verlauf.csv (eine Zeile je Wert und Tag).
@@ -132,6 +133,51 @@ def stooq_zu_reihe(text: str) -> List[Tuple[str, float]]:
     return reihe
 
 
+def paare_zu_reihe(paare) -> List[Tuple[str, float]]:
+    """paare: (Zeitpunkt mit strftime, Schlusskurs) - so liefert es yfinance."""
+    reihe = []
+    for zeit, c in paare:
+        v = zahl(c)
+        if v is not None and v > 0:
+            reihe.append((zeit.strftime("%Y-%m-%d"), v))
+    return reihe
+
+
+def notkurs_aus_info(info: Dict) -> Dict:
+    """Kurs-Eckdaten aus den Yahoo-Angaben, falls keine Kursreihe zu bekommen war."""
+    def feld(*namen):
+        for n in namen:
+            w = info.get(n)
+            if isinstance(w, dict):
+                w = w.get("raw")
+            v = zahl(w)
+            if v is not None and v > 0:
+                return v
+        return None
+
+    letzter = feld("regularMarketPrice", "currentPrice", "previousClose")
+    if letzter is None:
+        return {}
+    vortag = feld("regularMarketPreviousClose", "previousClose")
+    hoch, tief = feld("fiftyTwoWeekHigh"), feld("fiftyTwoWeekLow")
+    s50, s200 = feld("fiftyDayAverage"), feld("twoHundredDayAverage")
+    zeit = feld("regularMarketTime")
+
+    def abstand(basis):
+        return round((letzter / basis - 1) * 100, 2) if basis else None
+
+    return {
+        "schluss": round(letzter, 4),
+        "datum": datetime.fromtimestamp(int(zeit), timezone.utc).strftime("%Y-%m-%d") if zeit else None,
+        "handelstage": 0, "tag": abstand(vortag) if vortag != letzter else None,
+        "woche": None, "monat": None, "quartal": None, "jahr": None, "seit_jahresbeginn": None,
+        "hoch_52w": round(hoch, 4) if hoch else None, "tief_52w": round(tief, 4) if tief else None,
+        "abstand_hoch_52w": abstand(hoch), "abstand_tief_52w": abstand(tief),
+        "schnitt_50": round(s50, 4) if s50 else None, "schnitt_200": round(s200, 4) if s200 else None,
+        "abstand_schnitt_200": abstand(s200), "schwankung_30t": None,
+    }
+
+
 def fmt(v, einheit="", stellen=1) -> str:
     if v is None or v == "":
         return "–"
@@ -142,7 +188,7 @@ def fmt(v, einheit="", stellen=1) -> str:
 
 def uebersicht_md(daten: Dict) -> str:
     z = [f"# Trado Daten – Stand {daten['erzeugt_utc']} UTC", "",
-         "Quelle: Yahoo, Ausweichquelle Stooq. Keine Empfehlung, nur Zahlen.", "",
+         "Quelle: Yahoo (yfinance), Ausweichquellen Yahoo direkt und Stooq. Keine Empfehlung, nur Zahlen.", "",
          "## Beobachtungsliste", "",
          "| Wert | Schluss | Datum | Woche | Monat | Seit Jahresbeginn | Abstand 52-W-Hoch | KGV | KGV erwartet | Nettomarge | Umsatzwachstum | Nächste Zahlen |",
          "|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|"]
@@ -151,7 +197,7 @@ def uebersicht_md(daten: Dict) -> str:
         marge = f.get("nettomarge")
         wachs = f.get("umsatzwachstum")
         z.append("| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |".format(
-            w["name"], fmt(k.get("schluss"), " " + f.get("waehrung", ""), 2), k.get("datum", "–"),
+            w["name"], fmt(k.get("schluss"), " " + f.get("waehrung", ""), 2), k.get("datum") or "–",
             fmt(k.get("woche"), " %"), fmt(k.get("monat"), " %"), fmt(k.get("seit_jahresbeginn"), " %"),
             fmt(k.get("abstand_hoch_52w"), " %"), fmt(f.get("kgv")), fmt(f.get("kgv_erwartet")),
             fmt(marge * 100 if marge is not None else None, " %"),
@@ -161,13 +207,22 @@ def uebersicht_md(daten: Dict) -> str:
     for m in daten["maerkte"]:
         k = m.get("kurs", {})
         z.append("| {} | {} | {} | {} | {} | {} | {} |".format(
-            m["name"], fmt(k.get("schluss"), "", 4 if (k.get("schluss") or 0) < 10 else 2), k.get("datum", "–"),
+            m["name"], fmt(k.get("schluss"), "", 4 if (k.get("schluss") or 0) < 10 else 2), k.get("datum") or "–",
             fmt(k.get("tag"), " %"), fmt(k.get("woche"), " %"), fmt(k.get("monat"), " %"),
             fmt(k.get("seit_jahresbeginn"), " %")))
     return "\n".join(z) + "\n"
 
 
 # ---------- Holen (mit Netz) ----------
+
+def hole_kurse_yfinance(symbol: str) -> List[Tuple[str, float]]:
+    import yfinance as yf  # erst hier, damit Tests ohne das Paket laufen
+
+    df = yf.Ticker(symbol).history(period="2y", interval="1d", auto_adjust=False)
+    if df is None or len(df) < 2:
+        raise RuntimeError("yfinance lieferte keine Kursreihe")
+    return paare_zu_reihe(zip(df.index, df["Close"]))
+
 
 def hole_kurse_yahoo(symbol: str) -> List[Tuple[str, float]]:
     letzter_fehler = None
@@ -180,7 +235,7 @@ def hole_kurse_yahoo(symbol: str) -> List[Tuple[str, float]]:
         except Exception as e:  # noqa: BLE001 - jede Stoerung soll zur Ausweichquelle fuehren
             letzter_fehler = e
             time.sleep(1.5)
-    raise RuntimeError(f"Yahoo-Kurse: {letzter_fehler}")
+    raise RuntimeError(f"Yahoo direkt: {letzter_fehler}")
 
 
 def hole_kurse_stooq(symbol: str) -> List[Tuple[str, float]]:
@@ -192,9 +247,9 @@ def hole_kurse_stooq(symbol: str) -> List[Tuple[str, float]]:
     return reihe[-520:]
 
 
-def hole_kennzahlen(symbol: str) -> Tuple[Dict, Optional[str]]:
-    """Gibt (Kennzahlen, Termin der naechsten Zahlen) zurueck. Braucht yfinance."""
-    import yfinance as yf  # erst hier, damit Tests ohne das Paket laufen
+def hole_angaben(symbol: str) -> Tuple[Dict, Optional[str]]:
+    """Gibt (Rohangaben von Yahoo, Termin der naechsten Zahlen) zurueck. Braucht yfinance."""
+    import yfinance as yf
 
     t = yf.Ticker(symbol)
     info = t.info or {}
@@ -207,40 +262,52 @@ def hole_kennzahlen(symbol: str) -> Tuple[Dict, Optional[str]]:
             termin = str(erster)[:10]
     except Exception:  # noqa: BLE001 - Termin ist Beiwerk
         termin = None
-    kz = kennzahlen_aus_info(info)
-    if not kz:
-        raise RuntimeError("Yahoo lieferte keine Kennzahlen")
-    return kz, termin
+    if not info:
+        raise RuntimeError("Yahoo lieferte keine Angaben")
+    return info, termin
+
+
+KURSQUELLEN = (("yfinance", "yahoo", "hole_kurse_yfinance"),
+               ("Yahoo direkt", "yahoo", "hole_kurse_yahoo"),
+               ("Stooq", "stooq", "hole_kurse_stooq"))
 
 
 def bearbeite(eintrag: Dict, mit_kennzahlen: bool, status: Dict) -> Dict:
     aus = dict(eintrag)
     sym, protokoll = eintrag["yahoo"], {}
-    try:
-        aus["kurs"] = kurs_kennzahlen(hole_kurse_yahoo(sym))
-        aus["kursquelle"] = "Yahoo"
-        protokoll["kurse"] = "ok (Yahoo)"
-    except Exception as e:  # noqa: BLE001
-        protokoll["kurse_yahoo_fehler"] = str(e)[:200]
+    aus["kurs"] = {}
+    for name, schluessel, holer in KURSQUELLEN:
         try:
-            aus["kurs"] = kurs_kennzahlen(hole_kurse_stooq(eintrag["stooq"]))
-            aus["kursquelle"] = "Stooq"
-            protokoll["kurse"] = "ok (Stooq)"
-        except Exception as e2:  # noqa: BLE001
-            aus["kurs"] = {}
-            protokoll["kurse"] = "FEHLER"
-            protokoll["kurse_stooq_fehler"] = str(e2)[:200]
-    if mit_kennzahlen:
+            kurs = kurs_kennzahlen(globals()[holer](eintrag[schluessel]))
+            if not kurs:
+                raise RuntimeError("zu wenige Kurse")
+            aus["kurs"], aus["kursquelle"] = kurs, name
+            protokoll["kurse"] = f"ok ({name})"
+            break
+        except Exception as e:  # noqa: BLE001 - naechste Quelle versuchen
+            protokoll[f"kurse_fehler_{name}"] = f"{type(e).__name__}: {str(e)[:160]}"
+    info = {}
+    if mit_kennzahlen or not aus["kurs"]:
         for versuch in range(2):
             try:
-                aus["kennzahlen"], aus["naechste_zahlen"] = hole_kennzahlen(sym)
-                protokoll["kennzahlen"] = "ok"
+                info, termin = hole_angaben(sym)
+                if mit_kennzahlen:
+                    aus["naechste_zahlen"] = termin
                 break
             except Exception as e:  # noqa: BLE001
-                aus["kennzahlen"], aus["naechste_zahlen"] = {}, None
-                protokoll["kennzahlen"] = "FEHLER"
-                protokoll["kennzahlen_fehler"] = f"{type(e).__name__}: {str(e)[:200]}"
+                protokoll["angaben_fehler"] = f"{type(e).__name__}: {str(e)[:160]}"
                 time.sleep(3)
+    if mit_kennzahlen:
+        aus["kennzahlen"] = kennzahlen_aus_info(info)
+        aus.setdefault("naechste_zahlen", None)
+        protokoll["kennzahlen"] = "ok" if aus["kennzahlen"] else "FEHLER"
+    if not aus["kurs"]:
+        aus["kurs"] = notkurs_aus_info(info)
+        if aus["kurs"]:
+            aus["kursquelle"] = "Yahoo-Eckdaten"
+            protokoll["kurse"] = "nur Eckdaten (keine Kursreihe)"
+        else:
+            protokoll["kurse"] = "FEHLER"
     status["einzeln"][sym] = protokoll
     time.sleep(0.8)
     return aus
@@ -283,15 +350,16 @@ def main() -> int:
         status["kurse_gesamt"] = len(alle)
         status["kennzahlen_ok"] = sum(1 for w in daten["werte"] if w.get("kennzahlen"))
         status["kennzahlen_gesamt"] = len(daten["werte"])
-        if status["kurse_ok"]:
+        status["kursreihen_ok"] = sum(1 for w in alle if w.get("kurs", {}).get("handelstage"))
+        if status["kurse_ok"] or status["kennzahlen_ok"]:
             with open(os.path.join(AUSGABE, "daten.json"), "w", encoding="utf-8") as f:
                 json.dump(daten, f, ensure_ascii=False, indent=1)
             with open(os.path.join(AUSGABE, "uebersicht.md"), "w", encoding="utf-8") as f:
                 f.write(uebersicht_md(daten))
             schreibe_verlauf(daten)
-        status["ergebnis"] = "ok" if status["kurse_ok"] == status["kurse_gesamt"] and \
+        status["ergebnis"] = "ok" if status["kursreihen_ok"] == status["kurse_gesamt"] and \
             status["kennzahlen_ok"] == status["kennzahlen_gesamt"] else \
-            ("teilweise" if status["kurse_ok"] else "fehlgeschlagen")
+            ("teilweise" if status["kurse_ok"] or status["kennzahlen_ok"] else "fehlgeschlagen")
     except Exception as e:  # noqa: BLE001 - Status soll immer geschrieben werden
         status["ergebnis"] = "abgebrochen"
         status["abbruch"] = f"{type(e).__name__}: {str(e)[:300]}"

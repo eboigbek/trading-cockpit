@@ -3,7 +3,7 @@
 Holt zweimal je Handelstag Kurse und Kennzahlen für die Beobachtungsliste der Finanzabteilung und legt sie im Zweig `trado-daten` ab. Getrennt vom Trading Pilot: eigener Ordner, eigener Ablauf, eigener Zweig. Kein Schlüssel, kein Konto, kein Geld.
 
 - `liste.json` – welche Werte und Märkte geholt werden. Hier ändern, wenn die Liste wächst.
-- `abholer.py` – holt und rechnet. Quellen: Yahoo, Ausweichquelle Stooq.
+- `abholer.py` – holt und rechnet. Quelle: Yahoo über das Paket yfinance. Ausweichquellen für Kurse: Yahoo direkt, Stooq, zuletzt die Eckdaten aus den Kennzahlen.
 - `test_abholer.py` – Tests ohne Netz, laufen vor jedem Abruf.
 - `speichern.sh` – legt die Ausgabe im Zweig `trado-daten` ab.
 
