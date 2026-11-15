@@ -1,0 +1,21 @@
+{
+  "werte": [
+    {"name": "Siemens Energy", "yahoo": "ENR.DE", "stooq": "enr.de", "land": "DE", "zweck": "Langfrist"},
+    {"name": "Infineon", "yahoo": "IFX.DE", "stooq": "ifx.de", "land": "DE", "zweck": "Langfrist, Ereignis"},
+    {"name": "Allianz", "yahoo": "ALV.DE", "stooq": "alv.de", "land": "DE", "zweck": "Langfrist"},
+    {"name": "SAP", "yahoo": "SAP.DE", "stooq": "sap.de", "land": "DE", "zweck": "Langfrist"},
+    {"name": "Rheinmetall", "yahoo": "RHM.DE", "stooq": "rhm.de", "land": "DE", "zweck": "Ereignis"},
+    {"name": "Nvidia", "yahoo": "NVDA", "stooq": "nvda.us", "land": "US", "zweck": "Ereignis"},
+    {"name": "Broadcom", "yahoo": "AVGO", "stooq": "avgo.us", "land": "US", "zweck": "Ereignis"},
+    {"name": "Walmart", "yahoo": "WMT", "stooq": "wmt.us", "land": "US", "zweck": "Ereignis, Langfrist"},
+    {"name": "Home Depot", "yahoo": "HD", "stooq": "hd.us", "land": "US", "zweck": "Ereignis"}
+  ],
+  "maerkte": [
+    {"name": "DAX", "yahoo": "^GDAXI", "stooq": "^dax"},
+    {"name": "S&P 500", "yahoo": "^GSPC", "stooq": "^spx"},
+    {"name": "Nasdaq 100", "yahoo": "^NDX", "stooq": "^ndx"},
+    {"name": "EUR/USD", "yahoo": "EURUSD=X", "stooq": "eurusd"},
+    {"name": "GBP/USD", "yahoo": "GBPUSD=X", "stooq": "gbpusd"},
+    {"name": "US-Rendite 10 Jahre", "yahoo": "^TNX", "stooq": "10usy.b"}
+  ]
+}
