@@ -1,0 +1,66 @@
+{
+ "erzeugt_utc": "2026-11-20 23:22",
+ "einzeln": {
+  "ENR.DE": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "IFX.DE": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "ALV.DE": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "SAP.DE": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "RHM.DE": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "NVDA": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "AVGO": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "WMT": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "HD": {
+   "kurse": "ok (yfinance)",
+   "kennzahlen": "ok"
+  },
+  "^GDAXI": {
+   "kurse": "ok (yfinance)"
+  },
+  "^GSPC": {
+   "kurse": "ok (yfinance)"
+  },
+  "^NDX": {
+   "kurse": "ok (yfinance)"
+  },
+  "EURUSD=X": {
+   "kurse": "ok (yfinance)"
+  },
+  "GBPUSD=X": {
+   "kurse": "ok (yfinance)"
+  },
+  "^TNX": {
+   "kurse": "ok (yfinance)"
+  }
+ },
+ "lauf": "44836255664",
+ "kurse_ok": 15,
+ "kurse_gesamt": 15,
+ "kennzahlen_ok": 9,
+ "kennzahlen_gesamt": 9,
+ "kursreihen_ok": 15,
+ "ergebnis": "ok"
+}
