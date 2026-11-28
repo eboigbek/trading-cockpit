@@ -1,0 +1,2038 @@
+{
+ "generated": "2026-11-15 01:41 UTC",
+ "source": "yahoo",
+ "symbols": [
+  "EUR/USD",
+  "GBP/USD"
+ ],
+ "costs": {
+  "EUR/USD": 0.006,
+  "GBP/USD": 0.008
+ },
+ "slippage_pct": 0.005,
+ "max_cost_r": 0.25,
+ "min_t": 2.13,
+ "results": [
+  {
+   "timeframe": "1d",
+   "bars": {
+    "EUR/USD": 2601,
+    "GBP/USD": 2602
+   },
+   "learn_period": [
+    "2016-11-14",
+    "2022-11-11"
+   ],
+   "test_period": [
+    "2022-11-11",
+    "2026-11-13"
+   ],
+   "rows": [
+    {
+     "label": "EMA-Crossover (alt), Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "ema_cross",
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 55,
+      "net": 598.19,
+      "pf": 1.22,
+      "win_rate": 36.4,
+      "t": 0.67,
+      "max_dd_pct": 4.79,
+      "fees": 69.45
+     },
+     "test": {
+      "trades": 27,
+      "net": 1271.66,
+      "pf": 2.03,
+      "win_rate": 55.6,
+      "t": 1.64,
+      "max_dd_pct": 3.45,
+      "fees": 40.47
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 57,
+      "net": -706.4,
+      "pf": 0.75,
+      "win_rate": 43.9,
+      "t": -0.92,
+      "max_dd_pct": 13.16,
+      "fees": 44.96
+     },
+     "test": {
+      "trades": 38,
+      "net": -210.69,
+      "pf": 0.86,
+      "win_rate": 42.1,
+      "t": -0.37,
+      "max_dd_pct": 8.42,
+      "fees": 32.43
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 63,
+      "net": -930.13,
+      "pf": 0.74,
+      "win_rate": 36.5,
+      "t": -1.01,
+      "max_dd_pct": 16.07,
+      "fees": 66.26
+     },
+     "test": {
+      "trades": 41,
+      "net": -520.18,
+      "pf": 0.75,
+      "win_rate": 36.6,
+      "t": -0.79,
+      "max_dd_pct": 11.93,
+      "fees": 45.16
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 70,
+      "net": -860.55,
+      "pf": 0.74,
+      "win_rate": 44.3,
+      "t": -1.13,
+      "max_dd_pct": 13.4,
+      "fees": 55.05
+     },
+     "test": {
+      "trades": 46,
+      "net": 43.74,
+      "pf": 1.03,
+      "win_rate": 47.8,
+      "t": 0.11,
+      "max_dd_pct": 5.86,
+      "fees": 39.54
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 47,
+      "net": -896.85,
+      "pf": 0.66,
+      "win_rate": 34.0,
+      "t": -1.19,
+      "max_dd_pct": 13.31,
+      "fees": 37.79
+     },
+     "test": {
+      "trades": 28,
+      "net": -993.65,
+      "pf": 0.34,
+      "win_rate": 25.0,
+      "t": -2.56,
+      "max_dd_pct": 11.19,
+      "fees": 22.41
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 53,
+      "net": -450.72,
+      "pf": 0.86,
+      "win_rate": 35.8,
+      "t": -0.43,
+      "max_dd_pct": 12.41,
+      "fees": 58.88
+     },
+     "test": {
+      "trades": 30,
+      "net": -1671.24,
+      "pf": 0.23,
+      "win_rate": 16.7,
+      "t": -3.93,
+      "max_dd_pct": 17.84,
+      "fees": 32.27
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 57,
+      "net": -1108.66,
+      "pf": 0.62,
+      "win_rate": 38.6,
+      "t": -1.66,
+      "max_dd_pct": 14.79,
+      "fees": 45.25
+     },
+     "test": {
+      "trades": 31,
+      "net": -894.8,
+      "pf": 0.42,
+      "win_rate": 32.3,
+      "t": -2.26,
+      "max_dd_pct": 10.34,
+      "fees": 23.56
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 24,
+      "net": 505.96,
+      "pf": 1.71,
+      "win_rate": 62.5,
+      "t": 1.22,
+      "max_dd_pct": 3.23,
+      "fees": 21.93
+     },
+     "test": {
+      "trades": 19,
+      "net": -163.26,
+      "pf": 0.85,
+      "win_rate": 47.4,
+      "t": -0.33,
+      "max_dd_pct": 4.62,
+      "fees": 20.13
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 24,
+      "net": 846.37,
+      "pf": 1.73,
+      "win_rate": 50.0,
+      "t": 1.2,
+      "max_dd_pct": 3.5,
+      "fees": 29.62
+     },
+     "test": {
+      "trades": 19,
+      "net": 527.69,
+      "pf": 1.44,
+      "win_rate": 47.4,
+      "t": 0.77,
+      "max_dd_pct": 3.58,
+      "fees": 27.97
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 23,
+      "net": 1010.97,
+      "pf": 2.41,
+      "win_rate": 60.9,
+      "t": 1.79,
+      "max_dd_pct": 3.23,
+      "fees": 21.79
+     },
+     "test": {
+      "trades": 19,
+      "net": 379.05,
+      "pf": 1.32,
+      "win_rate": 47.4,
+      "t": 0.59,
+      "max_dd_pct": 3.63,
+      "fees": 21.13
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 70,
+      "net": 711.12,
+      "pf": 1.25,
+      "win_rate": 54.3,
+      "t": 0.93,
+      "max_dd_pct": 7.8,
+      "fees": 66.02
+     },
+     "test": {
+      "trades": 39,
+      "net": -327.68,
+      "pf": 0.85,
+      "win_rate": 43.6,
+      "t": -0.48,
+      "max_dd_pct": 8.1,
+      "fees": 41.12
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 68,
+      "net": 1409.27,
+      "pf": 1.4,
+      "win_rate": 48.5,
+      "t": 1.3,
+      "max_dd_pct": 7.49,
+      "fees": 86.98
+     },
+     "test": {
+      "trades": 43,
+      "net": 515.91,
+      "pf": 1.17,
+      "win_rate": 39.5,
+      "t": 0.52,
+      "max_dd_pct": 5.36,
+      "fees": 65.55
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 61,
+      "net": 969.05,
+      "pf": 1.38,
+      "win_rate": 49.2,
+      "t": 1.1,
+      "max_dd_pct": 6.49,
+      "fees": 56.42
+     },
+     "test": {
+      "trades": 36,
+      "net": 88.39,
+      "pf": 1.04,
+      "win_rate": 36.1,
+      "t": 0.15,
+      "max_dd_pct": 8.1,
+      "fees": 39.68
+     }
+    }
+   ],
+   "best": {
+    "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR",
+    "strategy": {
+     "name": "pullback",
+     "pullback_long_max": 20.0,
+     "pullback_short_min": 80.0,
+     "stop_atr": 1.5,
+     "take_profit_atr": 3.0
+    },
+    "learn": {
+     "trades": 68,
+     "net": 1409.27,
+     "pf": 1.4,
+     "win_rate": 48.5,
+     "t": 1.3,
+     "max_dd_pct": 7.49,
+     "fees": 86.98
+    },
+    "test": {
+     "trades": 43,
+     "net": 515.91,
+     "pf": 1.17,
+     "win_rate": 39.5,
+     "t": 0.52,
+     "max_dd_pct": 5.36,
+     "fees": 65.55
+    }
+   },
+   "passed": false,
+   "no_news": null,
+   "test_positive": 6,
+   "candidates": 13
+  },
+  {
+   "timeframe": "1h",
+   "bars": {
+    "EUR/USD": 17263,
+    "GBP/USD": 17266
+   },
+   "learn_period": [
+    "2024-01-29",
+    "2025-09-30"
+   ],
+   "test_period": [
+    "2025-09-30",
+    "2026-11-13"
+   ],
+   "rows": [
+    {
+     "label": "EMA-Crossover (alt), Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "ema_cross",
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 372,
+      "net": -4687.09,
+      "pf": 0.73,
+      "win_rate": 32.5,
+      "t": -2.36,
+      "max_dd_pct": 52.95,
+      "fees": 2318.32
+     },
+     "test": {
+      "trades": 240,
+      "net": -1741.47,
+      "pf": 0.73,
+      "win_rate": 32.1,
+      "t": -1.98,
+      "max_dd_pct": 39.19,
+      "fees": 923.47
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 547,
+      "net": -3380.92,
+      "pf": 0.86,
+      "win_rate": 38.8,
+      "t": -1.28,
+      "max_dd_pct": 42.7,
+      "fees": 2661.26
+     },
+     "test": {
+      "trades": 356,
+      "net": -2729.91,
+      "pf": 0.76,
+      "win_rate": 35.7,
+      "t": -2.18,
+      "max_dd_pct": 49.66,
+      "fees": 1298.46
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 622,
+      "net": -5129.84,
+      "pf": 0.82,
+      "win_rate": 36.8,
+      "t": -1.98,
+      "max_dd_pct": 54.07,
+      "fees": 3582.74
+     },
+     "test": {
+      "trades": 411,
+      "net": -2380.81,
+      "pf": 0.76,
+      "win_rate": 35.0,
+      "t": -2.36,
+      "max_dd_pct": 54.11,
+      "fees": 1309.84
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 726,
+      "net": -5519.34,
+      "pf": 0.77,
+      "win_rate": 48.3,
+      "t": -2.99,
+      "max_dd_pct": 57.32,
+      "fees": 3094.31
+     },
+     "test": {
+      "trades": 475,
+      "net": -2470.54,
+      "pf": 0.69,
+      "win_rate": 46.3,
+      "t": -3.77,
+      "max_dd_pct": 60.01,
+      "fees": 1059.91
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 380,
+      "net": -3314.88,
+      "pf": 0.81,
+      "win_rate": 38.2,
+      "t": -1.57,
+      "max_dd_pct": 40.41,
+      "fees": 1884.78
+     },
+     "test": {
+      "trades": 246,
+      "net": -2065.9,
+      "pf": 0.77,
+      "win_rate": 34.1,
+      "t": -1.82,
+      "max_dd_pct": 36.29,
+      "fees": 999.63
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 441,
+      "net": -5222.4,
+      "pf": 0.75,
+      "win_rate": 35.4,
+      "t": -2.54,
+      "max_dd_pct": 54.12,
+      "fees": 2612.37
+     },
+     "test": {
+      "trades": 273,
+      "net": -1097.94,
+      "pf": 0.86,
+      "win_rate": 37.0,
+      "t": -1.07,
+      "max_dd_pct": 30.15,
+      "fees": 1084.75
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 509,
+      "net": -4636.73,
+      "pf": 0.75,
+      "win_rate": 47.7,
+      "t": -2.79,
+      "max_dd_pct": 48.68,
+      "fees": 2337.42
+     },
+     "test": {
+      "trades": 325,
+      "net": -2274.49,
+      "pf": 0.7,
+      "win_rate": 45.5,
+      "t": -3.12,
+      "max_dd_pct": 46.29,
+      "fees": 974.95
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 188,
+      "net": -263.94,
+      "pf": 0.97,
+      "win_rate": 54.8,
+      "t": -0.13,
+      "max_dd_pct": 16.06,
+      "fees": 1342.94
+     },
+     "test": {
+      "trades": 106,
+      "net": -1453.82,
+      "pf": 0.74,
+      "win_rate": 50.0,
+      "t": -1.47,
+      "max_dd_pct": 21.34,
+      "fees": 783.47
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 192,
+      "net": -1657.58,
+      "pf": 0.86,
+      "win_rate": 38.0,
+      "t": -0.85,
+      "max_dd_pct": 34.1,
+      "fees": 1581.36
+     },
+     "test": {
+      "trades": 107,
+      "net": -119.53,
+      "pf": 0.98,
+      "win_rate": 42.1,
+      "t": -0.05,
+      "max_dd_pct": 14.46,
+      "fees": 945.33
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 181,
+      "net": -192.91,
+      "pf": 0.98,
+      "win_rate": 40.9,
+      "t": -0.03,
+      "max_dd_pct": 22.8,
+      "fees": 1266.49
+     },
+     "test": {
+      "trades": 103,
+      "net": -970.5,
+      "pf": 0.85,
+      "win_rate": 41.7,
+      "t": -0.71,
+      "max_dd_pct": 20.7,
+      "fees": 795.76
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 438,
+      "net": -4032.71,
+      "pf": 0.78,
+      "win_rate": 50.2,
+      "t": -2.41,
+      "max_dd_pct": 41.86,
+      "fees": 2315.64
+     },
+     "test": {
+      "trades": 291,
+      "net": -1877.54,
+      "pf": 0.78,
+      "win_rate": 50.2,
+      "t": -2.23,
+      "max_dd_pct": 36.66,
+      "fees": 1205.3
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 465,
+      "net": -4966.18,
+      "pf": 0.78,
+      "win_rate": 36.3,
+      "t": -2.17,
+      "max_dd_pct": 50.79,
+      "fees": 2830.1
+     },
+     "test": {
+      "trades": 293,
+      "net": -2486.1,
+      "pf": 0.73,
+      "win_rate": 34.1,
+      "t": -2.97,
+      "max_dd_pct": 53.0,
+      "fees": 1202.58
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 393,
+      "net": -3291.98,
+      "pf": 0.83,
+      "win_rate": 39.4,
+      "t": -1.47,
+      "max_dd_pct": 36.73,
+      "fees": 2086.15
+     },
+     "test": {
+      "trades": 264,
+      "net": -1608.71,
+      "pf": 0.84,
+      "win_rate": 39.4,
+      "t": -1.28,
+      "max_dd_pct": 32.43,
+      "fees": 1282.23
+     }
+    },
+    {
+     "label": "EMA-Crossover (alt), Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "ema_cross",
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 246,
+      "net": -1981.14,
+      "pf": 0.85,
+      "win_rate": 35.4,
+      "t": -0.95,
+      "max_dd_pct": 32.32,
+      "fees": 1835.6
+     },
+     "test": {
+      "trades": 159,
+      "net": -953.65,
+      "pf": 0.87,
+      "win_rate": 34.6,
+      "t": -0.72,
+      "max_dd_pct": 20.08,
+      "fees": 1134.18
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 448,
+      "net": -3188.33,
+      "pf": 0.84,
+      "win_rate": 38.6,
+      "t": -1.38,
+      "max_dd_pct": 37.5,
+      "fees": 2291.64
+     },
+     "test": {
+      "trades": 279,
+      "net": -1437.4,
+      "pf": 0.85,
+      "win_rate": 37.6,
+      "t": -1.04,
+      "max_dd_pct": 33.27,
+      "fees": 1170.11
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 497,
+      "net": -3122.27,
+      "pf": 0.88,
+      "win_rate": 37.8,
+      "t": -1.09,
+      "max_dd_pct": 40.26,
+      "fees": 3321.41
+     },
+     "test": {
+      "trades": 310,
+      "net": -1090.82,
+      "pf": 0.91,
+      "win_rate": 39.0,
+      "t": -0.59,
+      "max_dd_pct": 30.73,
+      "fees": 1741.06
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 574,
+      "net": -3981.54,
+      "pf": 0.81,
+      "win_rate": 49.1,
+      "t": -2.11,
+      "max_dd_pct": 41.8,
+      "fees": 2799.31
+     },
+     "test": {
+      "trades": 348,
+      "net": -2678.9,
+      "pf": 0.68,
+      "win_rate": 46.3,
+      "t": -3.25,
+      "max_dd_pct": 48.76,
+      "fees": 1111.58
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 313,
+      "net": -4692.14,
+      "pf": 0.68,
+      "win_rate": 34.8,
+      "t": -2.97,
+      "max_dd_pct": 49.97,
+      "fees": 1506.39
+     },
+     "test": {
+      "trades": 184,
+      "net": -1336.14,
+      "pf": 0.75,
+      "win_rate": 35.9,
+      "t": -1.65,
+      "max_dd_pct": 30.29,
+      "fees": 604.45
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 341,
+      "net": -4660.17,
+      "pf": 0.73,
+      "win_rate": 34.6,
+      "t": -2.48,
+      "max_dd_pct": 49.72,
+      "fees": 2133.3
+     },
+     "test": {
+      "trades": 202,
+      "net": -909.56,
+      "pf": 0.87,
+      "win_rate": 37.6,
+      "t": -0.86,
+      "max_dd_pct": 27.11,
+      "fees": 912.8
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 390,
+      "net": -4237.18,
+      "pf": 0.73,
+      "win_rate": 46.9,
+      "t": -2.83,
+      "max_dd_pct": 45.14,
+      "fees": 1922.91
+     },
+     "test": {
+      "trades": 231,
+      "net": -2288.71,
+      "pf": 0.62,
+      "win_rate": 43.3,
+      "t": -3.43,
+      "max_dd_pct": 42.67,
+      "fees": 736.06
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 113,
+      "net": -730.46,
+      "pf": 0.86,
+      "win_rate": 52.2,
+      "t": -0.71,
+      "max_dd_pct": 12.53,
+      "fees": 757.84
+     },
+     "test": {
+      "trades": 59,
+      "net": -1002.43,
+      "pf": 0.68,
+      "win_rate": 47.5,
+      "t": -1.43,
+      "max_dd_pct": 16.58,
+      "fees": 402.36
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 119,
+      "net": -1383.15,
+      "pf": 0.81,
+      "win_rate": 38.7,
+      "t": -0.94,
+      "max_dd_pct": 22.25,
+      "fees": 990.01
+     },
+     "test": {
+      "trades": 64,
+      "net": -472.68,
+      "pf": 0.88,
+      "win_rate": 39.1,
+      "t": -0.45,
+      "max_dd_pct": 16.44,
+      "fees": 544.71
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 110,
+      "net": 21.02,
+      "pf": 1.0,
+      "win_rate": 42.7,
+      "t": 0.07,
+      "max_dd_pct": 15.76,
+      "fees": 773.67
+     },
+     "test": {
+      "trades": 58,
+      "net": -1444.82,
+      "pf": 0.62,
+      "win_rate": 37.9,
+      "t": -1.66,
+      "max_dd_pct": 20.31,
+      "fees": 417.82
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 277,
+      "net": -2229.05,
+      "pf": 0.82,
+      "win_rate": 51.3,
+      "t": -1.47,
+      "max_dd_pct": 24.52,
+      "fees": 1633.26
+     },
+     "test": {
+      "trades": 193,
+      "net": -1791.53,
+      "pf": 0.76,
+      "win_rate": 49.7,
+      "t": -1.86,
+      "max_dd_pct": 28.52,
+      "fees": 1062.2
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 296,
+      "net": -3566.1,
+      "pf": 0.78,
+      "win_rate": 37.2,
+      "t": -1.78,
+      "max_dd_pct": 37.0,
+      "fees": 2069.08
+     },
+     "test": {
+      "trades": 192,
+      "net": -2478.55,
+      "pf": 0.69,
+      "win_rate": 33.3,
+      "t": -2.65,
+      "max_dd_pct": 44.27,
+      "fees": 1047.65
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 259,
+      "net": -2298.5,
+      "pf": 0.83,
+      "win_rate": 39.8,
+      "t": -1.21,
+      "max_dd_pct": 29.64,
+      "fees": 1536.04
+     },
+     "test": {
+      "trades": 180,
+      "net": -2261.54,
+      "pf": 0.73,
+      "win_rate": 36.7,
+      "t": -2.07,
+      "max_dd_pct": 36.68,
+      "fees": 974.77
+     }
+    }
+   ],
+   "best": {
+    "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+    "strategy": {
+     "name": "pullback",
+     "pullback_long_max": 10.0,
+     "pullback_short_min": 90.0,
+     "stop_atr": 2.0,
+     "take_profit_atr": 4.0,
+     "session_start_utc": 7,
+     "session_end_utc": 17
+    },
+    "learn": {
+     "trades": 110,
+     "net": 21.02,
+     "pf": 1.0,
+     "win_rate": 42.7,
+     "t": 0.07,
+     "max_dd_pct": 15.76,
+     "fees": 773.67
+    },
+    "test": {
+     "trades": 58,
+     "net": -1444.82,
+     "pf": 0.62,
+     "win_rate": 37.9,
+     "t": -1.66,
+     "max_dd_pct": 20.31,
+     "fees": 417.82
+    }
+   },
+   "passed": false,
+   "no_news": {
+    "trades": 170,
+    "net": -1522.51,
+    "pf": 0.85,
+    "win_rate": 40.6,
+    "t": -0.95,
+    "max_dd_pct": 22.96,
+    "fees": 1195.48,
+    "with": {
+     "trades": 168,
+     "net": -1423.8
+    }
+   },
+   "test_positive": 0,
+   "candidates": 26
+  },
+  {
+   "timeframe": "15m",
+   "bars": {
+    "EUR/USD": 5586,
+    "GBP/USD": 5587
+   },
+   "learn_period": [
+    "2026-08-24",
+    "2026-10-13"
+   ],
+   "test_period": [
+    "2026-10-13",
+    "2026-11-13"
+   ],
+   "rows": [
+    {
+     "label": "EMA-Crossover (alt), Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "ema_cross",
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 2,
+      "net": -162.52,
+      "pf": 0.0,
+      "win_rate": 0.0,
+      "t": -2.06,
+      "max_dd_pct": 1.94,
+      "fees": 22.78
+     },
+     "test": {
+      "trades": 8,
+      "net": -333.51,
+      "pf": 0.51,
+      "win_rate": 25.0,
+      "t": -0.95,
+      "max_dd_pct": 4.42,
+      "fees": 88.2
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 41,
+      "net": -2311.5,
+      "pf": 0.34,
+      "win_rate": 19.5,
+      "t": -3.36,
+      "max_dd_pct": 25.78,
+      "fees": 408.67
+     },
+     "test": {
+      "trades": 46,
+      "net": -831.21,
+      "pf": 0.68,
+      "win_rate": 32.6,
+      "t": -1.21,
+      "max_dd_pct": 18.64,
+      "fees": 378.56
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 17,
+      "net": -758.85,
+      "pf": 0.51,
+      "win_rate": 29.4,
+      "t": -1.2,
+      "max_dd_pct": 9.05,
+      "fees": 192.21
+     },
+     "test": {
+      "trades": 18,
+      "net": -175.54,
+      "pf": 0.85,
+      "win_rate": 38.9,
+      "t": -0.21,
+      "max_dd_pct": 8.13,
+      "fees": 187.61
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 50,
+      "net": -2429.76,
+      "pf": 0.31,
+      "win_rate": 34.0,
+      "t": -3.99,
+      "max_dd_pct": 25.14,
+      "fees": 487.47
+     },
+     "test": {
+      "trades": 66,
+      "net": -847.81,
+      "pf": 0.69,
+      "win_rate": 51.5,
+      "t": -1.46,
+      "max_dd_pct": 16.46,
+      "fees": 537.08
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 34,
+      "net": -2151.86,
+      "pf": 0.3,
+      "win_rate": 17.6,
+      "t": -3.47,
+      "max_dd_pct": 23.14,
+      "fees": 329.85
+     },
+     "test": {
+      "trades": 36,
+      "net": -102.05,
+      "pf": 0.95,
+      "win_rate": 38.9,
+      "t": -0.15,
+      "max_dd_pct": 8.11,
+      "fees": 313.79
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 14,
+      "net": -951.75,
+      "pf": 0.34,
+      "win_rate": 21.4,
+      "t": -1.86,
+      "max_dd_pct": 10.23,
+      "fees": 157.88
+     },
+     "test": {
+      "trades": 16,
+      "net": 45.05,
+      "pf": 1.05,
+      "win_rate": 43.8,
+      "t": 0.19,
+      "max_dd_pct": 7.03,
+      "fees": 163.18
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 39,
+      "net": -2600.37,
+      "pf": 0.18,
+      "win_rate": 23.1,
+      "t": -5.41,
+      "max_dd_pct": 26.5,
+      "fees": 363.76
+     },
+     "test": {
+      "trades": 52,
+      "net": -488.37,
+      "pf": 0.76,
+      "win_rate": 53.8,
+      "t": -0.94,
+      "max_dd_pct": 10.37,
+      "fees": 422.25
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 9,
+      "net": 308.85,
+      "pf": 2.26,
+      "win_rate": 77.8,
+      "t": 1.18,
+      "max_dd_pct": 1.95,
+      "fees": 105.74
+     },
+     "test": {
+      "trades": 13,
+      "net": -35.47,
+      "pf": 0.94,
+      "win_rate": 61.5,
+      "t": -0.02,
+      "max_dd_pct": 3.17,
+      "fees": 161.1
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 3,
+      "net": -127.21,
+      "pf": 0.58,
+      "win_rate": 33.3,
+      "t": -0.37,
+      "max_dd_pct": 2.99,
+      "fees": 38.03
+     },
+     "test": {
+      "trades": 3,
+      "net": -351.02,
+      "pf": 0.0,
+      "win_rate": 0.0,
+      "t": -319.76,
+      "max_dd_pct": 3.56,
+      "fees": 34.91
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 8,
+      "net": -285.61,
+      "pf": 0.55,
+      "win_rate": 25.0,
+      "t": -0.77,
+      "max_dd_pct": 5.6,
+      "fees": 95.55
+     },
+     "test": {
+      "trades": 13,
+      "net": 51.2,
+      "pf": 1.06,
+      "win_rate": 46.2,
+      "t": 0.15,
+      "max_dd_pct": 4.92,
+      "fees": 149.88
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 2 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0
+     },
+     "learn": {
+      "trades": 23,
+      "net": 37.3,
+      "pf": 1.03,
+      "win_rate": 60.9,
+      "t": 0.12,
+      "max_dd_pct": 5.15,
+      "fees": 247.62
+     },
+     "test": {
+      "trades": 39,
+      "net": -960.61,
+      "pf": 0.61,
+      "win_rate": 51.3,
+      "t": -1.38,
+      "max_dd_pct": 10.29,
+      "fees": 430.32
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0
+     },
+     "learn": {
+      "trades": 10,
+      "net": -349.14,
+      "pf": 0.59,
+      "win_rate": 30.0,
+      "t": -0.7,
+      "max_dd_pct": 5.83,
+      "fees": 117.61
+     },
+     "test": {
+      "trades": 11,
+      "net": -723.17,
+      "pf": 0.31,
+      "win_rate": 18.2,
+      "t": -1.9,
+      "max_dd_pct": 7.49,
+      "fees": 120.11
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 4 ATR",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0
+     },
+     "learn": {
+      "trades": 21,
+      "net": -648.26,
+      "pf": 0.63,
+      "win_rate": 28.6,
+      "t": -1.05,
+      "max_dd_pct": 12.87,
+      "fees": 226.11
+     },
+     "test": {
+      "trades": 31,
+      "net": -936.84,
+      "pf": 0.59,
+      "win_rate": 35.5,
+      "t": -1.3,
+      "max_dd_pct": 12.04,
+      "fees": 311.75
+     }
+    },
+    {
+     "label": "EMA-Crossover (alt), Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "ema_cross",
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 1,
+      "net": -121.18,
+      "pf": 0.0,
+      "win_rate": 0.0,
+      "t": 0.0,
+      "max_dd_pct": 1.32,
+      "fees": 11.55
+     },
+     "test": {
+      "trades": 6,
+      "net": -129.53,
+      "pf": 0.73,
+      "win_rate": 33.3,
+      "t": -0.39,
+      "max_dd_pct": 2.93,
+      "fees": 66.41
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 38,
+      "net": -2255.06,
+      "pf": 0.32,
+      "win_rate": 18.4,
+      "t": -3.47,
+      "max_dd_pct": 25.24,
+      "fees": 388.58
+     },
+     "test": {
+      "trades": 35,
+      "net": -519.95,
+      "pf": 0.74,
+      "win_rate": 34.3,
+      "t": -0.83,
+      "max_dd_pct": 14.22,
+      "fees": 285.34
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 14,
+      "net": -421.67,
+      "pf": 0.66,
+      "win_rate": 35.7,
+      "t": -0.64,
+      "max_dd_pct": 5.76,
+      "fees": 162.67
+     },
+     "test": {
+      "trades": 12,
+      "net": -30.95,
+      "pf": 0.96,
+      "win_rate": 41.7,
+      "t": 0.01,
+      "max_dd_pct": 7.76,
+      "fees": 129.09
+     }
+    },
+    {
+     "label": "Ausbruch 20, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 20,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 48,
+      "net": -2397.01,
+      "pf": 0.3,
+      "win_rate": 33.3,
+      "t": -4.02,
+      "max_dd_pct": 24.82,
+      "fees": 474.3
+     },
+     "test": {
+      "trades": 50,
+      "net": -462.52,
+      "pf": 0.76,
+      "win_rate": 54.0,
+      "t": -0.9,
+      "max_dd_pct": 11.61,
+      "fees": 409.52
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 31,
+      "net": -2094.25,
+      "pf": 0.27,
+      "win_rate": 16.1,
+      "t": -3.64,
+      "max_dd_pct": 22.58,
+      "fees": 308.9
+     },
+     "test": {
+      "trades": 29,
+      "net": -146.22,
+      "pf": 0.91,
+      "win_rate": 37.9,
+      "t": -0.24,
+      "max_dd_pct": 8.85,
+      "fees": 252.05
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 11,
+      "net": -621.6,
+      "pf": 0.45,
+      "win_rate": 27.3,
+      "t": -1.19,
+      "max_dd_pct": 6.95,
+      "fees": 127.43
+     },
+     "test": {
+      "trades": 12,
+      "net": -26.04,
+      "pf": 0.97,
+      "win_rate": 41.7,
+      "t": 0.01,
+      "max_dd_pct": 7.75,
+      "fees": 126.14
+     }
+    },
+    {
+     "label": "Ausbruch 50, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "breakout",
+      "breakout_bars": 50,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 37,
+      "net": -2568.36,
+      "pf": 0.17,
+      "win_rate": 21.6,
+      "t": -5.57,
+      "max_dd_pct": 26.18,
+      "fees": 350.77
+     },
+     "test": {
+      "trades": 43,
+      "net": -291.56,
+      "pf": 0.82,
+      "win_rate": 55.8,
+      "t": -0.61,
+      "max_dd_pct": 8.74,
+      "fees": 356.86
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 7,
+      "net": 157.54,
+      "pf": 1.65,
+      "win_rate": 71.4,
+      "t": 0.62,
+      "max_dd_pct": 1.95,
+      "fees": 81.17
+     },
+     "test": {
+      "trades": 8,
+      "net": -12.66,
+      "pf": 0.97,
+      "win_rate": 62.5,
+      "t": 0.02,
+      "max_dd_pct": 2.69,
+      "fees": 102.47
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 3,
+      "net": -127.21,
+      "pf": 0.58,
+      "win_rate": 33.3,
+      "t": -0.37,
+      "max_dd_pct": 2.99,
+      "fees": 38.03
+     },
+     "test": {
+      "trades": 1,
+      "net": -120.2,
+      "pf": 0.0,
+      "win_rate": 0.0,
+      "t": 0.0,
+      "max_dd_pct": 1.22,
+      "fees": 11.71
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 10/90, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 10.0,
+      "pullback_short_min": 90.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 6,
+      "net": -52.54,
+      "pf": 0.87,
+      "win_rate": 33.3,
+      "t": -0.14,
+      "max_dd_pct": 2.86,
+      "fees": 71.9
+     },
+     "test": {
+      "trades": 8,
+      "net": -207.04,
+      "pf": 0.66,
+      "win_rate": 37.5,
+      "t": -0.5,
+      "max_dd_pct": 5.16,
+      "fees": 98.37
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 2 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 2.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 18,
+      "net": 247.92,
+      "pf": 1.34,
+      "win_rate": 66.7,
+      "t": 0.63,
+      "max_dd_pct": 3.08,
+      "fees": 192.49
+     },
+     "test": {
+      "trades": 28,
+      "net": -641.94,
+      "pf": 0.65,
+      "win_rate": 53.6,
+      "t": -1.01,
+      "max_dd_pct": 8.65,
+      "fees": 321.15
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 1.5,
+      "take_profit_atr": 3.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 8,
+      "net": -113.16,
+      "pf": 0.81,
+      "win_rate": 37.5,
+      "t": -0.18,
+      "max_dd_pct": 3.51,
+      "fees": 96.77
+     },
+     "test": {
+      "trades": 8,
+      "net": -402.25,
+      "pf": 0.46,
+      "win_rate": 25.0,
+      "t": -1.06,
+      "max_dd_pct": 6.09,
+      "fees": 90.91
+     }
+    },
+    {
+     "label": "Rücksetzer RSI3 20/80, Stop 2 / Ziel 4 ATR, nur 07–17 UTC",
+     "strategy": {
+      "name": "pullback",
+      "pullback_long_max": 20.0,
+      "pullback_short_min": 80.0,
+      "stop_atr": 2.0,
+      "take_profit_atr": 4.0,
+      "session_start_utc": 7,
+      "session_end_utc": 17
+     },
+     "learn": {
+      "trades": 16,
+      "net": -77.4,
+      "pf": 0.93,
+      "win_rate": 37.5,
+      "t": -0.11,
+      "max_dd_pct": 8.61,
+      "fees": 173.65
+     },
+     "test": {
+      "trades": 24,
+      "net": -1174.97,
+      "pf": 0.44,
+      "win_rate": 29.2,
+      "t": -1.85,
+      "max_dd_pct": 15.86,
+      "fees": 253.6
+     }
+    }
+   ],
+   "best": {
+    "label": "Ausbruch 20, Stop 2 / Ziel 4 ATR",
+    "strategy": {
+     "name": "breakout",
+     "breakout_bars": 20,
+     "stop_atr": 2.0,
+     "take_profit_atr": 4.0
+    },
+    "learn": {
+     "trades": 41,
+     "net": -2311.5,
+     "pf": 0.34,
+     "win_rate": 19.5,
+     "t": -3.36,
+     "max_dd_pct": 25.78,
+     "fees": 408.67
+    },
+    "test": {
+     "trades": 46,
+     "net": -831.21,
+     "pf": 0.68,
+     "win_rate": 32.6,
+     "t": -1.21,
+     "max_dd_pct": 18.64,
+     "fees": 378.56
+    }
+   },
+   "passed": false,
+   "no_news": {
+    "trades": 93,
+    "net": -2918.69,
+    "pf": 0.55,
+    "win_rate": 29.0,
+    "t": -2.66,
+    "max_dd_pct": 34.84,
+    "fees": 873.02,
+    "with": {
+     "trades": 87,
+     "net": -3142.71
+    }
+   },
+   "test_positive": 2,
+   "candidates": 26
+  }
+ ],
+ "verdict": {
+  "passed": false,
+  "timeframe": "1d",
+  "label": "Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR",
+  "config": {
+   "interval_min": 1440,
+   "strategy": {
+    "name": "pullback",
+    "pullback_long_max": 20.0,
+    "pullback_short_min": 80.0,
+    "stop_atr": 1.5,
+    "take_profit_atr": 3.0,
+    "max_hold_bars": 20
+   }
+  },
+  "text": "Keine Variante hat den Prüf-Teil bestanden (mind. 30 Trades, PF 1.1, t 2.13). Am wenigsten schlecht: Rücksetzer RSI3 20/80, Stop 1.5 / Ziel 3 ATR auf 1d-Kerzen – höchstens zum Beobachten im Spielgeld, kein Beleg für einen Vorteil."
+ }
+}
